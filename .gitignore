@@ -1,0 +1,27 @@
+
+node_modules/
+.env
+.env.local
+.env.production
+
+# vite / client
+client/dist/
+
+# server
+server/dist/
+server/data/willa-ewa.db
+server/data/*.db-journal    # tymczasowe pliki SQLite
+
+# logi
+logs/
+*.log
+npm-debug.log*
+
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+.vscode/
+.idea/
+*.swp
