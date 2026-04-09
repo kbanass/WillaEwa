@@ -1,13 +1,799 @@
 <!doctype html>
-<html lang="en">
+<html lang="pl">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>client</title>
+    <meta
+      name="description"
+      content="Willa Ewa – spokojny obiekt noclegowy w Krynicy Morskiej. Cisza, morze, regeneracja. Tylko goście indywidualni."
+    />
+
+    <title>Willa Ewa - Krynica Morska</title>
+
+    <link rel="stylesheet" href="src/reset.css" />
+    <link rel="stylesheet" href="src/style.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
   </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
+
+  <body ontouchstart="">
+    <!-- ═══════════════════════════════ HEADER ═══════════════════════════════ -->
+    <header class="header">
+      <div class="content container">
+        <div class="header-brand">
+          <h3 class="header-brand__name">Willa Ewa</h3>
+          <small class="header-brand__sub"></small>
+        </div>
+        <div class="header-phone">
+          <a class="header-phone__number" href="tel:+48508273502">
+            <h3>+48 508 273 502</h3>
+          </a>
+          <small class="header-phone__label">Rezerwacje</small>
+        </div>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════════════ HERO ═════════════════════════════════ -->
+    <section class="hero" aria-label="Widok na morze Bałtyckie">
+      <img
+        class="hero__img hero__img--active"
+        src="./public/stock-4.jpg"
+        alt="Spokojne wybrzeże Bałtyku – morze i piasek o świcie, Krynica Morska"
+        loading="eager"
+        fetchpriority="high"
+      />
+      <img
+        class="hero__img"
+        src="./public/stock-5.jpg"
+        alt="Spokojne wybrzeże Bałtyku – morze i piasek o świcie, Krynica Morska"
+        loading="eager"
+        fetchpriority="high"
+      />
+      <img
+        class="hero__img"
+        src="./public/stock-6.jpg"
+        alt="Spokojne wybrzeże Bałtyku – morze i piasek o świcie, Krynica Morska"
+        loading="eager"
+        fetchpriority="high"
+      />
+
+      <div class="hero__overlay" aria-hidden="true"></div>
+
+      <div class="hero__content container">
+        <h1 class="hero__content__header">
+          Pokoje do wynajęcia<br />
+          w <em>Krynicy Morskiej</em>
+        </h1>
+        <a
+          class="hero__content__location"
+          href="https://www.google.com/maps/place/Willa+Ewa/@54.3707846,19.4120233,15.96z/data=!4m14!1m7!3m6!1s0x46fd73dabf562521:0x7f21225fd063c074!2swypisz,+wymaluj!8m2!3d54.3535535!4d18.6530348!16s%2Fg%2F11tx5jv4xm!3m5!1s0x46fd3145d9ee92c1:0xe0e8218ff1e1bcea!8m2!3d54.371607!4d19.4174926!16s%2Fg%2F11s2rr2g_t?entry=ttu&g_ep=EgoyMDI2MDMxMS4wIKXMDSoASAFQAw%3D%3D"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Otwórz
+              lokalizację w Google Maps"
+        >
+          <svg
+            width="13"
+            height="13"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          Szałwiowa 1
+        </a>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ ROOMS ════════════════════════════════ -->
+    <section class="rooms">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">Oferta</span>
+          <h2 class="section-title">Pokoje</h2>
+          <p class="section-lead">
+            Zapewniamy komfortowe warunki do wypoczynku w spokojnej atmosferze.
+          </p>
+        </div>
+        <div class="rooms-content">
+          <div class="rooms-slider">
+            <img
+              class="rooms-slider__img rooms-slider__img-active"
+              src="./public/room-placeholder-1.png"
+              alt="Zdjęcie pokoju"
+            />
+            <img
+              class="rooms-slider__img"
+              src="./public/room-placeholder-2.png"
+              alt="Zdjęcie pokoju"
+            />
+            <img
+              class="rooms-slider__img"
+              src="./public/room-placeholder-3.png"
+              alt="Zdjęcie pokoju"
+            />
+            <img
+              class="rooms-slider__img"
+              src="./public/room-placeholder-4.png"
+              alt="Zdjęcie pokoju"
+            />
+            <img
+              class="rooms-slider__img"
+              src="./public/room-placeholder-5.png"
+              alt="Zdjęcie pokoju"
+            />
+            <div class="rooms-slider__buttons-wrapper">
+              <button class="rooms-slider__left-button">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-left"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M5 12l14 0" />
+                  <path d="M5 12l6 6" />
+                  <path d="M5 12l6 -6" />
+                </svg>
+              </button>
+              <button class="rooms-slider__right-button">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-right"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M5 12l14 0" />
+                  <path d="M13 18l6 -6" />
+                  <path d="M13 6l6 6" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="rooms-info">
+            <h3 class="rooms-info__title">Nasza oferta</h3>
+
+            <p>
+              Mamy pokoje dwuosobowe oraz większe — dla 3-5 osób. W każdym
+              znajdą Państwo prywatną łazienkę, dwuosobowe wersalki do spania i
+              wszystko co potrzebne do codziennego użytku.
+            </p>
+
+            <div class="rooms-info__price">
+              Od 60 do 80 zł
+              <small>za dobę od osoby</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════ FACILITIES ═════════════════════════════ -->
+    <section class="facilities">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">Dodatkowe informacje</span>
+          <h2 class="section-title">Wszystko, czego potrzebujesz</h2>
+          <p class="section-lead"></p>
+        </div>
+
+        <div class="facilities-list">
+          <div class="facilities-card">
+            <div class="facilities-card__icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="icon icon-tabler icons-tabler-outline icon-tabler-wifi"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M12 18l.01 0" />
+                <path d="M9.172 15.172a4 4 0 0 1 5.656 0" />
+                <path d="M6.343 12.343a8 8 0 0 1 11.314 0" />
+                <path d="M3.515 9.515c4.686 -4.687 12.284 -4.687 17 0" />
+              </svg>
+            </div>
+            <h4>Darmowe Wi-Fi</h4>
+            <p>Bezpłatny dostęp w całym obiekcie</p>
+          </div>
+
+          <div class="facilities-card">
+            <div class="facilities-card__icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="icon icon-tabler icons-tabler-outline icon-tabler-parking-circle"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path
+                  d="M10 16v-8h3.334c.92 0 1.666 .895 1.666 2s-.746 2 -1.666 2h-3.334"
+                />
+                <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+              </svg>
+            </div>
+            <h4>Parking</h4>
+            <p>Bezpłatne miejsca postojowe w ogrodzie posesji</p>
+          </div>
+
+          <div class="facilities-card">
+            <div class="facilities-card__icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="icon icon-tabler icons-tabler-outline icon-tabler-beach"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M17.553 16.75a7.5 7.5 0 0 0 -10.606 0" />
+                <path
+                  d="M18 3.804a6 6 0 0 0 -8.196 2.196l10.392 6a6 6 0 0 0 -2.196 -8.196"
+                />
+                <path
+                  d="M16.732 10c1.658 -2.87 2.225 -5.644 1.268 -6.196c-.957 -.552 -3.075 1.326 -4.732 4.196"
+                />
+                <path d="M15 9l-3 5.196" />
+                <path
+                  d="M3 19.25a2.4 2.4 0 0 1 1 -.25a2.4 2.4 0 0 1 2 1a2.4 2.4 0 0 0 2 1a2.4 2.4 0 0 0 2 -1a2.4 2.4 0 0 1 2 -1a2.4 2.4 0 0 1 2 1a2.4 2.4 0 0 0 2 1a2.4 2.4 0 0 0 2 -1a2.4 2.4 0 0 1 2 -1a2.4 2.4 0 0 1 1 .25"
+                />
+              </svg>
+            </div>
+
+            <h4>15 minut do plaży</h4>
+            <p>Spacer leśną ścieżką nad Morze Bałtyckie</p>
+          </div>
+
+          <div class="facilities-card">
+            <div class="facilities-card__icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="icon icon-tabler icons-tabler-outline icon-tabler-shopping-bag"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path
+                  d="M6.331 8h11.339a2 2 0 0 1 1.977 2.304l-1.255 8.152a3 3 0 0 1 -2.966 2.544h-6.852a3 3 0 0 1 -2.965 -2.544l-1.255 -8.152a2 2 0 0 1 1.977 -2.304"
+                />
+                <path d="M9 11v-5a3 3 0 0 1 6 0v5" />
+              </svg>
+            </div>
+            <h4>Sklep za rogiem</h4>
+            <p>50 metrów do najbliższego sklepu spożywczego</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════ PHONE BANNER ════════════════════════════ -->
+    <div
+      class="phone-banner"
+      role="complementary"
+      aria-label="Numer kontaktowy"
+    >
+      <div class="phone-banner__content container">
+        <h2>Masz pytania lub chcesz dokonać rezerwacji?</h2>
+        <small>Serdecznie zapraszam do kontaku telefonicznego</small>
+        <div class="phone-banner__numbers">
+          <a class="button-outline" href="tel:+48508273502">508 273 502</a>
+          <a class="button-outline" href="tel:+48511611064">511 611 064</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════ GALLERY ROW ═════════════════════════════ -->
+    <section class="gallery">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">Galeria</span>
+          <h2 class="section-title">Pokoje i okolica</h2>
+          <p class="section-lead">Zobacz naszą galerię zdjęć</p>
+        </div>
+        <div class="photos">
+          <img src="./public/1000002297.jpg" alt="" loading="lazy" />
+          <img src="./public/1000004439.jpg" alt="" loading="lazy" />
+          <img src="./public/1000004580.jpg" alt="" loading="lazy" />
+          <img src="./public/1000004550.jpg" alt="" loading="lazy" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ REVIEWS ═══════════════════════════════ -->
+    <section class="reviews">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">Opinie gości</span>
+          <h2 class="section-title">Co doceniają nasi goście</h2>
+          <p class="section-lead">
+            Przeczytaj, co myślą osoby, które już u nas wypoczywały.
+          </p>
+        </div>
+
+        <div class="reviews-grid">
+          <!-- REVIEWS_START -->
+
+          <div class="review-card long-quote">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-container">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Byliśmy tam przez tydzień w 3-ech starszych panów (bez żon) w
+              końcu czerwca tak, że jeszcze przed wakacjami i nie było
+              specjalnie tłoku, nawet w centrum samej Krynicy. Mimo nie
+              nadzwyczajnej pogody, można było spokojnie odpocząć, bo willa choć
+              skromna, to bardzo czysta i przytulna (w pokoju wszystko co
+              potrzebne na krótki pobyt), przy tym położona na skraju kurortu -
+              przy wjeździe do Krynicy, co zapewnia ciszę i spokój. Sam pokój
+              troszkę mały (zwłaszcza łazienka) na trzech dorosłych chłopów, ale
+              do samego spania wystarczy, bo i tak czas spędza się albo na plaży
+              (do morza 1200 m przez uroczy las), albo na wojażach (Trójmiasto,
+              Frombork -statkiem przez Zalew Wiślany za 80 zł), albo na dużym
+              tarasie (udostępniony grill). Właścicielka bardzo miła i pomocna
+              (okazało się, że jednocześnie jest pisarką - Adrianna T. Zacząłem
+              nawet czytać Jej wydaną już książkę, ale choć wciągająca brakło
+              czasu na jej całkowite zaliczenie) -widać, że zależy Jej na swoich
+              gościach; - udostępnia bezpłatny parking, na półpiętrze duża
+              lodówka z zamrażarką (w pokojach małe), mikrofala, dwupłytowa
+              kuchenka elektryczna, garnki, patelnie itp. Ogólnie wszystko na
+              piątkę z plusem. Dziękujemy i pozdrawiamy."
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">jg</div>
+              <div>
+                <p class="review-card__name">Jerzy Gniadek</p>
+                <p class="review-card__date">6 lipca 2025</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-container">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Polecam, serdecznie. Bardzo miła Pani właściciel, bardzo czysto.
+              Cisza spokój i bardzo dobra cena 🤩"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">k</div>
+              <div>
+                <p class="review-card__name">kowboj87</p>
+                <p class="review-card__date">26 lutego 2026</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-container">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Polecam pobyt w Willa Ewa. Czysto, przyjemnie, w pokoju jest
+              wszystko co potrzebne. Spokojna okolica, niedaleko przejście na
+              plażę przez piękny las. Blisko też do sklepu. Przemiła Pani
+              Właścicielka. Miejsce bezpieczne, skromne, zadbane i otwarte na
+              potrzeby gości."
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">is</div>
+              <div>
+                <p class="review-card__name">Iwona Stankiewicz</p>
+                <p class="review-card__date">22 czerwca 2025</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-container">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Dziś wróciłem z pobytu w willa Ewa, to jest drugi pobyt w tym
+              miejscu, jestem bardzo zadowolony,włascielka przesympatyczna,
+              pokoje czysciutkie, polecam z czystym sumieniem ,do zobaczenia za
+              rok pozdrawiam"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">jb</div>
+              <div>
+                <p class="review-card__name">Józef Banacki</p>
+                <p class="review-card__date">2 lipca 2025</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-container">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Dziękujemy za udany wypoczynek w Willi Ewa , będziemy wspominać
+              go z przyjemnością,kwatera bardzo w porządku,właścicielka bardzo
+              miła..polecam miejsce do spokojnego urlopu"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">kb</div>
+              <div>
+                <p class="review-card__name">Kaska B.</p>
+                <p class="review-card__date">24 lipca 2025</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- REVIEWS_END -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ LOCATION ═══════════════════════════════ -->
+    <section class="location">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">Lokalizacja</span>
+          <h2 class="section-title">Mapa</h2>
+          <p class="section-lead"></p>
+        </div>
+        <div class="location-content">
+          <img class="location__map-image mobile" src="public/map-mobile.png" />
+          <img
+            class="location__map-image desktop"
+            src="public/map-desktop.png"
+          />
+
+          <a
+            class="location-button"
+            href="https://www.google.com/maps/place/Willa+Ewa/@54.3707846,19.4120233,15.96z/data=!4m14!1m7!3m6!1s0x46fd73dabf562521:0x7f21225fd063c074!2swypisz,+wymaluj!8m2!3d54.3535535!4d18.6530348!16s%2Fg%2F11tx5jv4xm!3m5!1s0x46fd3145d9ee92c1:0xe0e8218ff1e1bcea!8m2!3d54.371607!4d19.4174926!16s%2Fg%2F11s2rr2g_t?entry=ttu&g_ep=EgoyMDI2MDMxMS4wIKXMDSoASAFQAw%3D%3D"
+            target="_blank"
+            aria-label="Otwórz
+          lokalizację w Google Maps"
+            ><svg
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              width="24px"
+              height="24px"
+              viewBox="-55.5 0 367 367"
+              version="1.1"
+              preserveAspectRatio="xMidYMid"
+            >
+              <g>
+                <path
+                  d="M70.5853976,271.865254 C81.1995596,285.391378 90.8598594,299.639537 99.4963338,314.50654 C106.870174,328.489419 109.94381,337.97007 115.333495,354.817346 C118.638014,364.124835 121.625069,366.902652 128.046515,366.902652 C135.045169,366.902652 138.219816,362.176756 140.672953,354.867852 C145.766819,338.95854 149.763988,326.815514 156.069992,315.343493 C168.443902,293.193112 183.819296,273.510299 198.927732,254.592287 C203.018698,249.238677 229.462067,218.047767 241.366994,193.437035 C241.366994,193.437035 255.999233,166.402027 255.999233,128.645368 C255.999233,93.3274168 241.569017,68.8321265 241.569017,68.8321265 L200.024428,79.9578224 L174.793197,146.408963 L168.552129,155.57215 L167.303915,157.231625 L165.64444,159.309576 L162.729537,162.628525 L158.56642,166.791642 L136.098575,185.09637 L79.928962,217.528279 L70.5853976,271.865254 Z"
+                  fill="#34A853"
+                ></path>
+                <path
+                  d="M12.6120081,188.891517 C26.3207125,220.205084 52.7568668,247.730719 70.6431185,271.8869 L165.64444,159.352866 C165.64444,159.352866 152.260416,176.856717 127.981579,176.856717 C100.939355,176.856717 79.0920095,155.2619 79.0920095,128.032084 C79.0920095,109.359386 90.325932,96.5309245 90.325932,96.5309245 L25.8373003,113.811107 L12.6120081,188.891517 Z"
+                  fill="#FBBC04"
+                ></path>
+                <path
+                  d="M166.705061,5.78651629 C198.256727,15.959818 225.262874,37.3165365 241.597878,68.8104812 L165.673301,159.28793 C165.673301,159.28793 176.907223,146.228586 176.907223,127.671329 C176.907223,99.8065834 153.443693,78.990998 128.09702,78.990998 C104.128433,78.990998 90.3620076,96.4659886 90.3620076,96.4659886 L90.3620076,39.4666386 L166.705061,5.78651629 Z"
+                  fill="#4285F4"
+                ></path>
+                <path
+                  d="M30.0148476,45.7654275 C48.8607087,23.2182162 82.0213432,0 127.736265,0 C149.915506,0 166.625695,5.82259183 166.625695,5.82259183 L90.2898565,96.5164943 L36.2054099,96.5164943 L30.0148476,45.7654275 Z"
+                  fill="#1A73E8"
+                ></path>
+                <path
+                  d="M12.6120081,188.891517 C12.6120081,188.891517 0,164.194204 0,128.414485 C0,94.5972757 13.145926,65.0369799 30.0148476,45.7654275 L90.3331471,96.5237094 L12.6120081,188.891517 Z"
+                  fill="#EA4335"
+                ></path>
+              </g>
+            </svg>
+            Google maps</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ FOOTER ════════════════════════════════ -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <p class="footer-brand__name">Willa Ewa</p>
+            <p class="footer-brand__desc">
+              Obiekt noclegowy na Mierzei Wiślanej. Stworzony dla tych, którzy
+              szukają ciszy, przestrzeni i prawdziwego wypoczynku z dala od
+              zgiełku.
+            </p>
+          </div>
+
+          <div class="footer-address">
+            <p class="footer-address__title">Adres</p>
+            <address>
+              ul. Szałwiowa 1<br />
+              82-120 Krynica Morska<br />
+              woj. pomorskie
+            </address>
+          </div>
+
+          <div class="footer-contact">
+            <p class="footer-contact__title">Kontakt</p>
+            <p>Nr. telefonu:</p>
+            <a class="footer-phone" href="tel:+48508273502">+48 508 273 502</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span>2025 Willa Ewa · Krynica Morska</span>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      const imgs = document.querySelectorAll(".hero__img");
+      let current = 0;
+      setInterval(() => {
+        imgs[current].classList.remove("hero__img--active");
+        imgs[current].style.animation = "none";
+        current = (current + 1) % imgs.length;
+        const next = imgs[current];
+        next.style.animation = "none";
+        next.offsetHeight;
+        next.style.animation = "";
+        next.classList.add("hero__img--active");
+      }, 6000);
+
+      document.querySelectorAll(".review-toggle").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const text = btn.previousElementSibling;
+          const expanded = text.classList.toggle("expanded");
+          btn.textContent = expanded ? "Zwiń" : "Czytaj więcej";
+        });
+      });
+
+      document.querySelectorAll(".review-card").forEach((card) => {
+        const text = card.querySelector(".review-text");
+        const btn = card.querySelector(".review-toggle");
+      });
+
+      // Slider logic
+      const roomsSlider = document.querySelector(".rooms-slider");
+      const roomsSliderPrevBtn = document.querySelector(
+        ".rooms-slider__left-button",
+      );
+      const roomsSliderNextBtn = document.querySelector(
+        ".rooms-slider__right-button",
+      );
+
+      const roomsSliderImgs = document.querySelectorAll(".rooms-slider__img");
+      let roomsSliderCurrent = 0;
+
+      if (roomsSlider && roomsSliderPrevBtn && roomsSliderNextBtn) {
+        roomsSliderPrevBtn.addEventListener("click", (e) => {
+          roomsSliderImgs[roomsSliderCurrent].classList.remove(
+            "rooms-slider__img-active",
+          );
+          if (roomsSliderCurrent <= 0)
+            roomsSliderCurrent = roomsSliderImgs.length - 1;
+          else roomsSliderCurrent--;
+
+          roomsSliderImgs[roomsSliderCurrent].classList.add(
+            "rooms-slider__img-active",
+          );
+        });
+
+        roomsSliderNextBtn.addEventListener("click", (e) => {
+          roomsSliderImgs[roomsSliderCurrent].classList.remove(
+            "rooms-slider__img-active",
+          );
+          if (roomsSliderCurrent >= roomsSliderImgs.length - 1)
+            roomsSliderCurrent = 0;
+          else roomsSliderCurrent++;
+
+          roomsSliderImgs[roomsSliderCurrent].classList.add(
+            "rooms-slider__img-active",
+          );
+        });
+      }
+    </script>
   </body>
 </html>

@@ -10,7 +10,7 @@ client/dist/
 # server
 server/dist/
 server/data/willa-ewa.db
-server/data/*.db-journal    # tymczasowe pliki SQLite
+server/data/*.db-journal
 
 # logi
 logs/
