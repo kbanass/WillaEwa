@@ -1,5 +1,5 @@
 {% for review in reviews %}
-<div class="review-card {{ 'long-quote' if review.quote | length > 300 }}">
+<div class="review-card {{ 'long-quote' if review.quote | length > 350 }}">
   <div class="review-card__source">
     <div class="review-card__source-logo-container">
       {% if review.source == 'google' %}

@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import logger from "../logger.js";
 
 export function protectedRoute(
   req: Request,
@@ -9,7 +10,8 @@ export function protectedRoute(
   const token = req.cookies?.token;
 
   if (!token) {
-    res.status(401).json({ error: "Brak autoryzacji" });
+    res.status(401).json({ error: "Unauthorized" });
+    logger.warn("[auth-middleware] Token not included in request");
     return;
   }
 
@@ -17,6 +19,7 @@ export function protectedRoute(
     jwt.verify(token, process.env.JWT_SECRET!);
     next();
   } catch {
-    res.status(401).json({ error: "Nieważny lub wygasły token" });
+    logger.warn("[auth-middleware] Unauthorized request!", req);
+    res.status(401).json({ error: "Token expired" });
   }
 }

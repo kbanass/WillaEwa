@@ -69,6 +69,28 @@ a:hover {
   background-color: var(--c-font-secondary);
 }
 
+button {
+  margin: 0;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(0.96);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+@media (hover: hover) {
+  button:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+    transform: translateY(-1px);
+  }
+}
+
 /* ─── Section Common ──────────────────────────────────────────────── */
 section {
   padding-block: 64px;
@@ -359,21 +381,9 @@ footer {
 
 .rooms-slider button {
   padding: 12px;
-  margin: 0;
   background-color: transparent;
   border: 1px solid var(--c-font-primary);
   color: var(--c-font-primary);
-  transition:
-    transform 120ms ease,
-    box-shadow 120ms ease;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-  user-select: none;
-}
-
-.rooms-slider button:active {
-  transform: scale(0.96);
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .rooms-info {
@@ -437,7 +447,7 @@ footer {
   gap: 8px;
   justify-content: space-between;
   align-items: center;
-  padding: 32px 8px;
+  padding: 32px 12px;
 }
 
 .facilities-card__icon {
@@ -477,17 +487,21 @@ footer {
 .gallery {
 }
 
+.photos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
 .gallery img {
-  width: 100%;
-  height: 220px;
+  aspect-ratio: 1/1;
+  overflow: hidden;
   object-fit: cover;
 }
 
-.photos {
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+@media (min-width: 780px) {
+  .photos {
+  }
 }
 
 /* ------ Reviews section --------------------------------*/
@@ -508,6 +522,14 @@ footer {
 
 .reviews {
   background-color: var(--c-bg-secondary);
+}
+
+.review-card.active {
+  display: flex;
+}
+
+.review-card.in-active {
+  display: none;
 }
 
 .review-card {
@@ -632,6 +654,29 @@ footer {
 
   border-radius: 50%;
   text-transform: uppercase;
+}
+
+.reviews-navigation {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  align-items: center;
+  gap: 16px;
+}
+
+.reviews-navigation button {
+  padding: 12px;
+  background-color: transparent;
+  border: 1px solid var(--c-font-accent);
+  color: var(--c-font-primary);
+}
+
+.reviews-navigation__page {
+}
+
+.hidden {
+  display: none;
 }
 
 /* ------ Footer --------------------------------*/

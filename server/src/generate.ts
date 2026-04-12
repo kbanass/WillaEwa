@@ -1,10 +1,10 @@
 import fs from "fs";
 import path from "path";
 import nunjucks from "nunjucks";
-import type { Review } from "./types.js";
+import type { Review } from "@shared/types.js";
 import logger from "./logger.js";
 import { fileURLToPath } from "url";
-import { formatDate, getInitials } from "./utilities.js";
+import { formatDate, getInitials } from "@shared/utils.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

@@ -3,12 +3,12 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import "dotenv/config";
 
-import { initDB } from "./db.js";
-import { startCron, getGoogleReviews } from "./cron.js";
-import opinieRouter from "./routes/reviews.js";
+import { startCron } from "./cron.js";
+import reviewsRouter from "./routes/reviews.js";
+import authRouter from "./routes/auth.js";
 import adminRouter from "./routes/admin.js";
+
 import logger from "./logger.js";
-import { getReviews } from "./test.js";
 
 import { fileURLToPath } from "url";
 
@@ -34,15 +34,12 @@ app.get("/admin", (req, res) => {
   res.sendFile(path.join(__dirname, "../../client/admin/index.html"));
 });
 
-app.use("/api/opinie", opinieRouter);
+app.use("/api/add-review", reviewsRouter);
+app.use("/api/auth", authRouter);
 app.use("/api/admin", adminRouter);
 
-// initDB();
-// startCron();
-// getGoogleReviews();
+startCron();
 
 app.listen(PORT, () => {
   logger.info(`[server] Server started at port: ${PORT}`);
 });
-
-getReviews();
