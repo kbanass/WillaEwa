@@ -11,7 +11,7 @@ import {
   Statuses,
   type ReviewStatus,
   type StatusChange,
-} from "@shared/types.js";
+} from "../../../shared/types.js";
 import { generateHTMLReviews } from "../generate.js";
 
 const router = Router();

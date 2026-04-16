@@ -3,7 +3,7 @@ import type { Database as DatabaseType } from "better-sqlite3";
 import path from "path";
 import logger from "./logger.js";
 import { fileURLToPath } from "url";
-import type { NewReview, Review, StatusChange } from "@shared/types.js";
+import type { NewReview, Review, StatusChange } from "../../shared/types.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { getJson } from "serpapi";
-import type { GoogleReview, ReviewStatus } from "@shared/types.js";
+import type { GoogleReview, ReviewStatus } from "../../shared/types.js";
 import logger from "./logger.js";
 import { googleReviewExists } from "./db.js";
 

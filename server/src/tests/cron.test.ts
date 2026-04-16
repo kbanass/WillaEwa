@@ -7,7 +7,7 @@ vi.mock("./generate");
 
 import axios from "axios";
 import { db } from "./db";
-import { generujOpinie } from "./generate";
+import { generujOpinie } from "./generate.js";
 import { pobierzOpinie } from "./cron";
 
 // Przykładowe opinie z Google API
