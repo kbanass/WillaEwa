@@ -1,3 +1,6 @@
+// Fix dla :active na iOS Safari
+document.addEventListener("touchstart", () => {}, { passive: true });
+
 const imgs = document.querySelectorAll(".hero__img");
 let current = 0;
 setInterval(() => {
