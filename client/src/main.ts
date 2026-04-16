@@ -15,11 +15,6 @@ document.querySelectorAll(".review-toggle").forEach((btn) => {
   });
 });
 
-document.querySelectorAll(".review-card").forEach((card) => {
-  const text = card.querySelector(".review-text");
-  const btn = card.querySelector(".review-toggle");
-});
-
 // Slider logic
 const roomsSlider = document.querySelector(".rooms-slider");
 const roomsSliderPrevBtn = document.querySelector(".rooms-slider__left-button");
@@ -31,7 +26,7 @@ const roomsSliderImgs = document.querySelectorAll(".rooms-slider__img");
 let roomsSliderCurrent = 0;
 
 if (roomsSlider && roomsSliderPrevBtn && roomsSliderNextBtn) {
-  roomsSliderPrevBtn.addEventListener("click", (e) => {
+  roomsSliderPrevBtn.addEventListener("click", () => {
     roomsSliderImgs[roomsSliderCurrent].classList.remove(
       "rooms-slider__img-active",
     );
@@ -44,7 +39,7 @@ if (roomsSlider && roomsSliderPrevBtn && roomsSliderNextBtn) {
     );
   });
 
-  roomsSliderNextBtn.addEventListener("click", (e) => {
+  roomsSliderNextBtn.addEventListener("click", () => {
     roomsSliderImgs[roomsSliderCurrent].classList.remove(
       "rooms-slider__img-active",
     );
@@ -78,7 +73,7 @@ const reviewsSection = document.querySelector(".reviews");
 if (reviews.length > 5) {
   updateReviewsNavigation();
 
-  reviewsNavigationLeftBtn?.addEventListener("click", (e) => {
+  reviewsNavigationLeftBtn?.addEventListener("click", () => {
     if (currentReviewsPage === 1) {
       currentReviewsPage = numOfPages;
     } else {
@@ -87,7 +82,7 @@ if (reviews.length > 5) {
     updateReviewsNavigation();
     reviewsSection?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
-  reviewsNavigationRightBtn?.addEventListener("click", (e) => {
+  reviewsNavigationRightBtn?.addEventListener("click", () => {
     if (currentReviewsPage === numOfPages) {
       currentReviewsPage = 1;
     } else {

@@ -4,15 +4,6 @@ import { formatDate, getInitials } from "../../shared/utils";
 let currentStatusFilter: StatusFilter = "pending";
 const reviewsSectionTitle = document.querySelector(".reviews .section-title");
 const statusFilterElement = document.querySelector(".status-filter");
-const statusFilterButtonPending = document.querySelector(
-  ".status-filter__button-pending",
-);
-const statusFilterButtonAccepted = document.querySelector(
-  ".status-filter__button-accepted",
-);
-const statusFilterButtonDeleted = document.querySelector(
-  ".status-filter__button-deleted",
-);
 const reviewsContainerElement = document.querySelector(".reviews-grid")!;
 
 type StatusFilter = ReviewStatus | "all";
