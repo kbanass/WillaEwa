@@ -10,6 +10,9 @@ export function protectedRoute(
   const token = req.cookies?.token;
 
   if (!token) {
+    if (req.accepts("html")) {
+      return res.redirect("/login");
+    }
     res.status(401).json({ error: "Unauthorized" });
     logger.warn("[auth-middleware] Token not included in request");
     return;
@@ -19,6 +22,9 @@ export function protectedRoute(
     jwt.verify(token, process.env.JWT_SECRET!);
     next();
   } catch {
+    if (req.accepts("html")) {
+      return res.redirect("/login");
+    }
     logger.warn("[auth-middleware] Unauthorized request!", req);
     res.status(401).json({ error: "Token expired" });
   }

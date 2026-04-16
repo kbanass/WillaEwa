@@ -5,10 +5,17 @@ import bcrypt from "bcrypt";
 import { db } from "../db.js";
 import { protectedRoute } from "../middleware/auth.js";
 import logger from "../logger.js";
+import rateLimit from "express-rate-limit";
 
 const router = Router();
 
-router.post("/login", async (req: Request, res: Response) => {
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: "Too many login attempts",
+});
+
+router.post("/login", loginLimiter, async (req: Request, res: Response) => {
   const { password } = req.body;
 
   if (!password) {
