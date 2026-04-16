@@ -8,7 +8,7 @@ import type { NewReview, Review, StatusChange } from "../../shared/types.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const DB_PATH = path.join(__dirname, "../data/willa-ewa.db");
+const DB_PATH = process.env.DB_PATH ?? path.join(__dirname, "../data/willa-ewa.db");
 
 export const db: DatabaseType = new Database(DB_PATH);
 
