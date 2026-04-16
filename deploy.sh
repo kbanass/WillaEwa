@@ -3,7 +3,7 @@
 # Uruchamiać na serwerze docelowym z katalogu projektu.
 set -euo pipefail
 
-DEPLOY_DIR="/var/www/willa-ewa"
+DEPLOY_DIR="/var/www/WillaEwa"
 SERVER_ENV="$DEPLOY_DIR/server/.env"
 
 echo "==> [1/7] Sprawdzanie wymagań..."
@@ -25,6 +25,8 @@ cp -r client/templates client/dist/templates
 echo "==> [5/7] Synchronizacja plików na serwer..."
 mkdir -p "$DEPLOY_DIR/server/logs"
 mkdir -p "$DEPLOY_DIR/server/data"
+mkdir -p "$DEPLOY_DIR/server/dist"
+mkdir -p "$DEPLOY_DIR/client/dist"
 
 # Serwer — skompilowany JS
 rsync -av --delete server/dist/  "$DEPLOY_DIR/server/dist/"
