@@ -17,7 +17,7 @@ form.addEventListener("submit", async (e) => {
     const data = await res.json();
 
     if (data.success) {
-      window.location.href = "/admin";
+      window.location.href = "/panel";
     } else {
       errorEl.textContent = data.error || "Błąd logowania";
       input.value = "";
