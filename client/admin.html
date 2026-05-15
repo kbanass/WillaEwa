@@ -5,12 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Willa Ewa – spokojny obiekt noclegowy w Krynicy Morskiej. Cisza, morze, regeneracja. Tylko goście indywidualni."
+      content="Willa Ewa – spokojny obiekt noclegowy w Krynicy Morskiej."
     />
+
+    <link
+      rel="icon"
+      type="image/png"
+      href="/favicon/favicon-96x96.png"
+      sizes="96x96"
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon/favicon.ico" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/favicon/apple-touch-icon.png"
+    />
+    <meta name="apple-mobile-web-app-title" content="WillaEwa" />
+    <link rel="manifest" href="/favicon/site.webmanifest" />
 
     <title>Panel administratora</title>
 
+    <link rel="stylesheet" href="src/variables.css" />
     <link rel="stylesheet" href="src/reset.css" />
+    <link rel="stylesheet" href="src/style.css" />
     <link rel="stylesheet" href="src/style-admin.css" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -19,49 +37,37 @@
       href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
       rel="stylesheet"
     />
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
-      rel="stylesheet"
-    />
   </head>
 
   <body>
     <!-- ═══════════════════════════════ HEADER ═══════════════════════════════ -->
+
     <header class="header">
-      <div class="content container">
-        <div class="header-brand">
-          <h3 class="header-brand__name">Panel administratora</h3>
-          <small class="header-brand__sub"></small>
-        </div>
-        <div class="header-main-page">
-          <a class="header-main-page__link" href="/">
-            <h3>
-              Strona główna
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon icon-tabler icons-tabler-outline icon-tabler-link"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M9 15l6 -6" />
-                <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464" />
-                <path
-                  d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"
-                />
-              </svg>
-            </h3>
-          </a>
-        </div>
+      <div class="header__content container">
+        <h3 class="header__title">Login</h3>
+
+        <a class="header__link" href="/">
+          Strona główna
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon icon-tabler icons-tabler-outline icon-tabler-link"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M9 15l6 -6" />
+            <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464" />
+            <path
+              d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"
+            />
+          </svg>
+        </a>
       </div>
     </header>
 
@@ -178,7 +184,7 @@
         </div>
 
         <div class="status-filter" data-current-filter="pending">
-          <button class="status-filter__button-pending">
+          <button class="button-outline status-filter__btn--pending">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -199,7 +205,7 @@
             </svg>
             Oczekujące
           </button>
-          <button class="status-filter__button-accepted">
+          <button class="button-outline status-filter__btn--accepted">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -218,7 +224,7 @@
             </svg>
             Zaakceptowane
           </button>
-          <button class="status-filter__button-deleted">
+          <button class="button-outline status-filter__btn--deleted">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -240,7 +246,7 @@
             </svg>
             Usunięte
           </button>
-          <button class="status-filter__button-all">
+          <button class="button-outline status-filter__btn--all">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -262,11 +268,9 @@
             Wszystkie
           </button>
         </div>
-        <div class="reviews-grid"></div>
+        <div class="reviews__grid"></div>
       </div>
-      <button id="apply-changes" class="hidden">
-        Zatwierdź zmiany: 5 opini
-      </button>
+      <button id="apply-changes" class="hidden">Zatwierdź zmiany:</button>
     </section>
 
     <script type="module" src="./src/admin.ts" defer></script>

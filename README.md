@@ -24,3 +24,5 @@ pm2 start dist/index.js --name krynica-morska
 pm2 save
 pm2 startup
 ```
+
+cd server && npx tsx src/scripts/importReviews.ts

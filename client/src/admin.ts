@@ -4,7 +4,7 @@ import { formatDate, getInitials } from "../../shared/utils";
 let currentStatusFilter: StatusFilter = "pending";
 const reviewsSectionTitle = document.querySelector(".reviews .section-title");
 const statusFilterElement = document.querySelector(".status-filter");
-const reviewsContainerElement = document.querySelector(".reviews-grid")!;
+const reviewsContainerElement = document.querySelector(".reviews__grid")!;
 
 type StatusFilter = ReviewStatus | "all";
 const statusNamePl: Record<StatusFilter, string> = {
@@ -25,13 +25,13 @@ statusFilterElement?.addEventListener("click", (e) => {
   const button = (e.target as HTMLElement).closest("button");
   if (!button) return;
 
-  if (button.classList.contains("status-filter__button-pending")) {
+  if (button.classList.contains("status-filter__btn--pending")) {
     changeStatusFilter("pending");
-  } else if (button.classList.contains("status-filter__button-accepted")) {
+  } else if (button.classList.contains("status-filter__btn--accepted")) {
     changeStatusFilter("accepted");
-  } else if (button.classList.contains("status-filter__button-deleted")) {
+  } else if (button.classList.contains("status-filter__btn--deleted")) {
     changeStatusFilter("deleted");
-  } else if (button.classList.contains("status-filter__button-all")) {
+  } else if (button.classList.contains("status-filter__btn--all")) {
     changeStatusFilter("all");
   }
 });
@@ -50,6 +50,7 @@ async function fetchReviews(): Promise<Review[]> {
   const res = await fetch("/api/admin/get-reviews");
 
   if (!res.ok) {
+    alert("Błąd podczas pobierania opini z serwera");
     throw new Error("Błąd pobierania recenzji");
   }
 
@@ -83,7 +84,7 @@ reviewsContainerElement.addEventListener("click", (e) => {
 
   // Status picker
   const statusBtn = target.closest(
-    "[class*='status-picker__button']",
+    "[class*='status-picker__btn']",
   ) as HTMLElement | null;
   if (!statusBtn) return;
 
@@ -93,11 +94,11 @@ reviewsContainerElement.addEventListener("click", (e) => {
   const id = Number(card.dataset.id);
   let newStatus: ReviewStatus | null = null;
 
-  if (statusBtn.classList.contains("status-picker__button-accepted")) {
+  if (statusBtn.classList.contains("status-picker__btn--accepted")) {
     newStatus = "accepted";
-  } else if (statusBtn.classList.contains("status-picker__button-pending")) {
+  } else if (statusBtn.classList.contains("status-picker__btn--pending")) {
     newStatus = "pending";
-  } else if (statusBtn.classList.contains("status-picker__button-deleted")) {
+  } else if (statusBtn.classList.contains("status-picker__btn--deleted")) {
     newStatus = "deleted";
   }
 
@@ -166,7 +167,7 @@ function renderReview(review: Review) {
   return `
             <div class="review-card ${review.quote.length > 350 && "long-quote"}" data-status="${review.status}" data-id="${review.id}" ${pendingAttr}>
             <div class="review-card__source">
-              <div class="review-card__source-logo-container">
+              <div class="review-card__source-logo-wrap">
                 <div class="review-card__source-logo">
                 ${
                   review.source === "google"
@@ -214,7 +215,7 @@ function renderReview(review: Review) {
                 </div>
               </div>
               <div class="status-picker">
-                <button class="status-picker__button-accepted">
+                <button class="status-picker__btn--accepted">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -232,7 +233,7 @@ function renderReview(review: Review) {
                     <path d="M9 12l2 2l4 -4" />
                   </svg>
                 </button>
-                <button class="status-picker__button-pending">
+                <button class="status-picker__btn--pending">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -252,7 +253,7 @@ function renderReview(review: Review) {
                     <path d="M12 19l0 .01" />
                   </svg>
                 </button>
-                <button class="status-picker__button-deleted">
+                <button class="status-picker__btn--deleted">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"

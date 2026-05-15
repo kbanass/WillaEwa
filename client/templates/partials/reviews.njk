@@ -1,7 +1,7 @@
 {% for review in reviews %}
-<div class="review-card {{ 'long-quote' if review.quote | length > 350 }}">
+<div class="review-card {{ 'long-quote' if review.quote | length > 450 }}" data-id="{{review.id}}">
   <div class="review-card__source">
-    <div class="review-card__source-logo-container">
+    <div class="review-card__source-logo-wrap">
       {% if review.source == 'google' %}
       <div class="review-card__source-logo logo-google">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">

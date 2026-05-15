@@ -8,10 +8,28 @@
       content="Willa Ewa – spokojny obiekt noclegowy w Krynicy Morskiej."
     />
 
+    <link
+      rel="icon"
+      type="image/png"
+      href="/favicon/favicon-96x96.png"
+      sizes="96x96"
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon/favicon.ico" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/favicon/apple-touch-icon.png"
+    />
+    <meta name="apple-mobile-web-app-title" content="WillaEwa" />
+    <link rel="manifest" href="/favicon/site.webmanifest" />
+
     <title>Willa Ewa - Krynica Morska</title>
 
+    <link rel="stylesheet" href="src/variables.css" />
     <link rel="stylesheet" href="src/reset.css" />
     <link rel="stylesheet" href="src/style.css" />
+    <link rel="stylesheet" href="src/style-home.css" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,34 +37,24 @@
       href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
       rel="stylesheet"
     />
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
-      rel="stylesheet"
-    />
   </head>
 
   <body>
     <!-- ═══════════════════════════════ HEADER ═══════════════════════════════ -->
     <header class="header">
-      <div class="content container">
-        <div class="header-brand">
-          <h3 class="header-brand__name">Willa Ewa</h3>
-          <small class="header-brand__sub"></small>
-        </div>
-        <div class="header-phone">
-          <a class="header-phone__number" href="tel:+48508273502">
-            <h3>+48 508 273 502</h3>
+      <div class="header__content container">
+        <h3 class="header__title">Willa Ewa</h3>
+        <div class="header__phone">
+          <a class="header__phone-number" href="tel:+48508273502">
+            +48 508 273 502
           </a>
-          <small class="header-phone__label">Rezerwacje</small>
+          <small class="header__phone-label">Rezerwacje</small>
         </div>
       </div>
     </header>
 
     <!-- ═══════════════════════════════ HERO ═════════════════════════════════ -->
-    <section class="hero" aria-label="Widok na morze Bałtyckie">
+    <section class="hero" aria-label="Widoki z Krynicy Morskiej">
       <img
         class="hero__img hero__img--active"
         src="./public/stock-4.jpg"
@@ -72,12 +80,12 @@
       <div class="hero__overlay" aria-hidden="true"></div>
 
       <div class="hero__content container">
-        <h1 class="hero__content__header">
+        <h1 class="hero__content-header">
           Pokoje do wynajęcia<br />
           w <em>Krynicy Morskiej</em>
         </h1>
         <a
-          class="hero__content__location"
+          class="hero__content-location"
           href="https://www.google.com/maps/place/Willa+Ewa/@54.3707846,19.4120233,15.96z/data=!4m14!1m7!3m6!1s0x46fd73dabf562521:0x7f21225fd063c074!2swypisz,+wymaluj!8m2!3d54.3535535!4d18.6530348!16s%2Fg%2F11tx5jv4xm!3m5!1s0x46fd3145d9ee92c1:0xe0e8218ff1e1bcea!8m2!3d54.371607!4d19.4174926!16s%2Fg%2F11s2rr2g_t?entry=ttu&g_ep=EgoyMDI2MDMxMS4wIKXMDSoASAFQAw%3D%3D"
           target="_blank"
           rel="noopener noreferrer"
@@ -113,10 +121,10 @@
             Zapewniamy komfortowe warunki do wypoczynku w spokojnej atmosferze.
           </p>
         </div>
-        <div class="rooms-content">
+        <div class="rooms__content">
           <div class="rooms-slider">
             <img
-              class="rooms-slider__img rooms-slider__img-active"
+              class="rooms-slider__img rooms-slider__img--active"
               src="./public/room-placeholder-1.png"
               alt="Zdjęcie pokoju"
             />
@@ -141,7 +149,7 @@
               alt="Zdjęcie pokoju"
             />
             <div class="rooms-slider__buttons-wrapper">
-              <button class="rooms-slider__left-button">
+              <button class="rooms-slider__btn--prev">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -160,7 +168,7 @@
                   <path d="M5 12l6 -6" />
                 </svg>
               </button>
-              <button class="rooms-slider__right-button">
+              <button class="rooms-slider__btn--next">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -181,8 +189,8 @@
               </button>
             </div>
           </div>
-          <div class="rooms-info">
-            <h3 class="rooms-info__title">Nasza oferta</h3>
+          <div class="rooms__info">
+            <h3 class="rooms__info-title">Nasza oferta</h3>
 
             <p>
               Mamy pokoje dwuosobowe oraz większe — dla 3-5 osób. W każdym
@@ -190,7 +198,7 @@
               wszystko co potrzebne do codziennego użytku.
             </p>
 
-            <div class="rooms-info__price">
+            <div class="rooms__info-price">
               Od 60 do 80 zł
               <small>za dobę od osoby</small>
             </div>
@@ -208,59 +216,9 @@
           <p class="section-lead"></p>
         </div>
 
-        <div class="facilities-list">
-          <div class="facilities-card">
-            <div class="facilities-card__icon">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon icon-tabler icons-tabler-outline icon-tabler-wifi"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M12 18l.01 0" />
-                <path d="M9.172 15.172a4 4 0 0 1 5.656 0" />
-                <path d="M6.343 12.343a8 8 0 0 1 11.314 0" />
-                <path d="M3.515 9.515c4.686 -4.687 12.284 -4.687 17 0" />
-              </svg>
-            </div>
-            <h4>Darmowe Wi-Fi</h4>
-            <p>Bezpłatny dostęp w całym obiekcie</p>
-          </div>
-
-          <div class="facilities-card">
-            <div class="facilities-card__icon">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon icon-tabler icons-tabler-outline icon-tabler-parking-circle"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path
-                  d="M10 16v-8h3.334c.92 0 1.666 .895 1.666 2s-.746 2 -1.666 2h-3.334"
-                />
-                <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
-              </svg>
-            </div>
-            <h4>Parking</h4>
-            <p>Bezpłatne miejsca postojowe w ogrodzie posesji</p>
-          </div>
-
-          <div class="facilities-card">
-            <div class="facilities-card__icon">
+        <div class="facilities__list">
+          <div class="facilities__card">
+            <div class="facilities__card-icon">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -292,8 +250,33 @@
             <p>Spacer leśną ścieżką nad Morze Bałtyckie</p>
           </div>
 
-          <div class="facilities-card">
-            <div class="facilities-card__icon">
+          <div class="facilities__card">
+            <div class="facilities__card-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="icon icon-tabler icons-tabler-outline icon-tabler-parking-circle"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path
+                  d="M10 16v-8h3.334c.92 0 1.666 .895 1.666 2s-.746 2 -1.666 2h-3.334"
+                />
+                <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+              </svg>
+            </div>
+            <h4>Parking</h4>
+            <p>Bezpłatne miejsca postojowe w ogrodzie posesji</p>
+          </div>
+
+          <div class="facilities__card">
+            <div class="facilities__card-icon">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -316,19 +299,44 @@
             <h4>Sklep za rogiem</h4>
             <p>50 metrów do najbliższego sklepu spożywczego</p>
           </div>
+
+          <div class="facilities__card">
+            <div class="facilities__card-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="icon icon-tabler icons-tabler-outline icon-tabler-wifi"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M12 18l.01 0" />
+                <path d="M9.172 15.172a4 4 0 0 1 5.656 0" />
+                <path d="M6.343 12.343a8 8 0 0 1 11.314 0" />
+                <path d="M3.515 9.515c4.686 -4.687 12.284 -4.687 17 0" />
+              </svg>
+            </div>
+            <h4>Darmowe Wi-Fi</h4>
+            <p>Bezpłatny dostęp w całym obiekcie</p>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- ═══════════════════════════ PHONE BANNER ════════════════════════════ -->
-    <div
-      class="phone-banner"
-      role="complementary"
-      aria-label="Numer kontaktowy"
-    >
+    <div class="phone-banner" aria-label="Numer kontaktowy">
       <div class="phone-banner__content container">
-        <h2>Masz pytania lub chcesz dokonać rezerwacji?</h2>
-        <small>Serdecznie zapraszam do kontaku telefonicznego</small>
+        <h2 class="phone-banner__title">
+          Masz pytania lub chcesz dokonać rezerwacji?
+        </h2>
+        <p class="phone-banner__lead">
+          Serdecznie zapraszam do kontaku telefonicznego
+        </p>
         <div class="phone-banner__numbers">
           <a class="button-outline" href="tel:+48508273502">508 273 502</a>
           <a class="button-outline" href="tel:+48511611064">511 611 064</a>
@@ -336,19 +344,54 @@
       </div>
     </div>
 
-    <!-- ════════════════════════════ GALLERY ROW ═════════════════════════════ -->
+    <!-- ════════════════════════════ GALLERY ════════════════════════════════ -->
     <section class="gallery">
       <div class="container">
         <div class="section-header">
           <span class="section-label">Galeria</span>
           <h2 class="section-title">Pokoje i okolica</h2>
-          <p class="section-lead">Zobacz naszą galerię zdjęć</p>
+          <p class="section-lead">
+            Zajrzyj do naszych pokoi i odkryj piękno okolicy
+          </p>
         </div>
-        <div class="photos">
-          <img src="./public/1000002297.jpg" alt="" loading="lazy" />
-          <img src="./public/1000004439.jpg" alt="" loading="lazy" />
-          <img src="./public/1000004580.jpg" alt="" loading="lazy" />
-          <img src="./public/1000004550.jpg" alt="" loading="lazy" />
+
+        <div class="gallery__grid">
+          <img
+            class="gallery__grid__main-photo"
+            src="./public/1000004580.jpg"
+            alt="Willa Ewa – widok na obiekt"
+            loading="lazy"
+            data-gallery-index="0"
+          />
+          <img
+            src="./public/1000004550.jpg"
+            alt="Pokój gościnny"
+            loading="lazy"
+            data-gallery-index="1"
+          />
+          <img
+            src="./public/stock-4.jpg"
+            alt="Plaża w Krynicy Morskiej"
+            loading="lazy"
+            data-gallery-index="2"
+          />
+          <img
+            src="./public/1000004439.jpg"
+            alt="Wnętrze pokoju"
+            loading="lazy"
+            data-gallery-index="3"
+          />
+          <img
+            src="./public/1000004582.jpg"
+            alt="Taras i otoczenie"
+            loading="lazy"
+            data-gallery-index="4"
+          />
+        </div>
+        <div class="justify-right-wrapper">
+          <button class="gallery__open-btn button-outline" id="gallery-open">
+            Pokaż wszystkie
+          </button>
         </div>
       </div>
     </section>
@@ -364,13 +407,1777 @@
           </p>
         </div>
 
-        <div class="reviews-grid">
+        <div class="reviews__grid">
           <!-- REVIEWS_START -->
+
+          <div class="review-card long-quote" data-id="1">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Dzień dobry, chciałam wszystkim Państwu polecić z całego serca
+              placówkę BASMA. Opieka pacjenta i leczenie jest tutaj na
+              najwyższym poziomie, lekarze i pracownicy bardzo profesjonalni,
+              życzliwi, pomocni, empatyczni i z podejściem
+              &quot;pro-pacjent&quot;. Omawiają z pacjentem plan leczenia -
+              wszystko opiera się na zasadzie dialogu, co bardzo pomaga i
+              sprzyja zdrowiu i spokojowi pacjenta. Zarówno w ramach NFZ jak i
+              prywatnie, leczenie przebiega z najwyższym zaangażowaniem i chęcią
+              niesienia pomocy, a nie tylko &quot;odhaczenia&quot; pacjenta na
+              check liście. 🙂 Miejsce bardzo przyjazne dzieciom, które nie
+              zawsze są łatwymi pacjentami. Miałam przyjemność poznać dr Natalię
+              - podchodzi do dzieci z ogromną cierpliwością i wyrozumiałością.
+              Chirurgia, ortodoncja, stomatologia zachowawcza - obojętnie gdzie
+              nie byłam, sama, czy z synem, to z każdej wizyty wychodziłam
+              zadowolona. Bardzo bałam się usuwania ósemki, stresowałam się
+              kilka dni przed wizytą. Dr Ania uspokoiła mnie i bardzo szybko
+              usunęła zęba 😂 Byłam w szoku, że to już. Moje zęby leczył również
+              dr Bartek - polecam. Pełen profesjonalizm i słuchanie pacjenta,
+              jego obaw, problemów i dylematów związanych z uzębieniem.
+              Ortodoncja super - szybkie terminy, dokładność, omawianie planu
+              leczenia. Moje ukłony w kierunku wszystkich asystentek i
+              higienistek stomatologicznych. Wszystkie uśmiechnięte, miłe i
+              bardzo pomocne, nie sprawiają wrażenia jakby pracowały &quot;za
+              karę&quot;, czego niestety doświadczyłam w innej placówce. Pani w
+              recepcji (niestety nie pamiętam imienia), ale bardzo życzliwa,
+              zaangażowana, pracowita, zawsze pyta o samopoczucie. Widać, że
+              bardzo lubi swoją pracę. 🙂 Wisienką na torcie są bardzo dogodne i
+              szybkie terminy wizyt, które pozwalają zachować zdrowie i higienę.
+              Nie mam uwag, chciałabym, aby wszystkie placówki w Elblągu były na
+              takim lub podobnym poziomie, czego sobie i Państwu życzę. ♥️
+              Pozdrawiam, Joanna Konarska"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">jk</div>
+              <div>
+                <p class="review-card__name">Joanna Konarska</p>
+                <p class="review-card__date">15 stycznia 2026</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="2">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Z całego serca polecam. Bardzo bałam się - jestem właśnie po
+              wizycie na NFZ… Nigdy tak miłej, komfortowej wizyty nie odbyłam
+              nawet prywatnie w innym miejscu jak tutaj! Bardzo miłe, empatyczne
+              Panie zarówno w rejestracji jak w gabinecie❤️ Dziękuję serdecznie
+              Pani Doktor Agnieszce Macielak. Już zapisałam się na następną
+              wizytę. Już nie boję się - wiem, że znalazłam się w odpowiednim
+              miejscu. DZIĘKUJĘ."
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">żw</div>
+              <div>
+                <p class="review-card__name">Żaneta Wilczyńska</p>
+                <p class="review-card__date">31 grudnia 2025</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="3">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Polecam z całego serca Młoda dentystka ale widać że bardzo kocha
+              to co robi i robi to bardzo dobrze jestem zachwycona wizytą bardzo
+              ładnie i profesłonalnie wykonała bonding na mojej jedynce . Pani w
+              rejestracji przemiła i ciepła Niebawem czeka mnie ekstarakcja
+              ósemek mam nadzieję że przejdzie gładko 😂 Ale jestem bardzo
+              zadowolona z wizyty ❤️"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">jm</div>
+              <div>
+                <p class="review-card__name">Julia Minkiewicz</p>
+                <p class="review-card__date">6 lutego 2026</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="4">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Pani w rejestracji super kobieta uśmiechnięta. Specjaliści także
+              zawsze wszystko ok i odpowiednie podejście do każdego pacjenta
+              nawet takiego który panicznie się boi dentysty myślę, że naprawdę
+              z czystym sumieniem polecę innym bliskim. Najbliższa mi osoba od
+              małego bała się panicznie dentysty po latach już dorosły człowiek
+              stwierdzamy opieka super oraz sposób zrozumienia pacjenta,że jest
+              ten strach , podejście pierwsza klasa."
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">gp</div>
+              <div>
+                <p class="review-card__name">gosia Prz</p>
+                <p class="review-card__date">19 listopada 2025</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="5">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Bardzo miło, sympatycznie . Pan Jakub chirurg pełen
+              profesjonalizm. Kto się boi wyrwania to tylko do Pana Doktora . Na
+              prawdę jeleń szacunek!! Do tego przepiękne wnętrze."
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">wk</div>
+              <div>
+                <p class="review-card__name">Wi Ka</p>
+                <p class="review-card__date">9 lutego 2026</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="6">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „A ja z czystym sumieniem polecę. Moje co prawda drobne leczenie
+              było w ramach NFZ. Szybkie terminy, bardzo nowoczesny wygląd
+              przychodni i bardzo miłe podejście do pacjenta. Jest to dobra
+              alternatywa dla gabinetów rodem z PRL."
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">mk</div>
+              <div>
+                <p class="review-card__name">Maciek Kowal</p>
+                <p class="review-card__date">7 listopada 2025</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="7">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Z Całego serca polecam basma . Pani dentystka mega profesjonalne
+              podejście,wszystko wytłumaczone ,sam zabieg wykonany bezboleśnie w
+              miłym towarzystwie Pani z recepcji bardzo miła i przyjazna :)
+              Widzimy się na usunięciu ósemek. Pozdrawiam i polecam!!!!"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">mb</div>
+              <div>
+                <p class="review-card__name">Mateusz BERK</p>
+                <p class="review-card__date">11 lutego 2026</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="8">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Narazie bylismy na 1 wizycie ortodontycznej na NFZ z synem. Cala
+              droge leczenia rzetelnie przekazana, w krotkim czasie Pani dr
+              opowiedziala wszystko szczegolowo sama z siebie, co dodatkowo
+              mozna skonsultowac z innymi specjalistami, z czym sie zaznajomic.
+              Wszyscy bardzo mili. Nigdy chyba nie spotkalam sie z takim super
+              podejsciem na wizycie na NFZ. :)"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">kc</div>
+              <div>
+                <p class="review-card__name">karolina chmielewska</p>
+                <p class="review-card__date">10 grudnia 2025</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="9">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star"></div>
+
+                <div class="star"></div>
+
+                <div class="star"></div>
+
+                <div class="star"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Terminy może i szybkie ale plomby na NFZ to jakaś porażka , 3
+              osobom z mojego otoczenia wyleciały w przeciągu dwóch tygodni a
+              tłumaczenie że to na NFZ to dlatego takie słabe … czyli jak nie
+              zapłacisz to solidnie nie będzie zrobione , a szkoda"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">md</div>
+              <div>
+                <p class="review-card__name">M D</p>
+                <p class="review-card__date">19 stycznia 2026</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="10">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Byłem z Córką , wszystko wytłumaczone, podejście na wysokim
+              poziomie Panie które tam pracują na 6+ jeśli ktoś tam był i było
+              coś nie tak to chyba sam miał zły dzień. Jedyne co to terminy ale
+              gdzie teraz nie ma kolejek .., normalna kolej rzeczy !"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">pk</div>
+              <div>
+                <p class="review-card__name">Paweł Kulwicki</p>
+                <p class="review-card__date">18 listopada 2025</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="11">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Serdecznie polecam higienizację. Panie higienistki bardzo
+              profesjonalnie podeszły do tematu, wyjaśniły wszystko dokładnie i
+              odpowiedziały wyczerpująco na moje pytania. Zabieg był szybki i
+              przyjemny. Będę wracać, zarówno na higienizację, jak również w
+              przypadku konieczności leczenia u lekarza specjalisty ☺️"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">jk</div>
+              <div>
+                <p class="review-card__name">Julia Karpowicz</p>
+                <p class="review-card__date">3 października 2025</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="12">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Z czystym sumieniem polecam wszystkim ten gabinet. Bardzo miła
+              obsługa już od wejścia. Lekarze z ogromną wiedzą i doświadczeniem,
+              wszystko na wysokim poziomie w miłej atmosferze. Szczególnie
+              polecam dr Marię."
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">lg</div>
+              <div>
+                <p class="review-card__name">Laura Gawin</p>
+                <p class="review-card__date">8 października 2025</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="13">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Polecam 🙂 bardzo bałam się usunięcia zęba ale Pani Chirurg to
+              najlepszy specjalista- zabieg bezbolesny, profesjonalny i
+              ekspresowy. Już bez strachu umawiam kolejną wizytę 😊"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">ml</div>
+              <div>
+                <p class="review-card__name">Małgorzata Liwak</p>
+                <p class="review-card__date">9 grudnia 2025</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="14">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Pani w rejestracji bardzo miła i pomocna, terminy krótkie jak na
+              NFZ, panie higienistki z super podejściem do dzieci. Wrócimy na
+              pewno 🙂"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">ms</div>
+              <div>
+                <p class="review-card__name">Mm S</p>
+                <p class="review-card__date">26 listopada 2025</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="15">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Wyleczone sprawnie, bezboleśnie i w dobrej atmosferze, doktor
+              Kacper rzeczowo wszystko wytłumaczył, obsługa również była bardzo
+              miła, polecam"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">rw</div>
+              <div>
+                <p class="review-card__name">Robert Wojtaś</p>
+                <p class="review-card__date">14 października 2025</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="16">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Byłam pierwszy raz na wizycie i wrażenie zdecydowanie na duży
+              plus ...podejście do pacjenta profesjonalne ...Polecam z całego
+              serca 🙂"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">ko</div>
+              <div>
+                <p class="review-card__name">Karolina Odzga</p>
+                <p class="review-card__date">16 października 2025</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="17">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Bardzo polecam , podejście profesjonalne i ludzkie bez owijania w
+              bawełnę . Polecam Pana Kacpra Szuszkiewicza i Panią Agnieszke
+              Macielak ."
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">ms</div>
+              <div>
+                <p class="review-card__name">Mateusz Stawiak</p>
+                <p class="review-card__date">24 października 2025</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="18">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Polecam &#39;&#39;BASMA Przychodnie Stomatologiczną,, Najlepsza
+              klinika jaką znam miło klimatycznie wspaniali ludzie super obsługa
+              w recepcji Godne Polecenia Pozdrawiam!! 🙂"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">sb</div>
+              <div>
+                <p class="review-card__name">Sebastian Borysiak</p>
+                <p class="review-card__date">14 listopada 2025</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="19">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Polecam z Całego serca...Profesjonalizm na najwyższym poziomie
+              ❤️❤️❤️"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">jg</div>
+              <div>
+                <p class="review-card__name">Joanna Glowienke</p>
+                <p class="review-card__date">25 lutego 2026</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="20">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Obsługa profesjonalna jak mało gdzie. Przychodnia bardzo
+              nowoczesna. Polecam w 100%"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">pa</div>
+              <div>
+                <p class="review-card__name">Paweł Asztemborski</p>
+                <p class="review-card__date">18 listopada 2025</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="21">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Szybko, bardzo miło i bardzo profesjonalnie."
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">jk</div>
+              <div>
+                <p class="review-card__name">Józef Karpiński</p>
+                <p class="review-card__date">28 listopada 2025</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="22">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Lepiej być nie może 👌👌👌Basma!! I wszystko jasne 💪💪"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">dm</div>
+              <div>
+                <p class="review-card__name">Daria Mazurkiewicz</p>
+                <p class="review-card__date">16 stycznia 2026</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="23">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Pełen profesjonalizm, polecam usługi!"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">ar</div>
+              <div>
+                <p class="review-card__name">Adam Ruszkiewicz</p>
+                <p class="review-card__date">8 października 2025</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="24">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Polecam wyrywanie zęba , pan doktor wie co robi , bezboleśnie i
+              szybko"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">aw</div>
+              <div>
+                <p class="review-card__name">Adam Winnicki</p>
+                <p class="review-card__date">11 maja 2026</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="25">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Panie z recepcji bardzo szybko znalazły termin na wizytę mimo
+              dużego obłożenia ,a sama wizyta przebiegła miło profesjonalnie i
+              bezboleśnie. Dostałam również dużo zaleceń oraz informacji do domu
+              od pani doktor. Jestem bardzo zadowolona 😊"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">w</div>
+              <div>
+                <p class="review-card__name">Weronika</p>
+                <p class="review-card__date">8 maja 2026</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="26">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Dzisiaj byłam na usunięciu ósemki (problemowej ) cudowna opieka
+              wszystko sprawnie Panie przemiłe pierwszy raz spotkałam się taką
+              przyjazną człowiekowi przychodnią i to jeszcze na NFZ nie często
+              się to zdarza . Bardzo polecam !!!"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">n1</div>
+              <div>
+                <p class="review-card__name">Nikusia 1230</p>
+                <p class="review-card__date">31 marca 2026</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="27">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Z całego serca polecam to miejsce 🌹. Byliśmy wczoraj z synkiem
+              na leczeniu zębów w znieczuleniu ogólnym, wszystko przebiegło
+              pomyślnie , personel bardzo miły oraz profesjonalnie zrobione
+              zęby❤️"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">mk</div>
+              <div>
+                <p class="review-card__name">Magda Koc</p>
+                <p class="review-card__date">31 marca 2026</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card long-quote" data-id="28">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Miałam przyjemność skorzystać z usług wraz z synkiem i jesteśmy
+              bardzo zadowoleni. Najpierw odbyła się konsultacja
+              stomatologiczna, a następnie na kolejnym spotkaniu wykonano
+              leczenie, wszystko przebiegło sprawnie i w pełni profesjonalnie.
+              Od samego początku czuliśmy się zaopiekowani na każdym etapie
+              wizyty. Podejście do pacjenta, dokładne wyjaśnienia i atmosfera
+              dały nam duże poczucie bezpieczeństwa i komfortu, co jest
+              szczególnie ważne przy wizytach stomatologicznych. Na szczególne
+              wyróżnienie zasługuje również Pani rejestratorka, niezwykle miła,
+              pomocna i pełna pozytywnej energii osoba, która tworzy świetne
+              pierwsze wrażenie i dba o pacjentów już od wejścia. Zdecydowanie
+              polecam, pełen profesjonalizm i świetna opieka!"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">ek</div>
+              <div>
+                <p class="review-card__name">Ewa Kolendo</p>
+                <p class="review-card__date">21 marca 2026</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="29">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Super miejsce❤️"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">ab</div>
+              <div>
+                <p class="review-card__name">Agnieszka Babicka</p>
+                <p class="review-card__date">19 marca 2026</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="30">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Doktor Agnieszka najcudowniejsza stomatolog ☺️ cieszymy się, że
+              zasiliła załoge w Elblągu ☺️ jakość usług na wysokim poziomie ☺️"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">aj</div>
+              <div>
+                <p class="review-card__name">agnieszka jastak</p>
+                <p class="review-card__date">17 marca 2026</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="31">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Absolutnie polecam placówkę Basma ❤️! Panie na recepcji przemiłe,
+              zawsze znajdą jakieś rozwiązanie a jak nie, to i tak bije od nich
+              życzliwość i sympatia. Wyrywałam w tym miejscu już 2 ósemki,
+              bezproblemowo. Jedna już w pełni zagojona. Każdy przypadek jest
+              indywidualny, ale jestem naprawdę zadowolona. Piaskowanie,
+              fluoryzacja, leczenie zębów wszystko ekstra. Konkret i
+              profesjonalizm 👍🏼"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">jn</div>
+              <div>
+                <p class="review-card__name">Julia Nikola</p>
+                <p class="review-card__date">15 marca 2026</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="32">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Polecam 🌹. Byłam w lutym z synem na leczeniu zębów w
+              znieczuleniu ogólnym . Wszystko przebiegło pomyślnie , personel
+              bardzo miły i bardzo dobrze zrobione zęby. Terminy szybkie ."
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">js</div>
+              <div>
+                <p class="review-card__name">Joanna Sokolowska</p>
+                <p class="review-card__date">5 marca 2026</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="33">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">
+              „Polecam z calego serca❤️ Pani w rejestracji cudowna kobieta -
+              zawsze pomoze i znajdzie termin. Miejsce bardzo przyjazne
+              dzieciom, które nie zawsze są łatwymi pacjentami. Panie lekarki
+              oraz panie higienistki podchodza do dzieci z ogromną cierpliwością
+              i wyrozumiałością. Chirurgia, ortodoncja, stomatologia zachowawcza
+              - obojętnie gdzie nie byłam, sama, czy z synem, to z każdej wizyty
+              wychodziłam zadowolona"
+            </blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">pk</div>
+              <div>
+                <p class="review-card__name">Paulina Kamedulska</p>
+                <p class="review-card__date">5 marca 2026</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="34">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">„Pusta opinia"</blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">jn</div>
+              <div>
+                <p class="review-card__name">Julia Nalazek</p>
+                <p class="review-card__date">25 lutego 2026</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card" data-id="35">
+            <div class="review-card__source">
+              <div class="review-card__source-logo-wrap">
+                <div class="review-card__source-logo logo-google">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
+                    />
+                  </svg>
+                </div>
+                <span class="review-card__source-name">Google</span>
+              </div>
+
+              <div class="review-card__stars">
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+
+                <div class="star star--filled"></div>
+              </div>
+            </div>
+
+            <blockquote class="review-card__quote">„Pusta opinia"</blockquote>
+            <button class="review-toggle">Czytaj więcej</button>
+
+            <div class="review-card__author">
+              <div class="review-card__avatar" aria-hidden="true">ob</div>
+              <div>
+                <p class="review-card__name">Oskar Błaszkiewicz</p>
+                <p class="review-card__date">23 października 2025</p>
+              </div>
+            </div>
+          </div>
 
           <!-- REVIEWS_END -->
         </div>
-        <div class="reviews-navigation">
-          <button class="reviews-navigation__left-button">
+        <div class="reviews__navigation">
+          <button class="button-outline reviews__nav-btn--prev">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -389,8 +2196,8 @@
               <path d="M5 12l6 -6" />
             </svg>
           </button>
-          <div class="reviews-navigation__page"></div>
-          <button class="reviews-navigation__right-button">
+          <div class="reviews__navigation-page"></div>
+          <button class="button-outline reviews__nav-btn--next">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -433,7 +2240,7 @@
             href="https://www.google.com/maps/place/Willa+Ewa/@54.3707846,19.4120233,15.96z/data=!4m14!1m7!3m6!1s0x46fd73dabf562521:0x7f21225fd063c074!2swypisz,+wymaluj!8m2!3d54.3535535!4d18.6530348!16s%2Fg%2F11tx5jv4xm!3m5!1s0x46fd3145d9ee92c1:0xe0e8218ff1e1bcea!8m2!3d54.371607!4d19.4174926!16s%2Fg%2F11s2rr2g_t?entry=ttu&g_ep=EgoyMDI2MDMxMS4wIKXMDSoASAFQAw%3D%3D"
             target="_blank"
             aria-label="Otwórz
-          lokalizację w Google Maps"
+            lokalizację w Google Maps"
             ><svg
               xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -466,8 +2273,8 @@
                 ></path>
               </g>
             </svg>
-            Google maps</a
-          >
+            Google maps
+          </a>
         </div>
       </div>
     </section>
@@ -475,18 +2282,18 @@
     <!-- ══════════════════════════════ FOOTER ════════════════════════════════ -->
     <footer class="footer">
       <div class="container">
-        <div class="footer-grid">
-          <div class="footer-brand">
-            <p class="footer-brand__name">Willa Ewa</p>
-            <p class="footer-brand__desc">
+        <div class="footer__grid">
+          <div class="footer__brand">
+            <p class="footer__brand-name">Willa Ewa</p>
+            <p class="footer__brand-desc">
               Obiekt noclegowy na Mierzei Wiślanej. Stworzony dla tych, którzy
               szukają ciszy, przestrzeni i prawdziwego wypoczynku z dala od
               zgiełku.
             </p>
           </div>
 
-          <div class="footer-address">
-            <p class="footer-address__title">Adres</p>
+          <div class="footer__address">
+            <p class="footer__address-title">Adres</p>
             <address>
               ul. Szałwiowa 1<br />
               82-120 Krynica Morska<br />
@@ -494,17 +2301,89 @@
             </address>
           </div>
 
-          <div class="footer-contact">
-            <p class="footer-contact__title">Kontakt</p>
+          <div class="footer__contact">
+            <p class="footer__contact-title">Kontakt</p>
             <p>Nr. telefonu:</p>
-            <a class="footer-phone" href="tel:+48508273502">+48 508 273 502</a>
+            <a class="footer__phone" href="tel:+48508273502">+48 508 273 502</a>
           </div>
         </div>
-        <div class="footer-bottom">
+        <div class="footer__bottom">
           <span>2025 Willa Ewa · Krynica Morska</span>
         </div>
       </div>
     </footer>
+
+    <!-- ════════════════════════════ GALLERY MODAL ══════════════════════════ -->
+    <div
+      class="gallery-modal"
+      id="gallery-modal"
+      aria-hidden="true"
+      role="dialog"
+      aria-label="Galeria zdjęć"
+    >
+      <div class="gallery-modal__backdrop" id="gallery-backdrop"></div>
+      <div class="gallery-modal__inner">
+        <button
+          class="gallery-modal__close button-outline"
+          id="gallery-close"
+          aria-label="Zamknij galerię"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+        <button
+          class="gallery-modal__nav gallery-modal__prev button-outline"
+          id="gallery-prev"
+          aria-label="Poprzednie zdjęcie"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+        <img class="gallery-modal__img" id="gallery-img" src="" alt="" />
+        <button
+          class="gallery-modal__nav gallery-modal__next button-outline"
+          id="gallery-next"
+          aria-label="Następne zdjęcie"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </button>
+        <span class="gallery-modal__counter" id="gallery-counter"></span>
+      </div>
+    </div>
 
     <script type="module" src="./src/main.ts" defer></script>
   </body>

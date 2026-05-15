@@ -26,6 +26,6 @@ export async function syncGoogleReviews() {
   }
 
   logger.info(
-    `[cron] ${savedWithSuccess} new reviews saved, waiting for approval`,
+    `[cron] ${savedWithSuccess} new reviews saved${savedWithSuccess ? ", waiting for approval" : ""} `,
   );
 }
