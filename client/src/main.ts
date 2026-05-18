@@ -329,7 +329,7 @@ galleryBackdrop.addEventListener("click", closeGallery);
 
 // Otwórz modal na konkretnym zdjęciu po kliknięciu w podgląd.
 // Dopasowanie po pathname URL, bo Vite hashuje nazwy assetów.
-document.querySelectorAll<HTMLElement>(".gallery__grid img").forEach((img) => {
+document.querySelectorAll<HTMLImageElement>(".gallery__grid img").forEach((img) => {
   img.addEventListener("click", () => {
     const pathname = new URL(img.src).pathname;
     const index = GALLERY_PHOTOS.findIndex((url) => url.endsWith(pathname) || pathname.endsWith(url));
