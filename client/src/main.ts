@@ -12,7 +12,26 @@ setInterval(() => {
 
 // ── Rooms slider ─────────────────────────────────────────────────────────────
 
+// import.meta.glob importuje pliki z folderu rooms/ w czasie budowania
+const roomsGlob = import.meta.glob<string>("../public/rooms/*.{jpg,jpeg,png,webp}", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const ROOMS_PHOTOS = Object.values(roomsGlob);
+
 const roomsSlider = document.querySelector(".rooms-slider");
+const roomsButtonsWrapper = document.querySelector(".rooms-slider__buttons-wrapper");
+
+// Wstrzyknij obrazy do slidera dynamicznie
+ROOMS_PHOTOS.forEach((src, i) => {
+  const img = document.createElement("img");
+  img.className = "rooms-slider__img" + (i === 0 ? " rooms-slider__img--active" : "");
+  img.src = src;
+  img.alt = `Pokój ${i + 1}`;
+  roomsSlider?.insertBefore(img, roomsButtonsWrapper);
+});
+
 const roomsPrevBtn = document.querySelector(".rooms-slider__btn--prev");
 const roomsNextBtn = document.querySelector(".rooms-slider__btn--next");
 const roomsImgs = document.querySelectorAll(".rooms-slider__img");
@@ -197,31 +216,17 @@ if (numPages <= 1) {
 
 // ── Gallery modal ────────────────────────────────────────────────────────────
 
-const GALLERY_PHOTOS = [
-  "/1000004580.jpg",
-  "/1000004550.jpg",
-  "/stock-4.jpg",
-  "/1000004439.jpg",
-  "/1000004582.jpg",
-  "/1000002297.jpg",
-  "/1000002302.jpg",
-  "/1000004578.jpg",
-  "/1000004579.jpg",
-  "/1000004581.jpg",
-  "/1000004585.jpg",
-  "/1000004586.jpg",
-  "/stock-1.jpg",
-  "/stock-2.jpg",
-  "/stock-3.jpg",
-  "/stock-5.jpg",
-  "/stock-6.jpg",
-  "/stock-7.jpg",
-  "/room-placeholder-1.png",
-  "/room-placeholder-2.png",
-  "/room-placeholder-3.png",
-  "/room-placeholder-4.png",
-  "/room-placeholder-5.png",
-];
+const galleryPublicGlob = import.meta.glob<string>("../public/*.{jpg,jpeg,png,webp}", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const galleryExclude = /placeholder|favicon|map-/i;
+const galleryPublicPhotos = Object.entries(galleryPublicGlob)
+  .filter(([path]) => !galleryExclude.test(path))
+  .map(([, url]) => url);
+
+const GALLERY_PHOTOS = [...galleryPublicPhotos, ...ROOMS_PHOTOS];
 
 const galleryModal = document.getElementById("gallery-modal")!;
 const galleryImg = document.getElementById("gallery-img") as HTMLImageElement;
@@ -322,15 +327,15 @@ document.getElementById("gallery-prev")?.addEventListener("click", galleryPrev);
 document.getElementById("gallery-next")?.addEventListener("click", galleryNext);
 galleryBackdrop.addEventListener("click", closeGallery);
 
-// Otwórz modal na konkretnym zdjęciu po kliknięciu w podgląd
-document
-  .querySelectorAll<HTMLElement>(".gallery__grid img[data-gallery-index]")
-  .forEach((img) => {
-    img.addEventListener("click", () => {
-      const index = Number(img.dataset.galleryIndex);
-      openGallery(isNaN(index) ? 0 : index);
-    });
+// Otwórz modal na konkretnym zdjęciu po kliknięciu w podgląd.
+// Dopasowanie po pathname URL, bo Vite hashuje nazwy assetów.
+document.querySelectorAll<HTMLElement>(".gallery__grid img").forEach((img) => {
+  img.addEventListener("click", () => {
+    const pathname = new URL(img.src).pathname;
+    const index = GALLERY_PHOTOS.findIndex((url) => url.endsWith(pathname) || pathname.endsWith(url));
+    openGallery(index !== -1 ? index : 0);
   });
+});
 
 // Nawigacja klawiaturą
 document.addEventListener("keydown", (e) => {

@@ -196,8 +196,8 @@
 .rooms-slider button {
   padding: 12px;
   background-color: transparent;
-  border: 1px solid var(--c-font-primary);
-  color: var(--c-font-primary);
+  border: 1px solid var(--c-font-light);
+  color: var(--c-font-light);
 }
 
 .rooms__info {
@@ -321,7 +321,7 @@
   transform: scale(0.99);
 }
 
-.gallery__grid__main-photo {
+.gallery__grid-main {
   aspect-ratio: unset;
   height: 100%;
   grid-row: span 2;
@@ -460,6 +460,10 @@
 }
 
 /* ------ Reviews section --------------------------------*/
+.reviews {
+  background-color: var(--c-bg-secondary);
+}
+
 .reviews__grid {
   display: flex;
   flex-direction: column;
@@ -656,6 +660,10 @@
 
 .location-button:hover {
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.location__map-image {
+  filter: saturate(0.6);
 }
 
 .location__map-image.desktop {
