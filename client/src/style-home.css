@@ -470,16 +470,18 @@
   background-color: var(--c-bg-secondary);
 }
 
-.reviews__score {
-  width: fit-content;
-  margin-left: auto;
+.reviews .section-header {
   display: flex;
-  justify-content: center;
-  align-items: end;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.reviews__score {
+  display: flex;
   flex-direction: column;
 
   border: 1px solid var(--c-border-light);
-  gap: var(--space-m);
+  gap: var(--space-s);
   justify-content: space-between;
   align-items: center;
   padding: 12px;
