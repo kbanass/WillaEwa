@@ -339,7 +339,7 @@ section.reviews {
   grid-column: span 2;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 780px) {
   .footer__grid {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr;

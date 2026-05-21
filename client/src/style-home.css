@@ -115,7 +115,7 @@
 }
 
 .phone-banner__lead {
-  font-weight: var(--font-size-s);
+  font-weight: var(--weight-light);
   color: var(--c-font-secondary);
   text-transform: uppercase;
   text-align: center;
@@ -198,6 +198,12 @@
   background-color: transparent;
   border: 1px solid var(--c-font-light);
   color: var(--c-font-light);
+}
+
+@media (hover: hover) {
+  .rooms-slider button:hover {
+    background: hsl(from var(--c-font-light) h s l / 0.2);
+  }
 }
 
 .rooms__info {
@@ -462,6 +468,28 @@
 /* ------ Reviews section --------------------------------*/
 .reviews {
   background-color: var(--c-bg-secondary);
+}
+
+.reviews__score {
+  width: fit-content;
+  margin-left: auto;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  flex-direction: column;
+
+  border: 1px solid var(--c-border-light);
+  gap: var(--space-m);
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+}
+
+.reviews__score h2 {
+  color: var(--c-font-primary);
+  font-size: var(--font-size-xxl);
+  font-family: var(--font-sans-serif);
+  font-weight: var(--weight-medium);
 }
 
 .reviews__grid {

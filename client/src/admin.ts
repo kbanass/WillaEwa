@@ -156,6 +156,7 @@ async function applyChanges() {
   pendingChanges.clear();
   updateApplyButton();
   renderReviews();
+  alert("Udało się zaktualizować status opini");
 }
 
 function renderReview(review: Review) {
