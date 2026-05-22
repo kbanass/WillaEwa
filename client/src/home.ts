@@ -331,15 +331,14 @@ document.getElementById("gallery-next")?.addEventListener("click", galleryNext);
 galleryBackdrop.addEventListener("click", closeGallery);
 
 // Otwórz modal na konkretnym zdjęciu po kliknięciu w podgląd.
-// Dopasowanie po pathname URL, bo Vite hashuje nazwy assetów.
+// Dopasowanie po nazwie pliku bez hasha (np. "1000004580" z "1000004580-ABC123.jpg")
+// bo HTML serwuje public/ bez hasha, a glob importuje z hashem.
 document
   .querySelectorAll<HTMLImageElement>(".gallery__grid img")
   .forEach((img) => {
     img.addEventListener("click", () => {
-      const pathname = new URL(img.src).pathname;
-      const index = GALLERY_PHOTOS.findIndex(
-        (url) => url.endsWith(pathname) || pathname.endsWith(url),
-      );
+      const stem = img.src.split("/").pop()?.replace(/\.[^.]+$/, "") ?? "";
+      const index = GALLERY_PHOTOS.findIndex((url) => url.includes(stem));
       openGallery(index !== -1 ? index : 0);
     });
   });
