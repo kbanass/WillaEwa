@@ -550,7 +550,7 @@
 .star {
   width: 18px;
   height: 18px;
-  background: var(--c-star);
+  background: var(--c-star-empty);
   clip-path: polygon(
     50% 0%,
     61% 35%,
@@ -563,6 +563,12 @@
     2% 35%,
     39% 35%
   );
+}
+.star--filled {
+  background: var(--c-star);
+}
+.star--half {
+  background: linear-gradient(to right, var(--c-star) 50%, var(--c-star-empty) 50%);
 }
 
 .review-card__quote {

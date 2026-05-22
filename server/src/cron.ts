@@ -3,7 +3,7 @@ import logger from "./logger.js";
 import { syncGoogleReviews } from "./syncGoogleReviews.js";
 
 export function startCron(): void {
-  const job = new Cron("* 5 * * *", async () => {
+  const job = new Cron("0 4 * * *", async () => {
     syncGoogleReviews();
     logger.info(`[cron] Next Google reviews download: ${job.nextRun()}`);
   });

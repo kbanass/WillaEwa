@@ -47,12 +47,12 @@ router.post("/", (req: Request, res: Response) => {
   }
 
   const ratingNum = Number(rating);
-  if (!Number.isInteger(ratingNum) || ratingNum < 1 || ratingNum > 5) {
+  if (isNaN(ratingNum) || ratingNum < 0.5 || ratingNum > 5 || (ratingNum * 2) % 1 !== 0) {
     res
       .status(400)
-      .json({ error: "Rating must to be a number between 1 and 5" });
+      .json({ error: "Rating must be a number between 0.5 and 5 in 0.5 increments" });
 
-    logger.info("[reviews][POST] Rating must to be a number between 1 and 5");
+    logger.info("[reviews][POST] Invalid rating value");
     return;
   }
 
@@ -66,10 +66,8 @@ router.post("/", (req: Request, res: Response) => {
 
   try {
     db.prepare(
-      `
-      INSERT INTO reviews (author, content, rating, time, source, isAccepted, email)
-      VALUES (?, ?, ?, ?, 'strona', 0, ?)
-    `,
+      `INSERT INTO reviews (author, quote, rating, time, source, status, email)
+       VALUES (?, ?, ?, ?, 'page', 'pending', ?)`,
     ).run(
       author,
       content,

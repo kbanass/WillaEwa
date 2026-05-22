@@ -19,10 +19,13 @@
     </div>
 
     <div class="review-card__stars">
-      {% for i in range(review.rating) %}
+      {% for i in range(review.fullStars) %}
       <div class="star star--filled"></div>
       {% endfor %}
-      {% for i in range(5 - review.rating) %}
+      {% if review.halfStar %}
+      <div class="star star--half"></div>
+      {% endif %}
+      {% for i in range(review.emptyStars) %}
       <div class="star"></div>
       {% endfor %}
     </div>

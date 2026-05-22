@@ -1,6 +1,17 @@
 import type { Review, ReviewStatus } from "../../shared/types";
 import { formatDate, getInitials } from "../../shared/utils";
 
+function renderStars(rating: number): string {
+  const full = Math.floor(rating);
+  const half = (rating % 1) >= 0.5;
+  const empty = 5 - full - (half ? 1 : 0);
+  return (
+    '<div class="star star--filled"></div>'.repeat(full) +
+    (half ? '<div class="star star--half"></div>' : "") +
+    '<div class="star"></div>'.repeat(empty)
+  );
+}
+
 let currentStatusFilter: StatusFilter = "pending";
 const reviewsSectionTitle = document.querySelector(".reviews .section-title");
 const statusFilterElement = document.querySelector(".status-filter");
@@ -198,7 +209,7 @@ function renderReview(review: Review) {
               </div>
 
               <div class="review-card__stars">
-                ${'<div class="star"></div>'.repeat(review.rating)}
+                ${renderStars(review.rating)}
               </div>
             </div>
 

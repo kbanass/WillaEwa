@@ -18,7 +18,7 @@ db.exec(`
       googleReviewId    TEXT,
       author              TEXT    NOT NULL,
       quote               TEXT    NOT NULL,
-      rating              INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+      rating              REAL    NOT NULL CHECK (rating BETWEEN 0.5 AND 5),
       time                INTEGER NOT NULL,
       source              TEXT    NOT NULL DEFAULT 'page' CHECK (source IN ('google', 'page')),
       status              TEXT    NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'deleted')),
@@ -31,6 +31,34 @@ db.exec(`
       password    TEXT NOT NULL
     );
   `);
+
+// Migracja: rating INTEGER → REAL (wsparcie dla połówek gwiazdek)
+const ratingColType = (
+  db.prepare("PRAGMA table_info(reviews)").all() as Array<{ name: string; type: string }>
+).find((col) => col.name === "rating")?.type;
+
+if (ratingColType === "INTEGER") {
+  db.exec(`
+    BEGIN TRANSACTION;
+    CREATE TABLE reviews_migrated (
+      id              INTEGER PRIMARY KEY AUTOINCREMENT,
+      googleReviewId  TEXT,
+      author          TEXT    NOT NULL,
+      quote           TEXT    NOT NULL,
+      rating          REAL    NOT NULL CHECK (rating BETWEEN 0.5 AND 5),
+      time            INTEGER NOT NULL,
+      source          TEXT    NOT NULL DEFAULT 'page' CHECK (source IN ('google', 'page')),
+      status          TEXT    NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'deleted')),
+      email           TEXT,
+      createdAt       INTEGER NOT NULL DEFAULT (unixepoch())
+    );
+    INSERT INTO reviews_migrated SELECT * FROM reviews;
+    DROP TABLE reviews;
+    ALTER TABLE reviews_migrated RENAME TO reviews;
+    COMMIT;
+  `);
+  logger.info("[db] Migration: rating INTEGER → REAL");
+}
 
 logger.info("[db] DB has been initialized");
 
@@ -69,6 +97,13 @@ export function getAllReviews(): Review[] {
 
 export function getPublicReviews(): Review[] {
   return stmts.getPublicReviews.all() as Review[];
+}
+
+export function getGoogleAverageRating(): number | null {
+  const row = db
+    .prepare("SELECT AVG(rating) as avg FROM reviews WHERE source = 'google'")
+    .get() as { avg: number | null };
+  return row.avg;
 }
 
 export function changeReviewsStatuses(changes: StatusChange[]) {
