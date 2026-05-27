@@ -104,7 +104,7 @@ footer {
   width: 100%;
   top: 0;
   z-index: var(--z-header);
-  background: var(--c-bg-primary);
+  background: hsla(30, 40%, 95%, 0.95);
 
   border-bottom: 1px solid var(--c-bg-accent);
   padding-block: var(--space-s);

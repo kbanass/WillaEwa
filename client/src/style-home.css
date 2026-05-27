@@ -568,7 +568,11 @@
   background: var(--c-star);
 }
 .star--half {
-  background: linear-gradient(to right, var(--c-star) 50%, var(--c-star-empty) 50%);
+  background: linear-gradient(
+    to right,
+    var(--c-star) 50%,
+    var(--c-star-empty) 50%
+  );
 }
 
 .review-card__quote {
