@@ -26,7 +26,16 @@ app.use(cookieParser());
 
 app.set("trust proxy", 1);
 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        "frame-src": ["https://cloud.umami.is"],
+      },
+    },
+  }),
+);
 
 app.use("/api/add-review", reviewsRouter);
 app.use("/api/auth", authRouter);

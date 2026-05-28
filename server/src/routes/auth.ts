@@ -65,6 +65,10 @@ router.post("/login", loginLimiter, async (req: Request, res: Response) => {
   }
 });
 
+router.get("/verify", protectedRoute, (_req: Request, res: Response) => {
+  res.json({ authenticated: true });
+});
+
 router.post("/logout", protectedRoute, (_req: Request, res: Response) => {
   res.clearCookie("token");
   res.json({ success: true });

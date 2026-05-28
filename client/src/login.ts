@@ -1,3 +1,7 @@
+fetch("/api/auth/verify", { credentials: "include" }).then((res) => {
+  if (res.ok) window.location.replace("/panel");
+});
+
 const form = document.querySelector("form")!;
 const errorEl = form.querySelector<HTMLParagraphElement>(".error")!;
 
