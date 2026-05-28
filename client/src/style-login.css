@@ -37,7 +37,7 @@
 .login form {
   display: flex;
   flex-direction: column;
-  max-width: 20rem;
+  width: 100%;
   margin-inline: auto;
   gap: var(--space-m);
 }
@@ -64,9 +64,10 @@
   padding: 12px;
 }
 
-@media (min-width: 780px) {
+@media (min-width: 640px) {
   .login form {
     display: grid;
     grid-template-columns: 4fr 1fr;
+    max-width: fit-content;
   }
 }
