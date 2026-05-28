@@ -3,7 +3,7 @@ import { formatDate, getInitials } from "../../shared/utils";
 
 function renderStars(rating: number): string {
   const full = Math.floor(rating);
-  const half = (rating % 1) >= 0.5;
+  const half = rating % 1 >= 0.5;
   const empty = 5 - full - (half ? 1 : 0);
   return (
     '<div class="star star--filled"></div>'.repeat(full) +
@@ -177,7 +177,7 @@ function renderReview(review: Review) {
     : "";
 
   return `
-            <div class="review-card ${review.quote.length > 350 && "long-quote"}" data-status="${review.status}" data-id="${review.id}" ${pendingAttr}>
+            <div class="review-card ${review.quote.length > 450 && "long-quote"}" data-status="${review.status}" data-id="${review.id}" ${pendingAttr}>
             <div class="review-card__source">
               <div class="review-card__source-logo-wrap">
                 <div class="review-card__source-logo">
