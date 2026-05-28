@@ -65,8 +65,15 @@ router.post("/login", loginLimiter, async (req: Request, res: Response) => {
   }
 });
 
-router.get("/verify", protectedRoute, (_req: Request, res: Response) => {
-  res.json({ authenticated: true });
+router.get("/verify", (req: Request, res: Response) => {
+  const token = req.cookies?.token;
+  if (!token) { res.status(401).json({ authenticated: false }); return; }
+  try {
+    jwt.verify(token, process.env.JWT_SECRET!);
+    res.json({ authenticated: true });
+  } catch {
+    res.status(401).json({ authenticated: false });
+  }
 });
 
 router.post("/logout", protectedRoute, (_req: Request, res: Response) => {
