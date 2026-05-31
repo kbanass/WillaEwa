@@ -10,7 +10,7 @@ router.post("/", (req: Request, res: Response) => {
 
   if (website && website.length > 0) {
     res.status(200).json({ success: true });
-    logger.warn("[reviews][POST] Honeypot detected, request denied");
+    logger.alert("[reviews][POST] Honeypot detected, request denied");
     return;
   }
 
@@ -47,10 +47,17 @@ router.post("/", (req: Request, res: Response) => {
   }
 
   const ratingNum = Number(rating);
-  if (isNaN(ratingNum) || ratingNum < 0.5 || ratingNum > 5 || (ratingNum * 2) % 1 !== 0) {
+  if (
+    isNaN(ratingNum) ||
+    ratingNum < 0.5 ||
+    ratingNum > 5 ||
+    (ratingNum * 2) % 1 !== 0
+  ) {
     res
       .status(400)
-      .json({ error: "Rating must be a number between 0.5 and 5 in 0.5 increments" });
+      .json({
+        error: "Rating must be a number between 0.5 and 5 in 0.5 increments",
+      });
 
     logger.info("[reviews][POST] Invalid rating value");
     return;
