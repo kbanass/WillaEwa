@@ -13,11 +13,14 @@ setInterval(() => {
 // ── Rooms slider ─────────────────────────────────────────────────────────────
 
 // import.meta.glob importuje pliki z folderu rooms/ w czasie budowania
-const roomsGlob = import.meta.glob<string>("../public/rooms/*.{jpg,jpeg,png,webp}", {
-  eager: true,
-  query: "?url",
-  import: "default",
-});
+const roomsGlob = import.meta.glob<string>(
+  "../public/rooms/*.{jpg,jpeg,png,webp}",
+  {
+    eager: true,
+    query: "?url",
+    import: "default",
+  },
+);
 const ROOMS_PHOTOS = Object.values(roomsGlob);
 
 const roomsSlider = document.querySelector(".rooms-slider");
@@ -219,11 +222,14 @@ if (numPages <= 1) {
 
 // ── Gallery modal ────────────────────────────────────────────────────────────
 
-const galleryPublicGlob = import.meta.glob<string>("../public/*.{jpg,jpeg,png,webp}", {
-  eager: true,
-  query: "?url",
-  import: "default",
-});
+const galleryPublicGlob = import.meta.glob<string>(
+  "../public/gallery/*.{jpg,jpeg,png,webp}",
+  {
+    eager: true,
+    query: "?url",
+    import: "default",
+  },
+);
 const galleryExclude = /placeholder|favicon|map-/i;
 const galleryPublicPhotos = Object.entries(galleryPublicGlob)
   .filter(([path]) => !galleryExclude.test(path))
@@ -337,7 +343,11 @@ document
   .querySelectorAll<HTMLImageElement>(".gallery__grid img")
   .forEach((img) => {
     img.addEventListener("click", () => {
-      const stem = img.src.split("/").pop()?.replace(/\.[^.]+$/, "") ?? "";
+      const stem =
+        img.src
+          .split("/")
+          .pop()
+          ?.replace(/\.[^.]+$/, "") ?? "";
       const index = GALLERY_PHOTOS.findIndex((url) => url.includes(stem));
       openGallery(index !== -1 ? index : 0);
     });
