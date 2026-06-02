@@ -50,7 +50,7 @@ a {
 }
 
 .container {
-  width: min(90%, 100ch);
+  width: min(90%, 105ch);
   margin-inline: auto;
 }
 
