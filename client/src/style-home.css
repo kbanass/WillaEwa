@@ -270,7 +270,7 @@
   gap: var(--space-s);
   justify-content: space-around;
   align-items: center;
-  padding: 20px 8px;
+  padding: 20px 10px;
 }
 
 .facilities__card-icon {
