@@ -256,6 +256,8 @@
 .facilities__list {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+
   justify-self: center;
   gap: var(--space-l);
 }
@@ -265,10 +267,10 @@
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: var(--space-m);
+  gap: var(--space-s);
   justify-content: space-between;
   align-items: center;
-  padding: 32px 12px;
+  padding: 20px 8px;
 }
 
 .facilities__card-icon {
