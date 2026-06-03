@@ -83,7 +83,6 @@ export function googleReviewExists(googleReviewId: string): boolean {
 }
 
 export function insertReview(review: NewReview): number {
-  if (review.quote === "") review.quote = "Pusta opinia";
   return stmts.insertReview.run(review).lastInsertRowid as number;
 }
 

@@ -1,11 +1,18 @@
 import { Router } from "express";
 import type { Request, Response } from "express";
+import rateLimit from "express-rate-limit";
 import { db } from "../db.js";
 import logger from "../logger.js";
 
 const router = Router();
 
-router.post("/", (req: Request, res: Response) => {
+const addReviewLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  message: { error: "Zbyt wiele opinii. Spróbuj ponownie za godzinę." },
+});
+
+router.post("/", addReviewLimiter, (req: Request, res: Response) => {
   const { author, content, rating, email, website } = req.body;
 
   if (website && website.length > 0) {

@@ -31,9 +31,11 @@
     </div>
   </div>
 
+  {% if review.quote %}
   <blockquote class="review-card__quote">
     „{{ review.quote }}"
   </blockquote>
+  {% endif %}
   <button class="review-toggle">Czytaj więcej</button>
 
   <div class="review-card__author">

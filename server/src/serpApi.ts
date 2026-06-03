@@ -59,9 +59,9 @@ export const importGoogleReviews = async () => {
 
     return newReviews;
   } catch (error) {
-    logger.error("[importGoogleReviews] Error when importing Google reviews:", {
-      error,
-    });
+    logger.error(
+      `[importGoogleReviews] Error when importing Google reviews: ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 };
 

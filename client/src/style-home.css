@@ -477,9 +477,6 @@
   flex-direction: column;
 }
 
-.reviews-header__wrapper {
-}
-
 .reviews__score {
   margin-top: var(--space-l);
   display: flex;
