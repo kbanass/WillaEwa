@@ -18,8 +18,5 @@ router.get("/login", (_req, res) => {
   res.sendFile(path.join(CLIENT_DIR, "login.html"));
 });
 
-router.get("/opinie", (_req, res) => {
-  res.sendFile(path.join(CLIENT_DIR, "opinie.html"));
-});
 
 export default router;

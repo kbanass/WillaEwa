@@ -20,7 +20,8 @@
 .add-review form {
   display: flex !important;
   flex-direction: column !important;
-  max-width: 520px;
+  max-width: 520px !important;
+  width: 100% !important;
 }
 
 .add-review__field {
