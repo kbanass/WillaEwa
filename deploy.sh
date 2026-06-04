@@ -48,7 +48,16 @@ if [ ! -f "$SERVER_ENV" ]; then
   echo ""
 fi
 
-echo "==> [7/7] Restart PM2..."
+echo "==> [7/8] Aktualizacja konfiguracji nginx..."
+NGINX_CONF="/etc/nginx/sites-available/willa-ewa"
+if [ -f "$NGINX_CONF" ]; then
+  cp infra/nginx.conf "$NGINX_CONF"
+  nginx -t && systemctl reload nginx && echo "  nginx przeładowany" || echo "  UWAGA: nginx -t nie przeszedł — sprawdź konfigurację"
+else
+  echo "  Pomijam nginx — $NGINX_CONF nie istnieje (pierwsze wdrożenie, skonfiguruj ręcznie)"
+fi
+
+echo "==> [8/8] Restart PM2..."
 cd "$DEPLOY_DIR"
 if pm2 list | grep -q "willa-ewa"; then
   pm2 reload ecosystem.config.cjs --env production
