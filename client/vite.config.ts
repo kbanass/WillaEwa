@@ -7,6 +7,7 @@ export default defineConfig({
       "/api": "http://localhost:3000",
       "/panel": "http://localhost:3000",
       "/login": "http://localhost:3000",
+      "/opinie": "http://localhost:3000",
     },
   },
   build: {
