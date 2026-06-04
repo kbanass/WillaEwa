@@ -49,7 +49,7 @@ if [ ! -f "$SERVER_ENV" ]; then
 fi
 
 echo "==> [7/8] Aktualizacja konfiguracji nginx..."
-NGINX_CONF="/etc/nginx/sites-available/willa-ewa"
+NGINX_CONF="/etc/nginx/sites-enabled/willa-ewa"
 if [ -f "$NGINX_CONF" ]; then
   sudo cp infra/nginx.conf "$NGINX_CONF"
   sudo nginx -t && sudo systemctl reload nginx && echo "  nginx przeładowany" || echo "  UWAGA: nginx -t nie przeszedł — sprawdź konfigurację"
