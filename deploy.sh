@@ -51,8 +51,8 @@ fi
 echo "==> [7/8] Aktualizacja konfiguracji nginx..."
 NGINX_CONF="/etc/nginx/sites-available/willa-ewa"
 if [ -f "$NGINX_CONF" ]; then
-  cp infra/nginx.conf "$NGINX_CONF"
-  nginx -t && systemctl reload nginx && echo "  nginx przeładowany" || echo "  UWAGA: nginx -t nie przeszedł — sprawdź konfigurację"
+  sudo cp infra/nginx.conf "$NGINX_CONF"
+  sudo nginx -t && sudo systemctl reload nginx && echo "  nginx przeładowany" || echo "  UWAGA: nginx -t nie przeszedł — sprawdź konfigurację"
 else
   echo "  Pomijam nginx — $NGINX_CONF nie istnieje (pierwsze wdrożenie, skonfiguruj ręcznie)"
 fi
