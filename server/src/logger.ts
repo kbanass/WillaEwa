@@ -1,4 +1,5 @@
 import winston from "winston";
+import { TelegramTransport } from "./telegramTransport.js";
 
 const logger = winston.createLogger({
   level: process.env.NODE_ENV === "production" ? "info" : "debug",
@@ -9,8 +10,8 @@ const logger = winston.createLogger({
   ),
   transports: [
     new winston.transports.File({ filename: "logs/app.log" }),
-
     new winston.transports.File({ filename: "logs/error.log", level: "error" }),
+    new TelegramTransport(),
   ],
 });
 
