@@ -3,6 +3,7 @@ import type { Request, Response } from "express";
 import rateLimit from "express-rate-limit";
 import { db } from "../db.js";
 import logger from "../logger.js";
+import { sendNewReviewNotification } from "../mailer.js";
 
 const router = Router();
 
@@ -98,6 +99,8 @@ router.post("/", addReviewLimiter, (req: Request, res: Response) => {
     logger.info(
       "[review][POST] Review has been added and is now waiting for approval",
     );
+
+    sendNewReviewNotification({ author, content, rating: ratingNum, email });
   } catch (error) {
     logger.error("[opinie] Saving review error", error);
     res.status(500).json({ error: "Server Error" });
