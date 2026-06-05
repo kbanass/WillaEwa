@@ -5,7 +5,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const LOG_FILE = path.join(__dirname, "../../logs/app.log");
+const LOG_FILE = path.join(__dirname, "../logs/app.log");
 
 function isConfigured(): boolean {
   return !!(process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID);
