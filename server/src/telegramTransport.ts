@@ -99,7 +99,7 @@ export async function sendDailySummary(): Promise<void> {
 
   const lines: string[] = [`📋 <b>Podsumowanie dnia ${today}</b>`, countLine];
 
-  for (const level of ["error", "warn"]) {
+  for (const level of ["error", "warn", "info"]) {
     const items = byLevel[level];
     if (!items?.length) continue;
     lines.push(`\n${levelEmoji[level]} <b>${level.toUpperCase()}:</b>`);
