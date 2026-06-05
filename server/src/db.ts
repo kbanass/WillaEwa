@@ -32,33 +32,6 @@ db.exec(`
     );
   `);
 
-// Migracja: rating INTEGER → REAL (wsparcie dla połówek gwiazdek)
-const ratingColType = (
-  db.prepare("PRAGMA table_info(reviews)").all() as Array<{ name: string; type: string }>
-).find((col) => col.name === "rating")?.type;
-
-if (ratingColType === "INTEGER") {
-  db.exec(`
-    BEGIN TRANSACTION;
-    CREATE TABLE reviews_migrated (
-      id              INTEGER PRIMARY KEY AUTOINCREMENT,
-      googleReviewId  TEXT,
-      author          TEXT    NOT NULL,
-      quote           TEXT    NOT NULL,
-      rating          REAL    NOT NULL CHECK (rating BETWEEN 0.5 AND 5),
-      time            INTEGER NOT NULL,
-      source          TEXT    NOT NULL DEFAULT 'page' CHECK (source IN ('google', 'page')),
-      status          TEXT    NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'deleted')),
-      email           TEXT,
-      createdAt       INTEGER NOT NULL DEFAULT (unixepoch())
-    );
-    INSERT INTO reviews_migrated SELECT * FROM reviews;
-    DROP TABLE reviews;
-    ALTER TABLE reviews_migrated RENAME TO reviews;
-    COMMIT;
-  `);
-  logger.info("[db] Migration: rating INTEGER → REAL");
-}
 
 logger.info("[db] DB has been initialized");
 
@@ -71,9 +44,9 @@ const stmts = {
     VALUES (@googleReviewId, @author, @quote, @rating, @time, @source, @status, @email, @createdAt)
   `),
   getReviewById: db.prepare("SELECT * FROM reviews WHERE id = ?"),
-  getAllReviews: db.prepare("SELECT * FROM reviews"),
+  getAllReviews: db.prepare("SELECT * FROM reviews ORDER BY time DESC"),
   getPublicReviews: db.prepare(
-    "SELECT * FROM reviews WHERE status = 'accepted'",
+    "SELECT * FROM reviews WHERE status = 'accepted' ORDER BY time DESC",
   ),
   changeReviewStatus: db.prepare(`UPDATE reviews SET status = ? WHERE id = ?`),
 };

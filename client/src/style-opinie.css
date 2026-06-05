@@ -98,13 +98,24 @@
   outline-color: var(--c-font-accent);
 }
 
-/* ── Submit button ───────────────────────────────────────── */
+/* ── Disabled / sent state ───────────────────────────────── */
+
+.add-review__form--sent {
+  opacity: 0.5;
+  pointer-events: none;
+}
 
 .add-review button[type="submit"]:disabled {
   opacity: 0.45;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+}
+
+.add-review input:disabled,
+.add-review textarea:disabled {
+  cursor: not-allowed;
+  background-color: var(--c-bg-accent);
 }
 
 /* ── Honeypot ────────────────────────────────────────────── */

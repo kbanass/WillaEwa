@@ -59,7 +59,6 @@ function changeStatusFilter(filter: StatusFilter) {
 
 async function fetchReviews(): Promise<Review[]> {
   const res = await fetch("/api/admin/get-reviews");
-
   if (!res.ok) {
     alert("Błąd podczas pobierania opini z serwera");
     throw new Error("Błąd pobierania recenzji");
@@ -195,12 +194,7 @@ function renderReview(review: Review) {
                       d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"
                     />
                     </svg>`
-                    : `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                      <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
-                      <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-                      <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
-                    </svg>`
+                    : `<img src="/favicon/favicon.svg" width="24" height="24" alt="Willa Ewa" />`
                 }
                 </div>
                 <span class="review-card__source-name">${review.source === "google" ? "Google" : "Strona"}</span>

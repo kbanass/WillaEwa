@@ -80,14 +80,15 @@
           <h2 class="section-title">
             Napisz co myślisz o swoim pobycie w Willi Ewa
           </h2>
-          <p class="section-lead">
-            Opinia pojawi się na stronie po weryfikacji przez administratora.
-          </p>
+          <p class="section-lead"></p>
         </div>
 
         <form class="add-review__form">
           <fieldset class="add-review__field add-review__field--stars">
-            <legend class="add-review__label">Ocena <span class="add-review__required" aria-hidden="true">*</span></legend>
+            <legend class="add-review__label">
+              Ocena
+              <span class="add-review__required" aria-hidden="true">*</span>
+            </legend>
             <div class="star-picker">
               <input type="radio" id="star5" name="rating" value="5" />
               <label for="star5" aria-label="5 gwiazdek">★</label>
@@ -113,7 +114,7 @@
               type="text"
               id="author"
               name="author"
-              placeholder="np. Jan Kowalski"
+              placeholder="Jan Kowalski"
               autocomplete="name"
               required
             />
@@ -144,7 +145,7 @@
               type="email"
               id="email"
               name="email"
-              placeholder="np. jan@example.com"
+              placeholder="jan@example.com"
               autocomplete="email"
             />
           </div>
@@ -160,7 +161,6 @@
           <button type="submit">Dodaj opinię</button>
           <p class="error"></p>
         </form>
-
       </div>
     </section>
 

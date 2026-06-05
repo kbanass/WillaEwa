@@ -1,6 +1,39 @@
+const SUBMITTED_KEY = "review_submitted";
+
 const form = document.querySelector<HTMLFormElement>(".add-review__form")!;
 const errorEl = form.querySelector<HTMLParagraphElement>(".error")!;
 const submitBtn = form.querySelector<HTMLButtonElement>("button[type='submit']")!;
+
+function hasSubmitted(): boolean {
+  if (localStorage.getItem(SUBMITTED_KEY) === "1") return true;
+  return document.cookie.split(";").some((c) => c.trim().startsWith(`${SUBMITTED_KEY}=1`));
+}
+
+function markSubmitted() {
+  localStorage.setItem(SUBMITTED_KEY, "1");
+  const year = 60 * 60 * 24 * 365;
+  document.cookie = `${SUBMITTED_KEY}=1; max-age=${year}; path=/opinie; SameSite=Strict`;
+}
+
+function showSentState() {
+  form.querySelectorAll<HTMLElement>("input, textarea, button").forEach((el) => {
+    (el as HTMLInputElement | HTMLTextAreaElement | HTMLButtonElement).disabled = true;
+  });
+  submitBtn.textContent = "Wysłano";
+  form.classList.add("add-review__form--sent");
+  const sectionHeader = document.querySelector(".add-review .section-header");
+  if (sectionHeader) {
+    sectionHeader.innerHTML = `
+      <span class="section-label">Dziękujemy</span>
+      <h2 class="section-title">Dziękujemy za opinię!</h2>
+      <p class="section-lead">Po weryfikacji przez administratora pojawi się na stronie głównej.</p>
+    `;
+  }
+}
+
+if (hasSubmitted()) {
+  showSentState();
+}
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -45,17 +78,9 @@ form.addEventListener("submit", async (e) => {
     const data = await res.json();
 
     if (res.ok) {
-      form.reset();
-      submitBtn.textContent = "Wysłano";
-      form.classList.add("hidden");
-      const sectionHeader = document.querySelector(".add-review .section-header");
-      if (sectionHeader) {
-        sectionHeader.innerHTML = `
-          <span class="section-label">Dziękujemy</span>
-          <h2 class="section-title">Dziękujemy za opinię!</h2>
-          <p class="section-lead">Po weryfikacji przez administratora pojawi się na stronie głównej.</p>
-        `;
-      }
+      markSubmitted();
+      showSentState();
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
       errorEl.textContent = data.error || "Wystąpił błąd, spróbuj ponownie";
       submitBtn.disabled = false;
