@@ -12,7 +12,7 @@ const router = Router();
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 15,
-  message: "Too many login attempts",
+  message: { error: "Przekroczono liczbę prób. Spróbuj ponownie za 15 minut." },
 });
 
 router.post("/login", loginLimiter, async (req: Request, res: Response) => {
