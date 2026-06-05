@@ -19,7 +19,7 @@ router.post("/login", loginLimiter, async (req: Request, res: Response) => {
   const { password } = req.body;
 
   if (!password) {
-    res.status(400).json({ error: "Password missing" });
+    res.status(400).json({ error: "Podaj hasło" });
     logger.warn("[auth][Login] Password missing");
     return;
   }
@@ -30,7 +30,7 @@ router.post("/login", loginLimiter, async (req: Request, res: Response) => {
       .get() as { password: string } | undefined;
 
     if (!admin) {
-      res.status(500).json({ error: "Admin account missing, run setup" });
+      res.status(500).json({ error: "Brak konta admina, błąd serwera" });
       logger.error("[auth][login] Admin account missing, run setup");
       return;
     }
@@ -38,7 +38,7 @@ router.post("/login", loginLimiter, async (req: Request, res: Response) => {
     const isCorrect = await bcrypt.compare(password, admin.password);
 
     if (!isCorrect) {
-      res.status(401).json({ error: "Password is incorrect" });
+      res.status(401).json({ error: "Nieprawidłowe hasło" });
       logger.warn("[auth][login] Password is incorrect");
       return;
     }
@@ -67,7 +67,10 @@ router.post("/login", loginLimiter, async (req: Request, res: Response) => {
 
 router.get("/verify", (req: Request, res: Response) => {
   const token = req.cookies?.token;
-  if (!token) { res.status(401).json({ authenticated: false }); return; }
+  if (!token) {
+    res.status(401).json({ authenticated: false });
+    return;
+  }
   try {
     jwt.verify(token, process.env.JWT_SECRET!);
     res.json({ authenticated: true });
