@@ -2,11 +2,8 @@ import { Router } from "express";
 import { protectedRoute } from "../middleware/auth.js";
 import path from "path";
 
-import { fileURLToPath } from "url";
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
 const CLIENT_DIR =
-  process.env.CLIENT_DIR ?? path.join(__dirname, "../../../client");
+  process.env.CLIENT_DIR ?? path.join(process.cwd(), "../client/dist");
 
 const router = Router();
 
