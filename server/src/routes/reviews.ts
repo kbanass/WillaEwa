@@ -4,6 +4,7 @@ import rateLimit from "express-rate-limit";
 import { db } from "../db.js";
 import logger from "../logger.js";
 import { sendNewReviewNotification } from "../mailer.js";
+import { sendNewReviewNotificationTelegram } from "../telegramTransport.js";
 
 const router = Router();
 
@@ -101,6 +102,7 @@ router.post("/", addReviewLimiter, (req: Request, res: Response) => {
     );
 
     sendNewReviewNotification({ author, content, rating: ratingNum, email });
+    sendNewReviewNotificationTelegram({ author, content, rating: ratingNum, email });
   } catch (error) {
     logger.error("[opinie] Saving review error", error);
     res.status(500).json({ error: "Server Error" });

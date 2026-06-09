@@ -58,6 +58,24 @@ export class TelegramTransport extends TransportStream {
   }
 }
 
+export async function sendNewReviewNotificationTelegram(review: {
+  author: string;
+  content: string;
+  rating: number;
+  email?: string | null;
+}): Promise<void> {
+  if (!isConfigured()) return;
+  const stars = "★".repeat(Math.round(review.rating)) + "☆".repeat(5 - Math.round(review.rating));
+  const parts = [
+    `⭐ <b>Nowa opinia</b>`,
+    `<b>Autor:</b> ${escapeHtml(review.author)}`,
+    `<b>Ocena:</b> ${stars} (${review.rating}/5)`,
+    review.email ? `<b>E-mail:</b> ${escapeHtml(review.email)}` : null,
+    `<b>Treść:</b> ${escapeHtml(review.content)}`,
+  ].filter(Boolean);
+  await send(parts.join("\n")).catch(() => {});
+}
+
 export async function sendDailySummary(): Promise<void> {
   if (!isConfigured()) {
     console.log("[telegram] Daily summary skipped: not configured");
