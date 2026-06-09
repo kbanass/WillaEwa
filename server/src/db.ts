@@ -49,6 +49,7 @@ const stmts = {
     "SELECT * FROM reviews WHERE status = 'accepted' ORDER BY time DESC",
   ),
   changeReviewStatus: db.prepare(`UPDATE reviews SET status = ? WHERE id = ?`),
+  deletePageReview: db.prepare(`DELETE FROM reviews WHERE id = ? AND source = 'page'`),
 };
 
 export function googleReviewExists(googleReviewId: string): boolean {
@@ -76,6 +77,10 @@ export function getGoogleAverageRating(): number | null {
     .prepare("SELECT AVG(rating) as avg FROM reviews WHERE source = 'google'")
     .get() as { avg: number | null };
   return row.avg;
+}
+
+export function deletePageReview(id: number): number {
+  return stmts.deletePageReview.run(id).changes as number;
 }
 
 export function changeReviewsStatuses(changes: StatusChange[]) {

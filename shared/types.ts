@@ -17,7 +17,7 @@ export interface GoogleReview extends BaseReview {
 }
 
 export interface SiteReview extends BaseReview {
-  source: "site";
+  source: "page";
   googleReviewId: null;
 }
 

@@ -2,8 +2,10 @@ import { Router } from "express";
 import type { Request, Response } from "express";
 import {
   changeReviewsStatuses,
+  deletePageReview,
   getAllReviews,
   getPublicReviews,
+  getReviewById,
 } from "../db.js";
 import logger from "../logger.js";
 import { protectedRoute } from "../middleware/auth.js";
@@ -67,6 +69,34 @@ router.post("/change-statuses", protectedRoute, (req, res) => {
     });
     res.status(500).json({ error: "Server Error" });
   }
+});
+
+router.delete("/reviews/:id", protectedRoute, (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id <= 0) {
+    res.status(400).json({ error: "Invalid id" });
+    return;
+  }
+
+  const review = getReviewById(id);
+  if (!review) {
+    res.status(404).json({ error: "Review not found" });
+    return;
+  }
+  if (review.source !== "page") {
+    res.status(403).json({ error: "Cannot permanently delete Google reviews" });
+    logger.warn(`[admin][delete-review] Attempt to permanently delete Google review ${id}`);
+    return;
+  }
+
+  const changes = deletePageReview(id);
+  if (changes === 0) {
+    res.status(404).json({ error: "Review not found" });
+    return;
+  }
+
+  logger.info(`[admin][delete-review] Review ${id} permanently deleted`);
+  res.json({ success: true });
 });
 
 function isValidStatusChange(z: unknown): z is StatusChange {

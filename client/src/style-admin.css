@@ -204,16 +204,50 @@ section.reviews {
   }
 }
 
+.review-card__controls {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+@media (min-width: 780px) {
+  .review-card__controls {
+    width: fit-content;
+  }
+}
+
+.review-card__hard-delete {
+  align-self: flex-end;
+  padding: 6px 12px;
+  background-color: transparent;
+  border: 1px solid var(--c-border-light);
+  color: var(--c-font-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-s);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.review-card__hard-delete:hover {
+  border-color: #c0392b;
+  color: #c0392b;
+}
+
 .status-picker {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr;
-  width: 100%;
+  flex: 1;
   gap: 8px;
 }
 
 @media (min-width: 780px) {
   .status-picker {
+    flex: unset;
     width: fit-content;
   }
 }
@@ -331,6 +365,95 @@ section.reviews {
 
 .hidden {
   display: none;
+}
+
+/* ------ Delete confirmation dialog --------------------------------*/
+
+.delete-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.delete-confirm-dialog {
+  background: var(--c-bg-primary);
+  border: 1px solid var(--c-border-light);
+  padding: 2rem;
+  max-width: 480px;
+  width: 100%;
+}
+
+.delete-confirm-dialog h3 {
+  font-family: var(--font-serif);
+  font-weight: var(--weight-light);
+  font-size: var(--font-size-xl);
+  margin: 0 0 1.5rem;
+}
+
+.delete-confirm-details {
+  margin-bottom: 1rem;
+}
+
+.delete-confirm-details table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.delete-confirm-details td {
+  padding: 4px 12px 4px 0;
+  font-size: var(--font-size-s);
+  vertical-align: top;
+}
+
+.delete-confirm-details td:first-child {
+  color: var(--c-font-secondary);
+  white-space: nowrap;
+}
+
+.delete-confirm-details .stars {
+  display: flex;
+  gap: 2px;
+}
+
+.delete-confirm-details__quote {
+  max-width: 320px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.delete-confirm-warning {
+  color: #c0392b;
+  font-size: var(--font-size-s);
+  margin: 0 0 1.5rem;
+}
+
+.delete-confirm-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.delete-confirm__no {
+  padding: 10px 24px;
+  border: 1px solid var(--c-border-light);
+  background: transparent;
+  color: var(--c-font-primary);
+  cursor: pointer;
+}
+
+.delete-confirm__yes {
+  padding: 10px 24px;
+  border: 1px solid #c0392b;
+  background: #c0392b;
+  color: #fff;
+  cursor: pointer;
 }
 
 .analytics iframe {

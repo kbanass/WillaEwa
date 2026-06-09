@@ -92,6 +92,15 @@ reviewsContainerElement.addEventListener("click", (e) => {
     return;
   }
 
+  const hardDeleteBtn = target.closest(".review-card__hard-delete") as HTMLElement | null;
+  if (hardDeleteBtn) {
+    const card = hardDeleteBtn.closest(".review-card") as HTMLElement;
+    const id = Number(card?.dataset.id);
+    const review = allReviews.find((r) => r.id === id);
+    if (review) showDeleteConfirm(review);
+    return;
+  }
+
   // Status picker
   const statusBtn = target.closest(
     "[class*='status-picker__btn']",
@@ -169,6 +178,50 @@ async function applyChanges() {
   alert("Udało się zaktualizować status opini");
 }
 
+function showDeleteConfirm(review: Review): void {
+  document.querySelector(".delete-confirm-overlay")?.remove();
+
+  const overlay = document.createElement("div");
+  overlay.className = "delete-confirm-overlay";
+  overlay.innerHTML = `
+    <div class="delete-confirm-dialog">
+      <h3>Czy na pewno chcesz usunąć tę opinię?</h3>
+      <div class="delete-confirm-details">
+        <table>
+          <tr><td>Autor</td><td><strong>${review.author}</strong></td></tr>
+          <tr><td>Ocena</td><td><div class="stars">${renderStars(review.rating)}</div></td></tr>
+          <tr><td>Data</td><td>${formatDate(review.time)}</td></tr>
+          <tr><td>Treść</td><td class="delete-confirm-details__quote">${review.quote}</td></tr>
+        </table>
+      </div>
+      <p class="delete-confirm-warning">Tej operacji nie można cofnąć.</p>
+      <div class="delete-confirm-actions">
+        <button class="delete-confirm__no">Nie</button>
+        <button class="delete-confirm__yes">Tak, usuń trwale</button>
+      </div>
+    </div>
+  `;
+
+  overlay.querySelector(".delete-confirm__no")?.addEventListener("click", () => overlay.remove());
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
+  overlay.querySelector(".delete-confirm__yes")?.addEventListener("click", async () => {
+    await permanentlyDeleteReview(review.id);
+    overlay.remove();
+  });
+
+  document.body.appendChild(overlay);
+}
+
+async function permanentlyDeleteReview(id: number): Promise<void> {
+  const res = await fetch(`/api/admin/reviews/${id}`, { method: "DELETE" });
+  if (!res.ok) {
+    alert("Błąd podczas usuwania opinii");
+    return;
+  }
+  allReviews = allReviews.filter((r) => r.id !== id);
+  renderReviews();
+}
+
 function renderReview(review: Review) {
   const pendingStatus = pendingChanges.get(review.id);
   const pendingAttr = pendingStatus
@@ -216,68 +269,91 @@ function renderReview(review: Review) {
                   <p class="review-card__date">${formatDate(review.time)}</p>
                 </div>
               </div>
-              <div class="status-picker">
-                <button class="status-picker__btn--accepted">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-circle-check"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-                    <path d="M9 12l2 2l4 -4" />
-                  </svg>
-                </button>
-                <button class="status-picker__btn--pending">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-question-mark"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path
-                      d="M8 8a3.5 3 0 0 1 3.5 -3h1a3.5 3 0 0 1 3.5 3a3 3 0 0 1 -2 3a3 4 0 0 0 -2 4"
-                    />
-                    <path d="M12 19l0 .01" />
-                  </svg>
-                </button>
-                <button class="status-picker__btn--deleted">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-trash"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M4 7l16 0" />
-                    <path d="M10 11l0 6" />
-                    <path d="M14 11l0 6" />
-                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                  </svg>
-                </button>
+              <div class="review-card__controls">
+                <div class="status-picker">
+                  <button class="status-picker__btn--accepted">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="icon icon-tabler icons-tabler-outline icon-tabler-circle-check"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                      <path d="M9 12l2 2l4 -4" />
+                    </svg>
+                  </button>
+                  <button class="status-picker__btn--pending">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="icon icon-tabler icons-tabler-outline icon-tabler-question-mark"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path
+                        d="M8 8a3.5 3 0 0 1 3.5 -3h1a3.5 3 0 0 1 3.5 3a3 3 0 0 1 -2 3a3 4 0 0 0 -2 4"
+                      />
+                      <path d="M12 19l0 .01" />
+                    </svg>
+                  </button>
+                  <button class="status-picker__btn--deleted">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="icon icon-tabler icons-tabler-outline icon-tabler-trash"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M4 7l16 0" />
+                      <path d="M10 11l0 6" />
+                      <path d="M14 11l0 6" />
+                      <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                      <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
+            ${currentStatusFilter === "deleted" && review.source === "page" ? `
+            <button class="review-card__hard-delete">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M4 7h16" />
+                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                <path d="M10 12l4 4m0 -4l-4 4" />
+              </svg>
+              Usuń trwale
+            </button>` : ""}
           </div>
           `;
 }
