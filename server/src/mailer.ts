@@ -2,11 +2,9 @@ import nodemailer from "nodemailer";
 import { Resend } from "resend";
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
 import logger from "./logger.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DEFAULT_DB_PATH = path.join(__dirname, "../data/willa-ewa.db");
+const DEFAULT_DB_PATH = path.join(process.cwd(), "data/willa-ewa.db");
 
 type Mail = {
   to: string;
