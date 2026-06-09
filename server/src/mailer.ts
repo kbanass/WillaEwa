@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -7,26 +8,40 @@ import logger from "./logger.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_DB_PATH = path.join(__dirname, "../data/willa-ewa.db");
 
-function createTransport() {
+type Mail = {
+  to: string;
+  subject: string;
+  html?: string;
+  text?: string;
+  attachments?: { filename: string; content: Buffer }[];
+};
+
+function isConfigured(): boolean {
+  if (process.env.NODE_ENV !== "production") return true;
+  return !!(process.env.RESEND_API_KEY && process.env.MAIL_FROM);
+}
+
+async function sendMail(mail: Mail): Promise<void> {
   if (process.env.NODE_ENV !== "production") {
-    return nodemailer.createTransport({
+    const transport = nodemailer.createTransport({
       host: "localhost",
       port: 1025,
       secure: false,
     });
+    await transport.sendMail({ from: "Willa Ewa <dev@localhost>", ...mail });
+    return;
   }
-  return nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_APP_PASSWORD,
-    },
-  });
-}
 
-function isConfigured(): boolean {
-  if (process.env.NODE_ENV !== "production") return true;
-  return !!(process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD);
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  const { error } = await resend.emails.send({
+    from: process.env.MAIL_FROM!,
+    to: mail.to,
+    subject: mail.subject,
+    ...(mail.html ? { html: mail.html } : { text: mail.text ?? "" }),
+    ...(mail.attachments ? { attachments: mail.attachments } : {}),
+  });
+
+  if (error) throw new Error(error.message);
 }
 
 function stars(rating: number): string {
@@ -39,11 +54,15 @@ export async function sendNewReviewNotification(review: {
   rating: number;
   email?: string | null;
 }): Promise<void> {
-  if (!isConfigured() || !process.env.OWNER_EMAIL) return;
+  if (!isConfigured() || !process.env.OWNER_EMAIL) {
+    logger.info("[mailer] Review notification skipped: mailer not configured");
+    return;
+  }
+
+  logger.info(`[mailer] Sending review notification for review by "${review.author}"`);
 
   try {
-    await createTransport().sendMail({
-      from: `"Willa Ewa" <${process.env.GMAIL_USER}>`,
+    await sendMail({
       to: process.env.OWNER_EMAIL,
       subject: `Nowa opinia – ${review.author}`,
       html: `
@@ -69,7 +88,10 @@ export async function sendNewReviewNotification(review: {
 }
 
 export async function sendDatabaseBackup(): Promise<void> {
-  if (!isConfigured() || !process.env.BACKUP_EMAIL) return;
+  if (!isConfigured() || !process.env.BACKUP_EMAIL) {
+    logger.info("[mailer] Database backup skipped: mailer not configured");
+    return;
+  }
 
   const dbPath = process.env.DB_PATH ?? DEFAULT_DB_PATH;
   if (!dbPath || !fs.existsSync(dbPath)) {
@@ -80,9 +102,10 @@ export async function sendDatabaseBackup(): Promise<void> {
   const date = new Date().toISOString().slice(0, 10);
   const filename = `willa-ewa-backup-${date}.db`;
 
+  logger.info(`[mailer] Sending database backup (${filename})`);
+
   try {
-    await createTransport().sendMail({
-      from: `"Willa Ewa" <${process.env.GMAIL_USER}>`,
+    await sendMail({
       to: process.env.BACKUP_EMAIL,
       subject: `Backup bazy danych – ${date}`,
       text: `Cotygodniowy backup bazy danych Willa Ewa (${date}).`,

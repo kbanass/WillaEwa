@@ -19,15 +19,23 @@ function escapeHtml(str: string): string {
 async function send(text: string): Promise<void> {
   if (!isConfigured()) return;
   const maxLen = 4000;
-  for (let i = 0; i < text.length; i += maxLen) {
-    await axios.post(
-      `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
-      {
-        chat_id: process.env.TELEGRAM_CHAT_ID,
-        text: text.slice(i, i + maxLen),
-        parse_mode: "HTML",
-      },
+  try {
+    for (let i = 0; i < text.length; i += maxLen) {
+      await axios.post(
+        `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
+        {
+          chat_id: process.env.TELEGRAM_CHAT_ID,
+          text: text.slice(i, i + maxLen),
+          parse_mode: "HTML",
+        },
+      );
+    }
+    console.log("[telegram] Message sent");
+  } catch (error) {
+    console.error(
+      `[telegram] Failed to send message: ${error instanceof Error ? error.message : String(error)}`,
     );
+    throw error;
   }
 }
 
@@ -51,7 +59,10 @@ export class TelegramTransport extends TransportStream {
 }
 
 export async function sendDailySummary(): Promise<void> {
-  if (!isConfigured()) return;
+  if (!isConfigured()) {
+    console.log("[telegram] Daily summary skipped: not configured");
+    return;
+  }
 
   const today = new Date().toISOString().slice(0, 10);
 
