@@ -222,6 +222,8 @@ if (numPages <= 1) {
 
 // ── Gallery modal ────────────────────────────────────────────────────────────
 
+import captions from "./gallery-captions.json";
+
 const galleryPublicGlob = import.meta.glob<string>(
   "../public/gallery/*.{jpg,jpeg,png,webp}",
   {
@@ -231,16 +233,55 @@ const galleryPublicGlob = import.meta.glob<string>(
   },
 );
 const galleryExclude = /placeholder|favicon|map-/i;
-const galleryPublicPhotos = Object.entries(galleryPublicGlob)
+const GALLERY_PHOTOS = Object.entries(galleryPublicGlob)
   .filter(([path]) => !galleryExclude.test(path))
-  .map(([, url]) => url);
-
-const GALLERY_PHOTOS = [...galleryPublicPhotos, ...ROOMS_PHOTOS];
+  .map(([path, url]) => {
+    const stem =
+      path
+        .split("/")
+        .pop()
+        ?.replace(/\.[^.]+$/, "") ?? "";
+    const num = parseInt(stem, 10);
+    return { url, num: isNaN(num) ? Infinity : num };
+  })
+  .sort((a, b) => a.num - b.num)
+  .map(({ url }) => url);
 
 const galleryModal = document.getElementById("gallery-modal")!;
 const galleryImg = document.getElementById("gallery-img") as HTMLImageElement;
+const galleryImgShadow = document.getElementById(
+  "gallery-img-shadow",
+) as HTMLDivElement;
+const galleryCaption = document.getElementById(
+  "gallery-caption",
+) as HTMLParagraphElement;
 const galleryCounter = document.getElementById("gallery-counter")!;
 const galleryBackdrop = document.getElementById("gallery-backdrop")!;
+
+function updateImgShadow() {
+  const nw = galleryImg.naturalWidth;
+  const nh = galleryImg.naturalHeight;
+  if (!nw || !nh) return;
+
+  const cw = galleryImg.clientWidth;
+  const ch = galleryImg.clientHeight;
+  const imgRatio = nw / nh;
+  const containerRatio = cw / ch;
+
+  const renderedW = imgRatio > containerRatio ? cw : Math.floor(ch * imgRatio);
+  const renderedH = imgRatio > containerRatio ? Math.floor(cw / imgRatio) : ch;
+
+  const imgRect = galleryImg.getBoundingClientRect();
+  const parentRect = galleryImg.parentElement!.getBoundingClientRect();
+
+  const top = imgRect.top - parentRect.top + (ch - renderedH) / 2;
+  const left = imgRect.left - parentRect.left + (cw - renderedW) / 2;
+
+  galleryImgShadow.style.width = `${renderedW}px`;
+  galleryImgShadow.style.height = `${renderedH}px`;
+  galleryImgShadow.style.top = `${top}px`;
+  galleryImgShadow.style.left = `${left}px`;
+}
 
 let galleryIndex = 0;
 let isGalleryChanging = false;
@@ -264,16 +305,24 @@ function preloadAdjacent(index: number) {
 function openGallery(index: number) {
   galleryIndex = index;
   galleryImg.classList.remove("gallery-modal__img--fading");
+  galleryImgShadow.classList.remove("gallery-modal__img-shadow--fading");
   setGalleryPhoto();
+  galleryImg.onload = () => {
+    updateImgShadow();
+    galleryImg.onload = null;
+  };
+  if (galleryImg.complete && galleryImg.naturalWidth) updateImgShadow();
   preloadAdjacent(index);
   galleryModal.classList.add("open");
   galleryModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("gallery-open");
   document.body.style.overflow = "hidden";
 }
 
 function closeGallery() {
   galleryModal.classList.remove("open");
   galleryModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("gallery-open");
   document.body.style.overflow = "";
 }
 
@@ -281,6 +330,31 @@ function setGalleryPhoto() {
   galleryImg.src = GALLERY_PHOTOS[galleryIndex]!;
   galleryImg.alt = `Zdjęcie ${galleryIndex + 1}`;
   galleryCounter.textContent = `${galleryIndex + 1} / ${GALLERY_PHOTOS.length}`;
+  const entry = (captions as unknown as Record<string, { text: string; url: string }>)[
+    String(galleryIndex)
+  ];
+  const captionText = entry?.text ?? "";
+  const captionUrl = entry?.url ?? "";
+  galleryCaption.textContent = "";
+  if (captionText) {
+    if (captionUrl) {
+      const a = document.createElement("a");
+      a.href = captionUrl;
+      a.textContent = captionText;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      galleryCaption.appendChild(a);
+    } else {
+      galleryCaption.textContent = captionText;
+    }
+    galleryCaption.style.display = "";
+    galleryCaption.classList.remove("gallery-modal__caption--fading");
+    galleryCaption.style.animation = "none";
+    void galleryCaption.offsetWidth;
+    galleryCaption.style.animation = "caption-reveal 0.6s ease forwards";
+  } else {
+    galleryCaption.style.display = "none";
+  }
 }
 
 function galleryChangeTo(next: number) {
@@ -288,6 +362,8 @@ function galleryChangeTo(next: number) {
   isGalleryChanging = true;
 
   galleryImg.classList.add("gallery-modal__img--fading");
+  galleryImgShadow.classList.add("gallery-modal__img-shadow--fading");
+  galleryCaption.classList.add("gallery-modal__caption--fading");
 
   const total = GALLERY_PHOTOS.length;
   const src = GALLERY_PHOTOS[((next % total) + total) % total]!;
@@ -295,7 +371,13 @@ function galleryChangeTo(next: number) {
   function showNext() {
     galleryIndex = next;
     setGalleryPhoto();
+    galleryImg.onload = () => {
+      updateImgShadow();
+      galleryImg.onload = null;
+    };
+    if (galleryImg.complete && galleryImg.naturalWidth) updateImgShadow();
     galleryImg.classList.remove("gallery-modal__img--fading");
+    galleryImgShadow.classList.remove("gallery-modal__img-shadow--fading");
     preloadAdjacent(next);
     isGalleryChanging = false;
   }
@@ -335,6 +417,9 @@ document
 document.getElementById("gallery-prev")?.addEventListener("click", galleryPrev);
 document.getElementById("gallery-next")?.addEventListener("click", galleryNext);
 galleryBackdrop.addEventListener("click", closeGallery);
+window.addEventListener("resize", () => {
+  if (galleryModal.classList.contains("open")) updateImgShadow();
+});
 
 // Otwórz modal na konkretnym zdjęciu po kliknięciu w podgląd.
 // Dopasowanie po nazwie pliku bez hasha (np. "1000004580" z "1000004580-ABC123.jpg")

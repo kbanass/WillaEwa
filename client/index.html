@@ -604,30 +604,18 @@
         <div class="gallery__grid">
           <img
             class="gallery__grid-main"
-            src="./gallery/18_budynek_8.webp"
+            src="./gallery/2.webp"
             alt="Willa Ewa – widok na obiekt"
             loading="lazy"
           />
+          <img src="./gallery/0.webp" alt="Pokój gościnny" loading="lazy" />
           <img
-            src="./gallery/29_droga_na_plaze_1.webp"
-            alt="Pokój gościnny"
-            loading="lazy"
-          />
-          <img
-            src="./gallery/48_plaza_1.webp"
+            src="./gallery/20.webp"
             alt="Plaża w Krynicy Morskiej"
             loading="lazy"
           />
-          <img
-            src="./gallery/88_taras_6.webp"
-            alt="Wnętrze pokoju"
-            loading="lazy"
-          />
-          <img
-            src="./gallery/102_budynek_14.webp"
-            alt="Taras i otoczenie"
-            loading="lazy"
-          />
+          <img src="./gallery/21.webp" alt="Wnętrze pokoju" loading="lazy" />
+          <img src="./gallery/7.webp" alt="Taras i otoczenie" loading="lazy" />
         </div>
 
         <div class="justify-right-wrapper">
@@ -2160,6 +2148,8 @@
     >
       <div class="gallery-modal__backdrop" id="gallery-backdrop"></div>
       <div class="gallery-modal__inner">
+        <p class="gallery-modal__caption" id="gallery-caption"></p>
+
         <button
           class="gallery-modal__close button-outline"
           id="gallery-close"
@@ -2198,6 +2188,7 @@
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
+        <div class="gallery-modal__img-shadow" id="gallery-img-shadow"></div>
         <img class="gallery-modal__img" id="gallery-img" src="" alt="" />
         <button
           class="gallery-modal__nav gallery-modal__next button-outline"
