@@ -222,7 +222,9 @@ if (numPages <= 1) {
 
 // ── Gallery modal ────────────────────────────────────────────────────────────
 
-import captions from "./gallery-captions.json";
+import captionsJson from "./gallery-captions.json";
+
+type GalleryEntry = { id: string; text: string; url: string };
 
 const galleryPublicGlob = import.meta.glob<string>(
   "../public/gallery/*.{jpg,jpeg,png,webp}",
@@ -232,20 +234,19 @@ const galleryPublicGlob = import.meta.glob<string>(
     import: "default",
   },
 );
-const galleryExclude = /placeholder|favicon|map-/i;
-const GALLERY_PHOTOS = Object.entries(galleryPublicGlob)
-  .filter(([path]) => !galleryExclude.test(path))
-  .map(([path, url]) => {
-    const stem =
-      path
-        .split("/")
-        .pop()
-        ?.replace(/\.[^.]+$/, "") ?? "";
-    const num = parseInt(stem, 10);
-    return { url, num: isNaN(num) ? Infinity : num };
-  })
-  .sort((a, b) => a.num - b.num)
-  .map(({ url }) => url);
+
+const galleryById = new Map<string, string>();
+for (const [path, url] of Object.entries(galleryPublicGlob)) {
+  const stem = path.split("/").pop()?.replace(/\.[^.]+$/, "") ?? "";
+  galleryById.set(stem, url);
+}
+
+const galleryOrdered = (captionsJson as unknown as GalleryEntry[])
+  .map((e) => ({ photoUrl: galleryById.get(e.id) ?? "", text: e.text, captionUrl: e.url }))
+  .filter((e) => e.photoUrl !== "");
+
+const GALLERY_PHOTOS = galleryOrdered.map((e) => e.photoUrl);
+const GALLERY_CAPTIONS = galleryOrdered.map((e) => ({ text: e.text, url: e.captionUrl }));
 
 const galleryModal = document.getElementById("gallery-modal")!;
 const galleryImg = document.getElementById("gallery-img") as HTMLImageElement;
@@ -330,9 +331,7 @@ function setGalleryPhoto() {
   galleryImg.src = GALLERY_PHOTOS[galleryIndex]!;
   galleryImg.alt = `Zdjęcie ${galleryIndex + 1}`;
   galleryCounter.textContent = `${galleryIndex + 1} / ${GALLERY_PHOTOS.length}`;
-  const entry = (captions as unknown as Record<string, { text: string; url: string }>)[
-    String(galleryIndex)
-  ];
+  const entry = GALLERY_CAPTIONS[galleryIndex];
   const captionText = entry?.text ?? "";
   const captionUrl = entry?.url ?? "";
   galleryCaption.textContent = "";

@@ -1,41 +1,54 @@
-{
-  "0": { "text": "Willa Ewa od strony ogrodu.", "url": "" },
-  "1": { "text": "", "url": "" },
-  "2": { "text": "", "url": "" },
-  "3": { "text": "", "url": "" },
-  "4": { "text": "Widok z tarasu.", "url": "" },
-  "5": { "text": "Róże porastające żywopłot przy willi.", "url": "" },
-  "6": { "text": "", "url": "" },
-  "7": { "text": "", "url": "" },
-  "8": { "text": "", "url": "" },
-  "9": { "text": "", "url": "" },
-  "10": { "text": "Dojazd do Willi Ewa z głównej drogi.", "url": "" },
-  "11": { "text": "Przystanek autobusowy przy willi.", "url": "" },
-  "12": { "text": "Wejście na leśną drogę prowadzącą na plażę.", "url": "" },
-  "13": { "text": "Wejście na leśną drogę prowadzącą na plażę.", "url": "" },
-  "14": { "text": "Leśna droga prowadząca na plażę.", "url": "" },
-  "15": { "text": "", "url": "" },
-  "16": {
-    "text": "Ścieżka rowerowa prowadząca wzdłuż nadmorskiej wydmy.",
+[
+  { "id": "0000", "text": "Willa Ewa od strony ogrodu", "url": "" },
+  { "id": "0001", "text": "", "url": "" },
+  { "id": "0002", "text": "", "url": "" },
+  { "id": "0003", "text": "", "url": "" },
+  { "id": "0005", "text": "", "url": "" },
+  { "id": "0006", "text": "", "url": "" },
+  { "id": "0004", "text": "", "url": "" },
+
+  { "id": "0010", "text": "Dojazd do Willi Ewa z głównej drogi", "url": "" },
+  { "id": "0011", "text": "Przystanek autobusowy w pobliżu Willi", "url": "" },
+  {
+    "id": "0012",
+    "text": "Wejście na leśną drogę prowadzącą na plażę",
     "url": ""
   },
-  "17": { "text": "Wejście na plażę", "url": "" },
-  "18": { "text": "", "url": "" },
-  "19": { "text": "", "url": "" },
-  "20": { "text": "", "url": "" },
-  "21": { "text": "", "url": "" },
-  "22": { "text": "", "url": "" },
-  "23": {
-    "text": "Najbliższa asfaltowa droga prowadząca nad morze ze ścieżką rowerową",
+  {
+    "id": "0013",
+    "text": "Wejście na leśną drogę prowadzącą na plażę",
     "url": ""
   },
-  "24": { "text": "Deptak przy Zalewie Wiślanym", "url": "" },
-  "25": {
-    "text": "Centrum rekreacji",
+  { "id": "0014", "text": "Leśna droga prowadząca na plażę", "url": "" },
+  { "id": "0015", "text": "", "url": "" },
+  {
+    "id": "0016",
+    "text": "Ścieżka rowerowa wzdłuż nadmorskiej wydmy",
+    "url": ""
+  },
+  { "id": "0017", "text": "Wejście na plażę", "url": "" },
+  { "id": "0018", "text": "", "url": "" },
+  { "id": "0019", "text": "", "url": "" },
+  { "id": "0027", "text": "", "url": "" },
+  { "id": "0028", "text": "", "url": "" },
+
+  { "id": "0020", "text": "", "url": "" },
+  { "id": "0021", "text": "", "url": "" },
+  { "id": "0022", "text": "", "url": "" },
+  {
+    "id": "0023",
+    "text": "Ulica Marzynarzy - Najbliższa asfaltowa droga prowadząca nad morze ze ścieżką rowerową",
+    "url": "https://maps.app.goo.gl/W11wx63UaGFwfBS27"
+  },
+  { "id": "0024", "text": "Deptak przy Zalewie Wiślanym", "url": "" },
+  {
+    "id": "0025",
+    "text": "Centrum sportowo-rekreacyjne w Krynicy Morskiej",
     "url": "https://maps.app.goo.gl/MojXtctnCtMUHhoYA"
   },
-  "26": {
-    "text": "Centrum rekreacji",
+  {
+    "id": "0026",
+    "text": "Centrum sportowo-rekreacyjne w Krynicy Morskiej",
     "url": "https://maps.app.goo.gl/MojXtctnCtMUHhoYA"
   }
-}
+]
