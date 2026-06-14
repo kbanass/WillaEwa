@@ -76,6 +76,35 @@ export async function sendNewReviewNotificationTelegram(review: {
   await send(parts.join("\n")).catch(() => {});
 }
 
+export async function sendInquiryNotificationTelegram(inquiry: {
+  email: string;
+  phone: string;
+  dateFrom: string;
+  dateTo: string;
+  adults: number;
+  childrenAges: string;
+}): Promise<void> {
+  if (!isConfigured()) return;
+  const from = new Date(inquiry.dateFrom).toLocaleDateString("pl-PL");
+  const to = new Date(inquiry.dateTo).toLocaleDateString("pl-PL");
+  const nights = Math.round(
+    (new Date(inquiry.dateTo).getTime() - new Date(inquiry.dateFrom).getTime()) / (1000 * 60 * 60 * 24),
+  );
+  const childrenLine = inquiry.childrenAges
+    ? `<b>Dzieci:</b> ${inquiry.childrenAges.split(",").length} (wiek: ${escapeHtml(inquiry.childrenAges)})`
+    : `<b>Dzieci:</b> brak`;
+  const parts = [
+    `📅 <b>Zapytanie o dostępność</b>`,
+    `<b>E-mail:</b> ${escapeHtml(inquiry.email)}`,
+    inquiry.phone ? `<b>Telefon:</b> ${escapeHtml(inquiry.phone)}` : null,
+    `<b>Przyjazd:</b> ${from}`,
+    `<b>Wyjazd:</b> ${to} (${nights} nocy)`,
+    `<b>Dorośli:</b> ${inquiry.adults}`,
+    childrenLine,
+  ].filter(Boolean);
+  await send(parts.join("\n")).catch(() => {});
+}
+
 export async function sendDailySummary(): Promise<void> {
   if (!isConfigured()) {
     console.log("[telegram] Daily summary skipped: not configured");

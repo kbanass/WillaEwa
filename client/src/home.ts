@@ -248,6 +248,10 @@ const galleryOrdered = (captionsJson as unknown as GalleryEntry[])
 const GALLERY_PHOTOS = galleryOrdered.map((e) => e.photoUrl);
 const GALLERY_CAPTIONS = galleryOrdered.map((e) => ({ text: e.text, url: e.captionUrl }));
 
+type Caption = { text: string; url: string };
+let activePhotos: string[] = GALLERY_PHOTOS;
+let activeCaptions: Caption[] = GALLERY_CAPTIONS;
+
 const galleryModal = document.getElementById("gallery-modal")!;
 const galleryImg = document.getElementById("gallery-img") as HTMLImageElement;
 const galleryImgShadow = document.getElementById(
@@ -290,8 +294,8 @@ let isGalleryChanging = false;
 const preloaded = new Set<string>();
 
 function preload(index: number) {
-  const total = GALLERY_PHOTOS.length;
-  const src = GALLERY_PHOTOS[((index % total) + total) % total]!;
+  const total = activePhotos.length;
+  const src = activePhotos[((index % total) + total) % total]!;
   if (preloaded.has(src)) return;
   preloaded.add(src);
   new Image().src = src;
@@ -303,7 +307,9 @@ function preloadAdjacent(index: number) {
   preload(index - 1);
 }
 
-function openGallery(index: number) {
+function openGallery(photos: string[], captions: Caption[], index: number) {
+  activePhotos = photos;
+  activeCaptions = captions;
   galleryIndex = index;
   galleryImg.classList.remove("gallery-modal__img--fading");
   galleryImgShadow.classList.remove("gallery-modal__img-shadow--fading");
@@ -328,10 +334,10 @@ function closeGallery() {
 }
 
 function setGalleryPhoto() {
-  galleryImg.src = GALLERY_PHOTOS[galleryIndex]!;
+  galleryImg.src = activePhotos[galleryIndex]!;
   galleryImg.alt = `Zdjęcie ${galleryIndex + 1}`;
-  galleryCounter.textContent = `${galleryIndex + 1} / ${GALLERY_PHOTOS.length}`;
-  const entry = GALLERY_CAPTIONS[galleryIndex];
+  galleryCounter.textContent = `${galleryIndex + 1} / ${activePhotos.length}`;
+  const entry = activeCaptions[galleryIndex];
   const captionText = entry?.text ?? "";
   const captionUrl = entry?.url ?? "";
   galleryCaption.textContent = "";
@@ -364,8 +370,8 @@ function galleryChangeTo(next: number) {
   galleryImgShadow.classList.add("gallery-modal__img-shadow--fading");
   galleryCaption.classList.add("gallery-modal__caption--fading");
 
-  const total = GALLERY_PHOTOS.length;
-  const src = GALLERY_PHOTOS[((next % total) + total) % total]!;
+  const total = activePhotos.length;
+  const src = activePhotos[((next % total) + total) % total]!;
 
   function showNext() {
     galleryIndex = next;
@@ -397,19 +403,19 @@ function galleryChangeTo(next: number) {
 
 function galleryPrev() {
   galleryChangeTo(
-    galleryIndex === 0 ? GALLERY_PHOTOS.length - 1 : galleryIndex - 1,
+    galleryIndex === 0 ? activePhotos.length - 1 : galleryIndex - 1,
   );
 }
 
 function galleryNext() {
   galleryChangeTo(
-    galleryIndex === GALLERY_PHOTOS.length - 1 ? 0 : galleryIndex + 1,
+    galleryIndex === activePhotos.length - 1 ? 0 : galleryIndex + 1,
   );
 }
 
 document
   .getElementById("gallery-open")
-  ?.addEventListener("click", () => openGallery(0));
+  ?.addEventListener("click", () => openGallery(GALLERY_PHOTOS, GALLERY_CAPTIONS, 0));
 document
   .getElementById("gallery-close")
   ?.addEventListener("click", closeGallery);
@@ -421,8 +427,6 @@ window.addEventListener("resize", () => {
 });
 
 // Otwórz modal na konkretnym zdjęciu po kliknięciu w podgląd.
-// Dopasowanie po nazwie pliku bez hasha (np. "1000004580" z "1000004580-ABC123.jpg")
-// bo HTML serwuje public/ bez hasha, a glob importuje z hashem.
 document
   .querySelectorAll<HTMLImageElement>(".gallery__grid img")
   .forEach((img) => {
@@ -433,9 +437,15 @@ document
           .pop()
           ?.replace(/\.[^.]+$/, "") ?? "";
       const index = GALLERY_PHOTOS.findIndex((url) => url.includes(stem));
-      openGallery(index !== -1 ? index : 0);
+      openGallery(GALLERY_PHOTOS, GALLERY_CAPTIONS, index !== -1 ? index : 0);
     });
   });
+
+// Otwórz modal po kliknięciu w zdjęcie w rooms slider
+roomsSlider?.addEventListener("click", (e) => {
+  if ((e.target as HTMLElement).tagName !== "IMG") return;
+  openGallery(ROOMS_PHOTOS, [], roomsCurrent);
+});
 
 // Nawigacja klawiaturą
 document.addEventListener("keydown", (e) => {
@@ -471,4 +481,94 @@ document.querySelectorAll(".review-toggle").forEach((btn) => {
     const expanded = quote?.classList.toggle("expanded");
     btn.textContent = expanded ? "Zwiń" : "Czytaj więcej";
   });
+});
+
+// ── Booking inquiry form ──────────────────────────────────────────────────────
+
+const INQUIRY_KEY = "inquiry_submitted";
+const INQUIRY_TTL = 7 * 24 * 60 * 60 * 1000;
+
+function hasRecentInquiry(): boolean {
+  const ts = localStorage.getItem(INQUIRY_KEY);
+  if (!ts) return false;
+  return Date.now() - Number(ts) < INQUIRY_TTL;
+}
+
+function markInquirySubmitted() {
+  localStorage.setItem(INQUIRY_KEY, String(Date.now()));
+}
+
+const bookingForm = document.getElementById("booking-form") as HTMLFormElement | null;
+const bookingTitle = document.getElementById("booking-title");
+const bookingLead = document.getElementById("booking-lead");
+
+function showBookingSuccess() {
+  if (bookingForm) bookingForm.style.display = "none";
+  if (bookingTitle) bookingTitle.textContent = "Dziękujemy za zapytanie!";
+  if (bookingLead) bookingLead.textContent = "Skontaktujemy się z Tobą wkrótce na podany adres e-mail lub numer telefonu.";
+}
+
+if (hasRecentInquiry()) showBookingSuccess();
+
+bookingForm?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const errorEl = bookingForm.querySelector<HTMLParagraphElement>(".booking__error")!;
+  const submitBtn = bookingForm.querySelector<HTMLButtonElement>("button[type='submit']")!;
+  errorEl.textContent = "";
+
+  const email = bookingForm.querySelector<HTMLInputElement>("[name='email']")!.value.trim();
+  const phone = bookingForm.querySelector<HTMLInputElement>("[name='phone']")!.value.trim();
+  const dateFrom = bookingForm.querySelector<HTMLInputElement>("[name='dateFrom']")!.value;
+  const dateTo = bookingForm.querySelector<HTMLInputElement>("[name='dateTo']")!.value;
+  const adults = bookingForm.querySelector<HTMLInputElement>("[name='adults']")!.value;
+  const childrenAges = bookingForm.querySelector<HTMLInputElement>("[name='childrenAges']")!.value.trim();
+  const website = bookingForm.querySelector<HTMLInputElement>("[name='website']")!.value;
+
+  if (!email) {
+    errorEl.textContent = "Podaj adres e-mail";
+    return;
+  }
+  if (!phone) {
+    errorEl.textContent = "Podaj numer telefonu";
+    return;
+  }
+  if (!dateFrom || !dateTo) {
+    errorEl.textContent = "Wybierz zakres dat";
+    return;
+  }
+  if (new Date(dateFrom) >= new Date(dateTo)) {
+    errorEl.textContent = "Data wyjazdu musi być późniejsza niż data przyjazdu";
+    return;
+  }
+
+  submitBtn.disabled = true;
+
+  try {
+    const res = await fetch("/api/inquiry", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        phone,
+        dateFrom,
+        dateTo,
+        adults: Number(adults),
+        childrenAges: childrenAges || undefined,
+        website,
+      }),
+    });
+
+    const data = (await res.json()) as { success?: boolean; error?: string };
+
+    if (res.ok) {
+      markInquirySubmitted();
+      showBookingSuccess();
+    } else {
+      errorEl.textContent = data.error ?? "Wystąpił błąd, spróbuj ponownie";
+      submitBtn.disabled = false;
+    }
+  } catch {
+    errorEl.textContent = "Błąd połączenia z serwerem";
+    submitBtn.disabled = false;
+  }
 });

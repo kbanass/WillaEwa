@@ -21,12 +21,7 @@ function isConfigured(): boolean {
 
 async function sendMail(mail: Mail): Promise<void> {
   if (process.env.NODE_ENV !== "production") {
-    const transport = nodemailer.createTransport({
-      host: "localhost",
-      port: 1025,
-      secure: false,
-    });
-    await transport.sendMail({ from: "Willa Ewa <dev@localhost>", ...mail });
+    logger.info(`[mailer][dev] To: ${mail.to} | Subject: ${mail.subject}`);
     return;
   }
 
@@ -40,6 +35,14 @@ async function sendMail(mail: Mail): Promise<void> {
   });
 
   if (error) throw new Error(error.message);
+}
+
+function escapeHtml(str: string): string {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 function stars(rating: number): string {
@@ -66,10 +69,10 @@ export async function sendNewReviewNotification(review: {
       html: `
         <p>Na stronie pojawiła się nowa opinia oczekująca na akceptację.</p>
         <table style="border-collapse:collapse;margin-top:16px">
-          <tr><td style="padding:4px 12px 4px 0;color:#666">Autor</td><td><b>${review.author}</b></td></tr>
+          <tr><td style="padding:4px 12px 4px 0;color:#666">Autor</td><td><b>${escapeHtml(review.author)}</b></td></tr>
           <tr><td style="padding:4px 12px 4px 0;color:#666">Ocena</td><td>${stars(review.rating)} (${review.rating}/5)</td></tr>
-          ${review.email ? `<tr><td style="padding:4px 12px 4px 0;color:#666">E-mail</td><td>${review.email}</td></tr>` : ""}
-          <tr><td style="padding:4px 12px 4px 0;color:#666;vertical-align:top">Treść</td><td style="max-width:480px">${review.content}</td></tr>
+          ${review.email ? `<tr><td style="padding:4px 12px 4px 0;color:#666">E-mail</td><td>${escapeHtml(review.email)}</td></tr>` : ""}
+          <tr><td style="padding:4px 12px 4px 0;color:#666;vertical-align:top">Treść</td><td style="max-width:480px">${escapeHtml(review.content)}</td></tr>
         </table>
         ${process.env.DOMAIN_NAME ? `
         <p style="margin-top:24px">
@@ -82,6 +85,57 @@ export async function sendNewReviewNotification(review: {
     logger.info("[mailer] New review notification sent");
   } catch (error) {
     logger.error(`[mailer] Failed to send review notification: ${error instanceof Error ? error.message : String(error)}`);
+  }
+}
+
+export async function sendInquiryNotification(inquiry: {
+  email: string;
+  phone: string;
+  dateFrom: string;
+  dateTo: string;
+  adults: number;
+  childrenAges: string;
+}): Promise<void> {
+  if (!isConfigured() || !process.env.OWNER_EMAIL) {
+    logger.info("[mailer] Inquiry notification skipped: mailer not configured");
+    return;
+  }
+
+  const from = new Date(inquiry.dateFrom).toLocaleDateString("pl-PL");
+  const to = new Date(inquiry.dateTo).toLocaleDateString("pl-PL");
+  const nights = Math.round(
+    (new Date(inquiry.dateTo).getTime() - new Date(inquiry.dateFrom).getTime()) / (1000 * 60 * 60 * 24),
+  );
+  const childrenCount = inquiry.childrenAges ? inquiry.childrenAges.split(",").length : 0;
+  const childrenRow = inquiry.childrenAges
+    ? `<tr><td style="padding:4px 12px 4px 0;color:#666">Dzieci</td><td>${childrenCount} (wiek: ${escapeHtml(inquiry.childrenAges)})</td></tr>`
+    : `<tr><td style="padding:4px 12px 4px 0;color:#666">Dzieci</td><td>brak</td></tr>`;
+
+  logger.info(`[mailer] Sending inquiry notification from ${inquiry.email}`);
+
+  try {
+    await sendMail({
+      to: process.env.OWNER_EMAIL,
+      subject: `Zapytanie o dostępność – ${from} → ${to}`,
+      html: `
+        <p>Nowe zapytanie o dostępność terminu.</p>
+        <table style="border-collapse:collapse;margin-top:16px">
+          <tr><td style="padding:4px 12px 4px 0;color:#666">E-mail</td><td><b>${escapeHtml(inquiry.email)}</b></td></tr>
+          ${inquiry.phone ? `<tr><td style="padding:4px 12px 4px 0;color:#666">Telefon</td><td>${escapeHtml(inquiry.phone)}</td></tr>` : ""}
+          <tr><td style="padding:4px 12px 4px 0;color:#666">Przyjazd</td><td>${from}</td></tr>
+          <tr><td style="padding:4px 12px 4px 0;color:#666">Wyjazd</td><td>${to}</td></tr>
+          <tr><td style="padding:4px 12px 4px 0;color:#666">Liczba nocy</td><td>${nights}</td></tr>
+          <tr><td style="padding:4px 12px 4px 0;color:#666">Dorośli</td><td>${inquiry.adults}</td></tr>
+          ${childrenRow}
+        </table>
+        <p style="margin-top:24px;color:#666;font-size:13px">
+          Odpowiedz na ten e-mail lub napisz bezpośrednio na adres: <a href="mailto:${escapeHtml(inquiry.email)}">${escapeHtml(inquiry.email)}</a>
+        </p>
+      `,
+    });
+    logger.info("[mailer] Inquiry notification sent");
+  } catch (error) {
+    logger.error(`[mailer] Failed to send inquiry notification: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 

@@ -8,6 +8,7 @@ import { startCron } from "./cron.js";
 import reviewsRouter from "./routes/reviews.js";
 import authRouter from "./routes/auth.js";
 import adminRouter from "./routes/admin.js";
+import inquiryRouter from "./routes/inquiry.js";
 import staticFilesRouter from "./routes/static.js";
 
 import logger from "./logger.js";
@@ -40,6 +41,7 @@ app.use(
 app.use("/api/add-review", reviewsRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/inquiry", inquiryRouter);
 app.use("/", staticFilesRouter);
 
 app.get("/api/health", (_, res) =>
