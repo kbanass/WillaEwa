@@ -77,6 +77,7 @@ export async function sendNewReviewNotificationTelegram(review: {
 }
 
 export async function sendInquiryNotificationTelegram(inquiry: {
+  name: string;
   email: string;
   phone: string;
   dateFrom: string;
@@ -95,6 +96,7 @@ export async function sendInquiryNotificationTelegram(inquiry: {
     : `<b>Dzieci:</b> brak`;
   const parts = [
     `📅 <b>Zapytanie o dostępność</b>`,
+    `<b>Imię i nazwisko:</b> ${escapeHtml(inquiry.name)}`,
     `<b>E-mail:</b> ${escapeHtml(inquiry.email)}`,
     inquiry.phone ? `<b>Telefon:</b> ${escapeHtml(inquiry.phone)}` : null,
     `<b>Przyjazd:</b> ${from}`,

@@ -516,6 +516,7 @@ bookingForm?.addEventListener("submit", async (e) => {
   const submitBtn = bookingForm.querySelector<HTMLButtonElement>("button[type='submit']")!;
   errorEl.textContent = "";
 
+  const name = bookingForm.querySelector<HTMLInputElement>("[name='name']")!.value.trim();
   const email = bookingForm.querySelector<HTMLInputElement>("[name='email']")!.value.trim();
   const phone = bookingForm.querySelector<HTMLInputElement>("[name='phone']")!.value.trim();
   const dateFrom = bookingForm.querySelector<HTMLInputElement>("[name='dateFrom']")!.value;
@@ -524,6 +525,10 @@ bookingForm?.addEventListener("submit", async (e) => {
   const childrenAges = bookingForm.querySelector<HTMLInputElement>("[name='childrenAges']")!.value.trim();
   const website = bookingForm.querySelector<HTMLInputElement>("[name='website']")!.value;
 
+  if (!name) {
+    errorEl.textContent = "Podaj imię i nazwisko";
+    return;
+  }
   if (!email) {
     errorEl.textContent = "Podaj adres e-mail";
     return;
@@ -548,6 +553,7 @@ bookingForm?.addEventListener("submit", async (e) => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        name,
         email,
         phone,
         dateFrom,

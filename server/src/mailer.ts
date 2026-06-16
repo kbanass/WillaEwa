@@ -97,6 +97,7 @@ export async function sendNewReviewNotification(review: {
 }
 
 export async function sendInquiryNotification(inquiry: {
+  name: string;
   email: string;
   phone: string;
   dateFrom: string;
@@ -123,16 +124,17 @@ export async function sendInquiryNotification(inquiry: {
     ? `<tr><td style="padding:4px 12px 4px 0;color:#666">Dzieci</td><td>${childrenCount} (wiek: ${escapeHtml(inquiry.childrenAges)})</td></tr>`
     : `<tr><td style="padding:4px 12px 4px 0;color:#666">Dzieci</td><td>brak</td></tr>`;
 
-  logger.info(`[mailer] Sending inquiry notification from ${inquiry.email}`);
+  logger.info(`[mailer] Sending inquiry notification from ${inquiry.name} <${inquiry.email}>`);
 
   try {
     await sendMail({
       to: process.env.OWNER_EMAIL,
-      subject: `Zapytanie o dostępność – ${from} → ${to}`,
+      subject: `Zapytanie o dostępność – ${escapeHtml(inquiry.name)} (${from} → ${to})`,
       html: `
         <p>Nowe zapytanie o dostępność terminu.</p>
         <table style="border-collapse:collapse;margin-top:16px">
-          <tr><td style="padding:4px 12px 4px 0;color:#666">E-mail</td><td><b>${escapeHtml(inquiry.email)}</b></td></tr>
+          <tr><td style="padding:4px 12px 4px 0;color:#666">Imię i nazwisko</td><td><b>${escapeHtml(inquiry.name)}</b></td></tr>
+          <tr><td style="padding:4px 12px 4px 0;color:#666">E-mail</td><td>${escapeHtml(inquiry.email)}</td></tr>
           ${inquiry.phone ? `<tr><td style="padding:4px 12px 4px 0;color:#666">Telefon</td><td>${escapeHtml(inquiry.phone)}</td></tr>` : ""}
           <tr><td style="padding:4px 12px 4px 0;color:#666">Przyjazd</td><td>${from}</td></tr>
           <tr><td style="padding:4px 12px 4px 0;color:#666">Wyjazd</td><td>${to}</td></tr>

@@ -14,11 +14,17 @@ const inquiryLimiter = rateLimit({
 });
 
 router.post("/", inquiryLimiter, (req: Request, res: Response) => {
-  const { email, phone, dateFrom, dateTo, adults, childrenAges, website } = req.body;
+  const { name, email, phone, dateFrom, dateTo, adults, childrenAges, website } = req.body;
 
   if (website && website.length > 0) {
     res.status(200).json({ success: true });
     logger.alert("[inquiry][POST] Honeypot detected, request denied");
+    return;
+  }
+
+  const nameStr = typeof name === "string" ? name.trim() : "";
+  if (!nameStr || nameStr.length < 2 || nameStr.length > 100) {
+    res.status(400).json({ error: "Podaj imię i nazwisko" });
     return;
   }
 
@@ -74,10 +80,10 @@ router.post("/", inquiryLimiter, (req: Request, res: Response) => {
     return;
   }
 
-  logger.info(`[inquiry][POST] Inquiry from ${email}, ${dateFrom} → ${dateTo}`);
+  logger.info(`[inquiry][POST] Inquiry from ${nameStr} <${email}>, ${dateFrom} → ${dateTo}`);
 
-  sendInquiryNotification({ email, phone: phoneStr, dateFrom, dateTo, adults: adultsNum, childrenAges: childrenAgesStr });
-  sendInquiryNotificationTelegram({ email, phone: phoneStr, dateFrom, dateTo, adults: adultsNum, childrenAges: childrenAgesStr });
+  sendInquiryNotification({ name: nameStr, email, phone: phoneStr, dateFrom, dateTo, adults: adultsNum, childrenAges: childrenAgesStr });
+  sendInquiryNotificationTelegram({ name: nameStr, email, phone: phoneStr, dateFrom, dateTo, adults: adultsNum, childrenAges: childrenAgesStr });
 
   res.status(200).json({ success: true });
 });
