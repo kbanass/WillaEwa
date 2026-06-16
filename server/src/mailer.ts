@@ -135,7 +135,7 @@ export async function sendInquiryNotification(inquiry: {
         <table style="border-collapse:collapse;margin-top:16px">
           <tr><td style="padding:4px 12px 4px 0;color:#666">Imię i nazwisko</td><td><b>${escapeHtml(inquiry.name)}</b></td></tr>
           <tr><td style="padding:4px 12px 4px 0;color:#666">E-mail</td><td>${escapeHtml(inquiry.email)}</td></tr>
-          ${inquiry.phone ? `<tr><td style="padding:4px 12px 4px 0;color:#666">Telefon</td><td>${escapeHtml(inquiry.phone)}</td></tr>` : ""}
+          ${inquiry.phone ? `<tr><td style="padding:4px 12px 4px 0;color:#666">Telefon</td><td><a href="tel:${escapeHtml(inquiry.phone.replace(/\s/g, ""))}">${escapeHtml(inquiry.phone)}</a></td></tr>` : ""}
           <tr><td style="padding:4px 12px 4px 0;color:#666">Przyjazd</td><td>${from}</td></tr>
           <tr><td style="padding:4px 12px 4px 0;color:#666">Wyjazd</td><td>${to}</td></tr>
           <tr><td style="padding:4px 12px 4px 0;color:#666">Liczba nocy</td><td>${nights}</td></tr>
