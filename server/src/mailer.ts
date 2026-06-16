@@ -60,7 +60,9 @@ export async function sendNewReviewNotification(review: {
     return;
   }
 
-  logger.info(`[mailer] Sending review notification for review by "${review.author}"`);
+  logger.info(
+    `[mailer] Sending review notification for review by "${review.author}"`,
+  );
 
   try {
     await sendMail({
@@ -74,17 +76,23 @@ export async function sendNewReviewNotification(review: {
           ${review.email ? `<tr><td style="padding:4px 12px 4px 0;color:#666">E-mail</td><td>${escapeHtml(review.email)}</td></tr>` : ""}
           <tr><td style="padding:4px 12px 4px 0;color:#666;vertical-align:top">Treść</td><td style="max-width:480px">${escapeHtml(review.content)}</td></tr>
         </table>
-        ${process.env.DOMAIN_NAME ? `
+        ${
+          process.env.DOMAIN_NAME
+            ? `
         <p style="margin-top:24px">
           <a href="https://${process.env.DOMAIN_NAME}/panel" style="background:#1a1a1a;color:#fff;padding:10px 20px;text-decoration:none;border-radius:4px">
             Przejdź do panelu
           </a>
-        </p>` : ""}
+        </p>`
+            : ""
+        }
       `,
     });
     logger.info("[mailer] New review notification sent");
   } catch (error) {
-    logger.error(`[mailer] Failed to send review notification: ${error instanceof Error ? error.message : String(error)}`);
+    logger.error(
+      `[mailer] Failed to send review notification: ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 }
 
@@ -104,9 +112,13 @@ export async function sendInquiryNotification(inquiry: {
   const from = new Date(inquiry.dateFrom).toLocaleDateString("pl-PL");
   const to = new Date(inquiry.dateTo).toLocaleDateString("pl-PL");
   const nights = Math.round(
-    (new Date(inquiry.dateTo).getTime() - new Date(inquiry.dateFrom).getTime()) / (1000 * 60 * 60 * 24),
+    (new Date(inquiry.dateTo).getTime() -
+      new Date(inquiry.dateFrom).getTime()) /
+      (1000 * 60 * 60 * 24),
   );
-  const childrenCount = inquiry.childrenAges ? inquiry.childrenAges.split(",").length : 0;
+  const childrenCount = inquiry.childrenAges
+    ? inquiry.childrenAges.split(",").length
+    : 0;
   const childrenRow = inquiry.childrenAges
     ? `<tr><td style="padding:4px 12px 4px 0;color:#666">Dzieci</td><td>${childrenCount} (wiek: ${escapeHtml(inquiry.childrenAges)})</td></tr>`
     : `<tr><td style="padding:4px 12px 4px 0;color:#666">Dzieci</td><td>brak</td></tr>`;
@@ -129,13 +141,15 @@ export async function sendInquiryNotification(inquiry: {
           ${childrenRow}
         </table>
         <p style="margin-top:24px;color:#666;font-size:13px">
-          Odpowiedz na ten e-mail lub napisz bezpośrednio na adres: <a href="mailto:${escapeHtml(inquiry.email)}">${escapeHtml(inquiry.email)}</a>
+          Adres email nadawcy: <a href="mailto:${escapeHtml(inquiry.email)}">${escapeHtml(inquiry.email)}</a>
         </p>
       `,
     });
     logger.info("[mailer] Inquiry notification sent");
   } catch (error) {
-    logger.error(`[mailer] Failed to send inquiry notification: ${error instanceof Error ? error.message : String(error)}`);
+    logger.error(
+      `[mailer] Failed to send inquiry notification: ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 }
 
@@ -170,6 +184,8 @@ export async function sendDatabaseBackup(): Promise<void> {
     });
     logger.info("[mailer] Database backup sent");
   } catch (error) {
-    logger.error(`[mailer] Failed to send database backup: ${error instanceof Error ? error.message : String(error)}`);
+    logger.error(
+      `[mailer] Failed to send database backup: ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 }
