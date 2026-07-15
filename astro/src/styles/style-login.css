@@ -1,0 +1,73 @@
+/* ------ Header --------------------------------*/
+
+.header__link {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.header__link:hover {
+  color: var(--c-font-accent);
+}
+
+/* ------ Login section --------------------------------*/
+
+.login {
+  margin-block-start: var(--space-xl);
+}
+
+.login .section-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  text-align: center;
+}
+
+.login .container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+}
+
+.login form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-inline: auto;
+  gap: var(--space-m);
+}
+
+.login .error {
+  text-align: left;
+  color: var(--c-error);
+}
+
+.login input {
+  padding: 12px 16px;
+  border: 1px solid var(--c-font-primary);
+  background-color: var(--c-bg-secondary);
+}
+
+.login input:focus {
+  outline-color: var(--c-font-accent);
+}
+
+.login button {
+  background-color: var(--c-bg-dark);
+  border: 1px solid var(--c-font-primary);
+  color: var(--c-font-light);
+  padding: 12px;
+}
+
+@media (min-width: 640px) {
+  .login form {
+    display: grid;
+    grid-template-columns: 4fr 1fr;
+    max-width: fit-content;
+  }
+}

@@ -1,0 +1,130 @@
+import type { Env } from './env'
+
+const isProd = true // always treat CF as production
+
+// ── Email ─────────────────────────────────────────────────────────────────────
+
+export async function sendEmail(
+  env: Env,
+  opts: { to: string; subject: string; html: string },
+): Promise<void> {
+  if (!env.RESEND_API_KEY || !env.MAIL_FROM) return
+  await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: env.MAIL_FROM,
+      to: opts.to,
+      subject: opts.subject,
+      html: opts.html,
+    }),
+  })
+}
+
+export async function sendNewReviewNotification(
+  env: Env,
+  review: { author: string; rating: number; quote: string },
+): Promise<void> {
+  const domain = env.DOMAIN_NAME ?? 'willaewanadmorzem.pl'
+  await sendEmail(env, {
+    to: env.OWNER_EMAIL,
+    subject: `Nowa opinia – ${review.author}`,
+    html: `
+      <table>
+        <tr><td>Autor</td><td><strong>${review.author}</strong></td></tr>
+        <tr><td>Ocena</td><td>${review.rating} / 5</td></tr>
+        <tr><td>Treść</td><td>${review.quote}</td></tr>
+      </table>
+      <p><a href="https://${domain}/panel">Przejdź do panelu</a></p>
+    `,
+  })
+}
+
+export async function sendInquiryNotification(
+  env: Env,
+  data: {
+    name: string
+    email: string
+    phone: string
+    dateFrom: string
+    dateTo: string
+    adults: number
+    childrenAges?: string
+  },
+): Promise<void> {
+  await sendEmail(env, {
+    to: env.OWNER_EMAIL,
+    subject: `Zapytanie o dostępność – ${data.name} (${data.dateFrom} → ${data.dateTo})`,
+    html: `
+      <table>
+        <tr><td>Imię i nazwisko</td><td><strong>${data.name}</strong></td></tr>
+        <tr><td>E-mail</td><td>${data.email}</td></tr>
+        <tr><td>Telefon</td><td>${data.phone}</td></tr>
+        <tr><td>Od</td><td>${data.dateFrom}</td></tr>
+        <tr><td>Do</td><td>${data.dateTo}</td></tr>
+        <tr><td>Dorośli</td><td>${data.adults}</td></tr>
+        ${data.childrenAges ? `<tr><td>Dzieci (wiek)</td><td>${data.childrenAges}</td></tr>` : ''}
+      </table>
+    `,
+  })
+}
+
+// ── Telegram ──────────────────────────────────────────────────────────────────
+
+async function sendTelegram(env: Env, text: string): Promise<void> {
+  if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_CHAT_ID) return
+  const chunks: string[] = []
+  for (let i = 0; i < text.length; i += 4000) {
+    chunks.push(text.slice(i, i + 4000))
+  }
+  for (const chunk of chunks) {
+    await fetch(
+      `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: env.TELEGRAM_CHAT_ID,
+          text: chunk,
+          parse_mode: 'HTML',
+        }),
+      },
+    )
+  }
+}
+
+export async function sendNewReviewTelegram(
+  env: Env,
+  review: { author: string; rating: number; quote: string },
+): Promise<void> {
+  const stars = '⭐'.repeat(Math.round(review.rating))
+  await sendTelegram(
+    env,
+    `<b>Nowa opinia</b>\n${stars} (${review.rating})\n<b>${review.author}</b>\n${review.quote}`,
+  )
+}
+
+export async function sendInquiryTelegram(
+  env: Env,
+  data: {
+    name: string
+    email: string
+    phone: string
+    dateFrom: string
+    dateTo: string
+    adults: number
+    childrenAges?: string
+  },
+): Promise<void> {
+  await sendTelegram(
+    env,
+    `<b>Zapytanie o dostępność</b>\n` +
+      `<b>${data.name}</b>\n` +
+      `📅 ${data.dateFrom} → ${data.dateTo}\n` +
+      `👥 Dorośli: ${data.adults}${data.childrenAges ? `, dzieci: ${data.childrenAges}` : ''}\n` +
+      `📧 ${data.email}\n📞 ${data.phone}`,
+  )
+}

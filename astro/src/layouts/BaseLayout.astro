@@ -1,0 +1,228 @@
+---
+import "../styles/variables.css";
+import "../styles/reset.css";
+import "../styles/style.css";
+import { getSiteSettings } from "../lib/sanity";
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogUrl?: string;
+  ogImage?: string;
+  bodyClass?: string;
+  navigation?: {
+    title: string;
+    link: "contact-number" | "main-page";
+  };
+}
+
+const {
+  title = "Willa Ewa - Krynica Morska",
+  description = "Willa Ewa – spokojny obiekt noclegowy w Krynicy Morskiej.",
+  ogUrl = "https://willaewanadmorzem.pl/",
+  ogImage = "https://willaewanadmorzem.pl/favicon/og-image.png",
+  bodyClass = "",
+  navigation = {
+    title: "Willa Ewa",
+    link: "contact-number",
+  },
+} = Astro.props;
+
+const settings = await getSiteSettings().catch(() => null);
+const phone = settings?.contactPhone ?? "+48 508 273 502";
+const address = settings?.address ?? "ul. Szałwiowa 1, 82-120 Krynica Morska";
+const [addressStreet, ...addressRest] = address
+  .split(",")
+  .map((s: string) => s.trim());
+---
+
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+
+    <link
+      rel="icon"
+      type="image/png"
+      href="/favicon/favicon-96x96.png"
+      sizes="96x96"
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon/favicon.ico" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/favicon/apple-touch-icon.png"
+    />
+    <meta name="apple-mobile-web-app-title" content="WillaEwa" />
+    <link rel="manifest" href="/favicon/site.webmanifest" />
+
+    <meta property="og:title" content="Willa Ewa" />
+    <meta property="og:description" content="Dom gościnny nad polskim morzem" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:url" content={ogUrl} />
+    <meta property="og:type" content="website" />
+
+    <title>{title}</title>
+
+    <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <script is:inline>
+      var l=document.createElement("link");
+      l.rel="stylesheet";
+      l.href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap";
+      document.head.appendChild(l);
+    </script>
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
+
+    <script
+      defer
+      src="https://cloud.umami.is/script.js"
+      data-website-id="38110df9-bdd5-4709-b80d-77f20dbcd1f3"></script>
+
+    <slot name="head" />
+  </head>
+
+  <body class={bodyClass}>
+    <script>
+      document.addEventListener("touchstart", () => {}, { passive: true });
+
+      const animateObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              animateObserver.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.9 },
+      );
+
+      // Stagger containers can be taller than the viewport, so a 40% threshold
+      // may never be met. Use 10% instead. Inline transitionDelay is set here
+      // (not in CSS) so it always wins over component-scoped `transition`
+      // shorthand that would otherwise reset the delay to 0.
+      const staggerObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const children = Array.from(
+                entry.target.children,
+              ) as HTMLElement[];
+              children.forEach((child, i) => {
+                child.style.transitionDelay = `${i * 120}ms`;
+              });
+              entry.target.classList.add("visible");
+              staggerObserver.unobserve(entry.target);
+              // Remove inline delays after last item finishes so hover
+              // transitions on those elements are not delayed afterward.
+              const cleanupMs = (children.length - 1) * 120 + 900;
+              setTimeout(() => {
+                children.forEach((child) => (child.style.transitionDelay = ""));
+              }, cleanupMs);
+            }
+          });
+        },
+        { threshold: 0.1 },
+      );
+
+      document
+        .querySelectorAll<HTMLElement>(".animate:not(.stagger)")
+        .forEach((el) => {
+          animateObserver.observe(el);
+        });
+
+      document
+        .querySelectorAll<HTMLElement>(".stagger")
+        .forEach((container) => {
+          [...container.children].forEach((child, i) => {
+            (child as HTMLElement).style.setProperty("--stagger", `${i}`);
+          });
+          staggerObserver.observe(container);
+        });
+
+      // position:fixed elements are always in the viewport — IntersectionObserver
+      // is unreliable for them on iOS Safari. Trigger immediately via double-rAF
+      // so the CSS transition still plays from the initial state.
+      document
+        .querySelectorAll<HTMLElement>(".header .animate")
+        .forEach((el) => {
+          animateObserver.unobserve(el);
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => el.classList.add("visible")),
+          );
+        });
+    </script>
+    <header class="header">
+      <div class="header__content container">
+        <h3 class="header__title animate slide-from-left">
+          {navigation.title}
+        </h3>
+        <div class="header__phone animate fade-in">
+          {
+            navigation.link === "contact-number" ? (
+              <>
+                <a
+                  class="header__phone-number"
+                  href={`tel:${phone.replace(/\s/g, "")}`}
+                >
+                  {phone}
+                </a>
+                <small class="header__phone-label">Rezerwacje</small>
+              </>
+            ) : (
+              <a class="header__main-page" href="/">
+                Strona Główna
+              </a>
+            )
+          }
+        </div>
+      </div>
+    </header>
+
+    <main style="flex: 1">
+      <slot />
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer__grid">
+          <div class="footer__brand">
+            <p class="footer__brand-name">Willa Ewa</p>
+            <p class="footer__brand-desc">
+              Obiekt noclegowy na Mierzei Wiślanej. Stworzony dla tych, którzy
+              szukają ciszy, przestrzeni i prawdziwego wypoczynku z dala od
+              zgiełku.
+            </p>
+          </div>
+          <div class="footer__address">
+            <p class="footer__address-title">Adres</p>
+            <address>
+              {addressStreet}<br />
+              {addressRest.join(", ")}
+            </address>
+          </div>
+          <div class="footer__contact">
+            <p class="footer__contact-title">Kontakt</p>
+            <p>Nr telefonu:</p>
+            <a class="footer__phone" href={`tel:${phone.replace(/\s/g, "")}`}
+              >{phone}</a
+            >
+          </div>
+        </div>
+        <div class="footer__bottom">
+          <span>2025 Willa Ewa · Krynica Morska</span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

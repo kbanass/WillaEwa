@@ -1,0 +1,360 @@
+---
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "photoswipe/dist/photoswipe.css";
+import { getRoomsSlider, getSiteSettings, urlFor } from "../lib/sanity";
+
+const [roomsData, settings] = await Promise.all([
+  getRoomsSlider(),
+  getSiteSettings().catch(() => null),
+]);
+
+const photos = (roomsData?.images ?? [])
+  .filter((img) => img.image)
+  .map((img, i) => ({
+    thumbSrc: urlFor(img.image!).width(1200).auto("format").url(),
+    mainSrc: urlFor(img.image!).width(1920).auto("format").url(),
+    zoomSrc: urlFor(img.image!).width(3840).auto("format").url(),
+    alt: img.alt ?? "",
+    lqip: img.lqip ?? "",
+    width: img.width ?? 1920,
+    height: img.height ?? 1080,
+    idx: i,
+  }));
+---
+
+<section class="rooms">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label"></span>
+      <h2 class="section-title">Nasza oferta</h2>
+      <p class="section-lead">
+        Willa Ewa położona jest w spokojnej części Krynicy Morskiej, nieopodal
+        malowniczego lasu. To kameralne miejsce idealne dla osób szukających
+        ciszy i relaksu z dala od zgiełku, przeznaczone dla par oraz rodzin ze
+        starszymi dziećmi.
+      </p>
+    </div>
+    <div class="rooms__content">
+      <div class="rooms-slider">
+        {
+          photos.length > 0 && (
+            <div class="rooms-swiper-wrapper">
+              <div
+                class="swiper rooms-swiper"
+                data-loop={photos.length > 1 ? "true" : "false"}
+              >
+                <div class="swiper-wrapper">
+                  {photos.map((photo) => (
+                    <div class="swiper-slide">
+                      <button
+                        class="rooms-swiper__btn"
+                        data-pswp-src={photo.mainSrc}
+                        data-pswp-zoom={photo.zoomSrc}
+                        data-pswp-w={photo.width}
+                        data-pswp-h={photo.height}
+                        data-pswp-lqip={photo.lqip}
+                        data-pswp-alt={photo.alt}
+                        data-pswp-idx={photo.idx}
+                        aria-label={`Otwórz zdjęcie: ${photo.alt}`}
+                      >
+                        <img
+                          src={photo.thumbSrc}
+                          alt={photo.alt}
+                          loading={photo.idx === 0 ? "eager" : "lazy"}
+                          class="rooms-swiper__img"
+                          style={
+                            photo.lqip
+                              ? `background-image: url('${photo.lqip}'); background-size: cover;`
+                              : ""
+                          }
+                        />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <div class="swiper-button-prev" />
+                <div class="swiper-button-next" />
+                <div class="swiper-pagination" />
+              </div>
+            </div>
+          )
+        }
+      </div>
+      <div class="rooms__info">
+        <h3 class="rooms__info-title"></h3>
+        <p>
+          {
+            settings?.roomsDescription ??
+              `Oferujemy przytulne pokoje dwuosobowe oraz większe — dla 3-5 osób, z prywatnymi łazienkami. W każdym z nich znajduje się telewizor, lodówka i czajnik elektryczny. Do dyspozycji gości jest także duży taras na pierwszym piętrze z miejscem na grilla oraz parking na ogrodzonej posesji.`
+          }
+        </p>
+        <div class="rooms__info-price animate slide-from-left">
+          {
+            settings?.priceFrom && settings?.priceTo
+              ? `Od ${settings.priceFrom} do ${settings.priceTo} zł`
+              : "Od 60 do 80 zł"
+          }
+          <small>za dobę od osoby</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import Swiper from "swiper";
+  import { Navigation, Pagination, Keyboard, A11y } from "swiper/modules";
+  import PhotoSwipe from "photoswipe";
+
+  const DOWNLOAD_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/><path d="M7 11l5 5l5 -5"/><path d="M12 4l0 12"/></svg>`;
+
+  function downloadImage(src: string): void {
+    const a = document.createElement("a");
+    a.href = `/api/download-image?url=${encodeURIComponent(src)}`;
+    a.download = `willa-ewa-${Date.now()}.jpg`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  const swiperEl = document.querySelector<HTMLElement>(".rooms-swiper");
+  if (swiperEl) {
+    const shouldLoop = swiperEl.dataset.loop === "true";
+
+    const origButtons = Array.from(
+      swiperEl.querySelectorAll<HTMLElement>(".rooms-swiper__btn"),
+    );
+    const dataSource = origButtons.map((btn) => ({
+      src: btn.dataset.pswpSrc ?? "",
+      width: parseInt(btn.dataset.pswpW ?? "1920", 10),
+      height: parseInt(btn.dataset.pswpH ?? "1080", 10),
+      msrc: btn.dataset.pswpLqip || undefined,
+      alt: btn.dataset.pswpAlt ?? "",
+      zoomSrc: btn.dataset.pswpZoom ?? "",
+    }));
+
+    new Swiper(swiperEl, {
+      modules: [Navigation, Pagination, Keyboard, A11y],
+      navigation: {
+        prevEl: ".swiper-button-prev",
+        nextEl: ".swiper-button-next",
+      },
+      pagination: {
+        el: ".swiper-pagination",
+        dynamicBullets: true,
+        clickable: true,
+      },
+      keyboard: { enabled: true },
+      loop: shouldLoop,
+      spaceBetween: 32,
+      centeredSlides: true,
+      a11y: { enabled: true },
+    });
+
+    let pswp: PhotoSwipe | null = null;
+
+    function openPhotoSwipe(startIndex: number) {
+      pswp?.destroy();
+      pswp = new PhotoSwipe({
+        dataSource,
+        index: startIndex,
+        bgOpacity: 0.88,
+        wheelToZoom: true,
+        zoom: true,
+        close: true,
+        counter: true,
+        arrowKeys: true,
+        preload: [1, 1],
+        padding: { top: 48, bottom: 80, left: 48, right: 48 },
+        imageClickAction: "zoom",
+        tapAction: "zoom",
+        bgClickAction: "close",
+        clickToCloseNonZoomable: false,
+        secondaryZoomLevel: (zl) => Math.max(zl.fit * 2, zl.fill),
+        maxZoomLevel: (zl) => Math.max(zl.fit * 4, 4),
+      });
+
+      pswp.on("uiRegister", () => {
+        pswp!.ui!.registerElement({
+          name: "download-button",
+          order: 8,
+          isButton: true,
+          appendTo: "bar",
+          html: DOWNLOAD_ICON,
+          title: "Pobierz zdjęcie",
+          onClick: () => {
+            const data = dataSource[pswp!.currIndex];
+            if (data) downloadImage(data.src);
+          },
+        });
+      });
+
+      const loadedHighRes = new Set<number>();
+      pswp.on("zoomPanUpdate", ({ slide }) => {
+        const idx = slide.index;
+        if (loadedHighRes.has(idx)) return;
+        const initialZoom = slide.zoomLevels?.initial ?? 1;
+        if (slide.currZoomLevel <= initialZoom * 1.2) return;
+        const data = dataSource[idx];
+        if (!data?.zoomSrc) return;
+        loadedHighRes.add(idx);
+        const hi = new window.Image();
+        hi.onload = () => {
+          const imgEl = slide.content.element as HTMLImageElement | null;
+          if (imgEl?.tagName === "IMG" && imgEl.src !== data.zoomSrc)
+            imgEl.src = data.zoomSrc;
+        };
+        hi.src = data.zoomSrc;
+      });
+
+      pswp.on("destroy", () => {
+        pswp = null;
+      });
+      pswp.init();
+    }
+
+    swiperEl.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLElement>(
+        ".rooms-swiper__btn",
+      );
+      if (!btn) return;
+      const idx = parseInt(btn.dataset.pswpIdx ?? "0", 10);
+      openPhotoSwipe(idx);
+    });
+  }
+</script>
+
+<style>
+  .rooms {
+    background-color: var(--c-bg-primary);
+  }
+
+  .rooms__content {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    background-color: var(--c-bg-secondary);
+  }
+
+  .rooms-slider {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+
+  .rooms__info {
+    display: grid;
+    grid-template-rows: min-content 1fr min-content;
+    gap: var(--space-xl);
+    padding: 64px 16px;
+  }
+
+  .rooms__info-title {
+    font-size: var(--font-size-l);
+    font-weight: var(--weight-bold);
+    font-family: var(--font-serif);
+  }
+
+  .rooms__info-price {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    font-size: var(--font-size-xl);
+    font-weight: var(--weight-bold);
+    font-family: var(--font-sans-serif);
+    font-style: italic;
+    color: var(--c-font-accent);
+  }
+  .rooms__info-price small {
+    color: var(--c-font-primary);
+    font-size: var(--font-size-m);
+    font-weight: var(--weight-medium);
+  }
+
+  @media (min-width: 780px) {
+    .rooms__content {
+      grid-template-columns: 1.1fr 1fr;
+      grid-template-rows: unset;
+    }
+
+    .rooms-slider {
+      aspect-ratio: unset;
+      height: 100%;
+    }
+
+    .rooms__info {
+      padding: 32px;
+    }
+  }
+
+  /* ── Swiper wrapper + gradients ───────────────────────────────── */
+
+  .rooms-swiper-wrapper {
+    position: absolute;
+    inset: 0;
+  }
+
+  .rooms-swiper-wrapper::before,
+  .rooms-swiper-wrapper::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .rooms-swiper-wrapper::before {
+    left: 0;
+    background: linear-gradient(to right, var(--c-bg-secondary), transparent);
+  }
+
+  .rooms-swiper-wrapper::after {
+    right: 0;
+    background: linear-gradient(to left, var(--c-bg-secondary), transparent);
+  }
+
+  /* ── Swiper internals — :global() needed for loop-cloned slides ── */
+
+  :global(.rooms-swiper) {
+    --swiper-navigation-color: #fff;
+    --swiper-pagination-color: var(--c-font-light);
+    position: absolute;
+    inset: 0;
+  }
+
+  :global(.rooms-swiper .swiper-wrapper) {
+    height: 100%;
+  }
+
+  :global(.rooms-swiper .swiper-slide) {
+    height: 100%;
+  }
+
+  :global(.rooms-swiper__btn) {
+    all: unset;
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: zoom-in;
+  }
+
+  :global(.rooms-swiper__img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    user-select: none;
+    transition:
+      opacity 200ms,
+      transform 200ms;
+  }
+
+  @media (hover: hover) {
+    :global(.rooms-swiper__btn:hover .rooms-swiper__img) {
+      opacity: 0.92;
+      transform: scale(0.99);
+    }
+  }
+</style>

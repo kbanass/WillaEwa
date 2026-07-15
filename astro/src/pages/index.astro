@@ -1,0 +1,46 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "../components/Hero.astro";
+import Rooms from "../components/Rooms.astro";
+import Facilities from "../components/Facilities.astro";
+import PhoneBanner from "../components/PhoneBanner.astro";
+import Gallery from "../components/Gallery.astro";
+import Reviews from "../components/Reviews.astro";
+import Location from "../components/Location.astro";
+import Booking from "../components/Booking.astro";
+import { sanityClient, heroImagesQuery, urlFor } from "../lib/sanity";
+
+const hero = await sanityClient.fetch(heroImagesQuery);
+const firstHeroImg = (hero?.images ?? []).find((img: any) => img?.image);
+const firstSmallUrl: string | null = firstHeroImg
+  ? urlFor(firstHeroImg.image).width(800).quality(75).auto("format").url()
+  : null;
+const firstMidUrl: string | null = firstHeroImg
+  ? urlFor(firstHeroImg.image).width(1200).quality(75).auto("format").url()
+  : null;
+const firstSrcset: string | null =
+  firstSmallUrl && firstMidUrl ? `${firstSmallUrl} 800w, ${firstMidUrl} 1200w` : null;
+---
+
+<BaseLayout title="Willa Ewa — Krynica Morska">
+  <Fragment slot="head">
+    {firstMidUrl && (
+      <link
+        rel="preload"
+        as="image"
+        href={firstMidUrl}
+        imagesrcset={firstSrcset ?? undefined}
+        imagesizes={firstSrcset ? "100vw" : undefined}
+        fetchpriority="high"
+      />
+    )}
+  </Fragment>
+  <Hero hero={hero} />
+  <Rooms />
+  <Facilities />
+  <PhoneBanner />
+  <Gallery />
+  <Reviews />
+  <Location />
+  <Booking />
+</BaseLayout>

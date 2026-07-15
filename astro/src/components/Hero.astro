@@ -1,0 +1,308 @@
+---
+import { urlFor } from "../lib/sanity";
+
+interface Props {
+  hero: {
+    images: Array<{
+      _key: string;
+      alt: string | null;
+      image: any;
+      lqip: string | null;
+      width: number | null;
+      height: number | null;
+    }> | null;
+  } | null;
+}
+
+const { hero } = Astro.props;
+
+type HeroSlide = {
+  lqip: string;
+  smallUrl: string;
+  midUrl: string;
+  fullUrl: string | null;
+  alt: string;
+};
+
+const slides: HeroSlide[] = (hero?.images ?? [])
+  .filter((img) => img.image)
+  .map((img): HeroSlide => {
+    const origWidth: number = img.width ?? 1920;
+    const smallUrl: string = urlFor(img.image).width(800).quality(75).auto("format").url();
+    const midUrl: string = urlFor(img.image).width(1200).quality(75).auto("format").url();
+    const fullUrl: string | null =
+      origWidth > 1200
+        ? urlFor(img.image)
+            .width(Math.min(origWidth, 4500))
+            .quality(80)
+            .auto("format")
+            .url()
+        : null;
+    return {
+      lqip: (img.lqip ?? "") as string,
+      smallUrl,
+      midUrl,
+      fullUrl,
+      alt: (img.alt ?? "") as string,
+    };
+  });
+---
+
+<section class="hero" aria-label="Widoki z Krynicy Morskiej">
+  {slides.map((slide, i) => (
+    <div
+      class={`hero__slide${i === 0 ? " hero__slide--active" : ""}`}
+      style={slide.lqip ? `background-image: url('${slide.lqip}')` : undefined}
+      aria-hidden="true"
+    >
+      <img
+        class="hero__slide-img"
+        src={i === 0 ? slide.midUrl : undefined}
+        srcset={i === 0 ? `${slide.smallUrl} 800w, ${slide.midUrl} 1200w` : undefined}
+        sizes={i === 0 ? "100vw" : undefined}
+        data-mid={slide.midUrl}
+        data-full={slide.fullUrl ?? undefined}
+        alt=""
+        loading={i === 0 ? "eager" : "lazy"}
+        fetchpriority={i === 0 ? "high" : undefined}
+        decoding="async"
+      />
+    </div>
+  ))}
+  <div class="hero__overlay" aria-hidden="true"></div>
+  <div class="hero__content container">
+    <h1 class="hero__content-header animate slide-from-left">
+      Pokoje do wynajęcia
+      <br />w <em>Krynicy Morskiej</em>
+    </h1>
+    <a
+      class="hero__content-location"
+      href="https://www.google.com/maps/place/Willa+Ewa/@54.3707846,19.4120233,16z/data=!4m6!3m5!1s0x46fd3145d9ee92c1:0xe0e8218ff1e1bcea!8m2!3d54.371607!4d19.4174926!16s%2Fg%2F11s2rr2g_t?entry=ttu&g_ep=EgoyMDI2MDUyNy4wIKXMDSoASAFQAw%3D%3D"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Otwórz lokalizację w Google Maps"
+    >
+      <svg
+        width="13"
+        height="13"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+        <circle cx="12" cy="10" r="3"></circle>
+      </svg>
+      Szałwiowa 1
+    </a>
+  </div>
+</section>
+
+<script>
+  const slides = Array.from(
+    document.querySelectorAll<HTMLElement>(".hero__slide"),
+  );
+
+  if (slides.length > 0) {
+    const midLoaded = new WeakSet<Element>();
+    const fullLoaded = new WeakSet<Element>();
+    const INTERVAL = 5000;
+
+    function shouldLoadFull(): boolean {
+      return window.innerWidth * window.devicePixelRatio > 1920;
+    }
+
+    function loadMid(slide: HTMLElement): Promise<void> {
+      if (midLoaded.has(slide)) return Promise.resolve();
+      const img = slide.querySelector<HTMLImageElement>(".hero__slide-img")!;
+      const src = img.dataset.mid!;
+      return new Promise<void>((resolve) => {
+        // Already loaded — e.g. first slide whose src was set in HTML and fetched
+        // from the preload cache before JS ran.
+        if (img.complete && img.naturalWidth > 0) {
+          midLoaded.add(slide);
+          resolve();
+          return;
+        }
+        img.onload = () => {
+          midLoaded.add(slide);
+          resolve();
+        };
+        img.onerror = () => resolve();
+        // For slide 0 src is already set in HTML; this is a no-op if unchanged.
+        if (img.src !== src) img.src = src;
+      });
+    }
+
+    function loadFull(slide: HTMLElement): void {
+      if (fullLoaded.has(slide)) return;
+      const img = slide.querySelector<HTMLImageElement>(".hero__slide-img")!;
+      const src = img.dataset.full;
+      if (!src) return;
+      const doLoad = () => {
+        if (!midLoaded.has(slide)) return;
+        const preload = new Image();
+        preload.onload = () => {
+          if (midLoaded.has(slide)) {
+            img.src = src;
+            fullLoaded.add(slide);
+          }
+        };
+        preload.src = src;
+      };
+      if ("requestIdleCallback" in window) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (window as any).requestIdleCallback(doLoad, { timeout: 2000 });
+      } else {
+        setTimeout(doLoad, 500);
+      }
+    }
+
+    // First slide: browser already started fetching src from the preload cache.
+    // loadMid detects img.complete and resolves immediately if it finished.
+    loadMid(slides[0]).then(() => {
+      if (shouldLoadFull()) loadFull(slides[0]);
+    });
+
+    if (slides.length > 1) {
+      let current = 0;
+
+      function preloadSlide(idx: number): void {
+        const slide = slides[idx];
+        if (slide && !midLoaded.has(slide)) loadMid(slide);
+      }
+
+      setTimeout(() => preloadSlide(1), INTERVAL - 1500);
+
+      setInterval(() => {
+        const prevIdx = current;
+        const nextIdx = (current + 1) % slides.length;
+        current = nextIdx;
+
+        const prev = slides[prevIdx];
+        const next = slides[nextIdx];
+        const expectedCurrent = nextIdx;
+
+        const doSwitch = () => {
+          if (current !== expectedCurrent) return;
+          prev.classList.remove("hero__slide--active");
+          next.classList.add("hero__slide--active");
+          if (shouldLoadFull()) loadFull(next);
+          setTimeout(
+            () => preloadSlide((current + 1) % slides.length),
+            INTERVAL - 1500,
+          );
+        };
+
+        if (midLoaded.has(next)) {
+          doSwitch();
+        } else {
+          loadMid(next).then(doSwitch);
+        }
+      }, INTERVAL);
+    }
+  }
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .hero__slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+  }
+
+  .hero__slide--active {
+    opacity: 1;
+    animation: slowZoom 5s ease-out forwards;
+  }
+
+  .hero__slide-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  @keyframes slowZoom {
+    from {
+      transform: scale(1.015);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+
+  .hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      hsla(30, 29%, 20%, 0.7) 20%,
+      hsla(30, 29%, 20%, 0.5) 75%,
+      transparent 100%
+    );
+  }
+
+  .hero__content {
+    height: 100%;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 100px;
+  }
+
+  .hero__content-header {
+    grid-column: 1 / -1;
+    align-self: center;
+    text-align: center;
+    font-family: var(--font-serif);
+    color: var(--c-font-light);
+    font-weight: var(--weight-normal);
+    text-shadow: 1px 2px 1px var(--c-font-primary);
+    font-size: var(--font-size-xxl);
+    font-style: italic;
+  }
+
+  .hero__content-header em {
+    color: var(--c-font-accent);
+  }
+
+  .hero__content-location {
+    width: fit-content;
+    align-self: self-end;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-s);
+    text-transform: uppercase;
+    color: var(--c-font-light);
+    animation: pulseLocation 2s ease-in infinite;
+  }
+
+  .hero__content-location:hover {
+    animation: none;
+  }
+
+  @keyframes pulseLocation {
+    0%,
+    100% {
+      opacity: 0.2;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+</style>

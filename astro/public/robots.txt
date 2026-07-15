@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Disallow: /panel
+Disallow: /login
+Disallow: /opinie
+
+Sitemap: https://willaewanadmorzem.pl/sitemap-index.xml

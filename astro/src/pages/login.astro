@@ -1,0 +1,133 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Panel administratora"
+  description="Willa Ewa – panel logowania"
+  navigation={{ title: "Login", link: "main-page" }}
+>
+  <meta name="robots" content="noindex" slot="head" />
+
+  <section class="login">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Login</span>
+        <h2 class="section-title">
+          Aby przejść do panelu administratora podaj hasło
+        </h2>
+        <p class="section-lead">
+          Jeżeli jesteś tu przez przypadek, kliknij link "Strona główna" w
+          prawym górnym rogu.
+        </p>
+      </div>
+      <form>
+        <input type="password" name="password" placeholder="Hasło" required />
+        <button type="submit">Zaloguj</button>
+        <p class="error"></p>
+      </form>
+    </div>
+  </section>
+
+  <script>
+    fetch("/api/auth/verify", { credentials: "include" }).then((res) => {
+      if (res.ok) window.location.replace("/panel");
+    });
+
+    const form = document.querySelector("form")!;
+    const errorEl = form.querySelector<HTMLParagraphElement>(".error")!;
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorEl.textContent = "";
+      const input = form.querySelector<HTMLInputElement>(
+        "input[name='password']",
+      )!;
+      try {
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: input.value }),
+        });
+        const data = (await res.json()) as { success: boolean; error?: string };
+        if (data.success) {
+          window.location.href = "/panel";
+        } else {
+          errorEl.textContent = data.error ?? "Błąd logowania";
+          input.value = "";
+          input.focus();
+        }
+      } catch {
+        errorEl.textContent = "Błąd połączenia z serwerem";
+      }
+    });
+  </script>
+
+  <style>
+    .login {
+      margin-block-start: var(--space-xl);
+    }
+
+    .login .section-header {
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      align-items: center;
+      text-align: center;
+    }
+
+    .login .container {
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      align-items: center;
+    }
+
+    .login form {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      margin-inline: auto;
+      gap: var(--space-m);
+    }
+
+    .login .error {
+      text-align: left;
+      color: hsl(0, 60%, 45%);
+    }
+
+    .login input {
+      padding: 12px 16px;
+      border: 1px solid var(--c-font-primary);
+      background-color: var(--c-bg-secondary);
+      font-size: var(--font-size-m);
+      font-family: var(--font-sans-serif);
+      color: var(--c-font-primary);
+    }
+
+    .login input:focus {
+      outline-color: var(--c-font-accent);
+    }
+
+    .login button {
+      background-color: var(--c-bg-dark);
+      border: 1px solid var(--c-font-primary);
+      color: var(--c-font-light);
+      padding: 12px;
+      cursor: pointer;
+    }
+
+    @media (min-width: 640px) {
+      .login form {
+        display: grid;
+        grid-template-columns: 4fr 1fr;
+        max-width: fit-content;
+      }
+
+      .login .error {
+        grid-column: 1 / -1;
+      }
+    }
+  </style>
+</BaseLayout>

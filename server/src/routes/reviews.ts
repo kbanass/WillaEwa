@@ -1,7 +1,7 @@
 import { Router } from "express";
 import type { Request, Response } from "express";
 import rateLimit from "express-rate-limit";
-import { db } from "../db.js";
+import { db, getPublicReviews, getGoogleAverageRating } from "../db.js";
 import logger from "../logger.js";
 import { sendNewReviewNotification } from "../mailer.js";
 import { sendNewReviewNotificationTelegram } from "../telegramTransport.js";
@@ -107,6 +107,13 @@ router.post("/", addReviewLimiter, (req: Request, res: Response) => {
     logger.error("[opinie] Saving review error", error);
     res.status(500).json({ error: "Server Error" });
   }
+});
+
+router.get("/public", (_req: Request, res: Response) => {
+  const reviews = getPublicReviews();
+  const avgRaw = getGoogleAverageRating() ?? 5;
+  const avg = Math.round(avgRaw * 10) / 10;
+  res.json({ reviews, avg });
 });
 
 export default router;

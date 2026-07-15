@@ -1,0 +1,309 @@
+---
+---
+
+<section class="booking">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">kontakt mailowy</span>
+      <h2 class="section-title animate fade-in" id="booking-title">Zapytaj o dostępność</h2>
+      <p class="section-lead animate fade-in" id="booking-lead">
+        Wypełnij formularz, a skontaktujemy się z Tobą w sprawie rezerwacji.
+      </p>
+    </div>
+    <form class="booking__form animate slide-from-left" id="booking-form" novalidate autocomplete="on">
+      <div class="booking__field">
+        <label class="booking__label" for="booking-name"
+          >Imię i nazwisko <span class="booking__required" aria-hidden="true">*</span></label
+        >
+        <input
+          type="text"
+          id="booking-name"
+          name="name"
+          placeholder="Jan Kowalski"
+          autocomplete="section-booking name"
+          required
+        />
+      </div>
+      <div class="booking__row">
+        <div class="booking__field">
+          <label class="booking__label" for="booking-email"
+            >E-mail <span class="booking__required" aria-hidden="true">*</span></label
+          >
+          <input
+            type="email"
+            id="booking-email"
+            name="email"
+            placeholder="jan.kowalski@example.com"
+            autocomplete="section-booking email"
+            required
+          />
+        </div>
+        <div class="booking__field">
+          <label class="booking__label" for="booking-phone"
+            >Telefon <span class="booking__required" aria-hidden="true">*</span></label
+          >
+          <input
+            type="tel"
+            id="booking-phone"
+            name="phone"
+            placeholder="+48 123 456 789"
+            autocomplete="section-booking tel"
+            required
+          />
+        </div>
+      </div>
+      <div class="booking__row">
+        <div class="booking__field">
+          <label class="booking__label" for="booking-date-from"
+            >Przyjazd <span class="booking__required" aria-hidden="true">*</span></label
+          >
+          <input type="date" id="booking-date-from" name="dateFrom" required />
+        </div>
+        <div class="booking__field">
+          <label class="booking__label" for="booking-date-to"
+            >Wyjazd <span class="booking__required" aria-hidden="true">*</span></label
+          >
+          <input type="date" id="booking-date-to" name="dateTo" required />
+        </div>
+      </div>
+      <div class="booking__row">
+        <div class="booking__field">
+          <label class="booking__label" for="booking-adults"
+            >Dorośli <span class="booking__required" aria-hidden="true">*</span></label
+          >
+          <input
+            type="number"
+            id="booking-adults"
+            name="adults"
+            min="1"
+            max="20"
+            value="2"
+            required
+          />
+        </div>
+        <div class="booking__field">
+          <label class="booking__label" for="booking-children"
+            >Dzieci <span class="booking__optional">(wiek, np. 8, 10)</span></label
+          >
+          <input
+            type="text"
+            id="booking-children"
+            name="childrenAges"
+            placeholder="np. 8, 10"
+            autocomplete="off"
+          />
+        </div>
+      </div>
+      <input
+        type="text"
+        name="website"
+        class="booking__honeypot"
+        tabindex="-1"
+        autocomplete="off"
+      />
+      <button type="submit" class="booking__submit">Wyślij zapytanie</button>
+      <p class="booking__error"></p>
+    </form>
+  </div>
+</section>
+
+<script>
+  const INQUIRY_KEY = "inquiry_submitted";
+  const INQUIRY_TTL = 7 * 24 * 60 * 60 * 1000;
+
+  function hasRecentInquiry(): boolean {
+    const ts = localStorage.getItem(INQUIRY_KEY);
+    if (!ts) return false;
+    return Date.now() - Number(ts) < INQUIRY_TTL;
+  }
+
+  function markInquirySubmitted(): void {
+    localStorage.setItem(INQUIRY_KEY, String(Date.now()));
+  }
+
+  const bookingForm = document.getElementById("booking-form") as HTMLFormElement | null;
+  const bookingTitle = document.getElementById("booking-title");
+  const bookingLead = document.getElementById("booking-lead");
+
+  function showBookingSuccess(): void {
+    if (bookingForm) bookingForm.style.display = "none";
+    if (bookingTitle) bookingTitle.textContent = "Dziękujemy za zapytanie!";
+    if (bookingLead)
+      bookingLead.textContent =
+        "Skontaktujemy się z Tobą wkrótce na podany adres e-mail lub numer telefonu.";
+  }
+
+  if (hasRecentInquiry()) showBookingSuccess();
+
+  bookingForm?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const errorEl = bookingForm.querySelector<HTMLParagraphElement>(".booking__error");
+    const submitBtn = bookingForm.querySelector<HTMLButtonElement>('button[type="submit"]');
+    if (!errorEl || !submitBtn) return;
+
+    errorEl.textContent = "";
+    const name = bookingForm.querySelector<HTMLInputElement>('[name="name"]')?.value.trim() ?? "";
+    const email = bookingForm.querySelector<HTMLInputElement>('[name="email"]')?.value.trim() ?? "";
+    const phone = bookingForm.querySelector<HTMLInputElement>('[name="phone"]')?.value.trim() ?? "";
+    const dateFrom = bookingForm.querySelector<HTMLInputElement>('[name="dateFrom"]')?.value ?? "";
+    const dateTo = bookingForm.querySelector<HTMLInputElement>('[name="dateTo"]')?.value ?? "";
+    const adults = bookingForm.querySelector<HTMLInputElement>('[name="adults"]')?.value ?? "2";
+    const childrenAges = bookingForm.querySelector<HTMLInputElement>('[name="childrenAges"]')?.value.trim() ?? "";
+    const website = bookingForm.querySelector<HTMLInputElement>('[name="website"]')?.value ?? "";
+
+    if (!name) { errorEl.textContent = "Podaj imię i nazwisko"; return; }
+    if (!email) { errorEl.textContent = "Podaj adres e-mail"; return; }
+    if (!phone) { errorEl.textContent = "Podaj numer telefonu"; return; }
+    if (!dateFrom || !dateTo) { errorEl.textContent = "Wybierz zakres dat"; return; }
+    if (new Date(dateFrom) >= new Date(dateTo)) {
+      errorEl.textContent = "Data wyjazdu musi być późniejsza niż data przyjazdu";
+      return;
+    }
+
+    submitBtn.disabled = true;
+    try {
+      const res = await fetch("/api/inquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          dateFrom,
+          dateTo,
+          adults: Number(adults),
+          childrenAges: childrenAges || undefined,
+          website,
+        }),
+      });
+      const data = (await res.json()) as { error?: string };
+      if (res.ok) {
+        markInquirySubmitted();
+        showBookingSuccess();
+      } else {
+        errorEl.textContent = data.error ?? "Wystąpił błąd, spróbuj ponownie";
+        submitBtn.disabled = false;
+      }
+    } catch {
+      errorEl.textContent = "Błąd połączenia z serwerem";
+      submitBtn.disabled = false;
+    }
+  });
+</script>
+
+<style>
+  .booking {
+    background-color: var(--c-bg-secondary);
+    border-top: 1px solid var(--c-border-light);
+  }
+
+  .booking .section-header {
+    align-items: center;
+    text-align: center;
+  }
+
+  .booking__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-l);
+    max-width: 560px;
+    margin-inline: auto;
+  }
+
+  .booking__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+    min-width: 0;
+  }
+
+  .booking__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-l);
+  }
+
+  @media (max-width: 480px) {
+    .booking__row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .booking__label {
+    font-size: var(--font-size-s);
+    text-transform: uppercase;
+    color: var(--c-font-secondary);
+    font-weight: var(--weight-semi);
+    letter-spacing: 0.05em;
+  }
+
+  .booking__required {
+    color: var(--c-font-accent);
+  }
+
+  .booking__optional {
+    text-transform: none;
+    font-weight: var(--weight-normal);
+    color: var(--c-font-secondary);
+    opacity: 0.7;
+  }
+
+  .booking__form input[type="text"],
+  .booking__form input[type="email"],
+  .booking__form input[type="tel"],
+  .booking__form input[type="date"],
+  .booking__form input[type="number"] {
+    padding: 12px 16px;
+    line-height: 1.6;
+    min-height: 50px;
+    border: 1px solid var(--c-font-primary);
+    background-color: var(--c-bg-primary);
+    width: 100%;
+    min-width: 0;
+    font-family: var(--font-sans-serif);
+    font-size: var(--font-size-m);
+    color: var(--c-font-primary);
+  }
+
+  .booking__form input[type="date"] {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .booking__form input:focus {
+    outline-color: var(--c-font-accent);
+  }
+
+  .booking__honeypot {
+    display: none;
+  }
+
+  .booking__submit {
+    align-self: flex-end;
+    background-color: var(--c-bg-dark);
+    border: 1px solid var(--c-font-primary);
+    color: var(--c-font-light);
+    padding: 12px 28px;
+    font-size: var(--font-size-m);
+    font-family: var(--font-sans-serif);
+  }
+
+  @media (max-width: 480px) {
+    .booking__submit {
+      width: 100%;
+    }
+  }
+
+  .booking__submit:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .booking__error {
+    color: hsl(0, 60%, 45%);
+    font-size: var(--font-size-s);
+    min-height: 1.2em;
+  }
+</style>

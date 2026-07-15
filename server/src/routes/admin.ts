@@ -4,17 +4,16 @@ import {
   changeReviewsStatuses,
   deletePageReview,
   getAllReviews,
-  getPublicReviews,
   getReviewById,
 } from "../db.js";
 import logger from "../logger.js";
 import { protectedRoute } from "../middleware/auth.js";
+import { triggerRebuild } from "./rebuild.js";
 import {
   Statuses,
   type ReviewStatus,
   type StatusChange,
 } from "../../../shared/types.js";
-import { generateHTMLReviews } from "../generate.js";
 
 const router = Router();
 
@@ -58,9 +57,7 @@ router.post("/change-statuses", protectedRoute, (req, res) => {
       `[admin][change-statuses] ${validChanges.length} reviews statuses changed`,
     );
 
-    const allPublicReviews = getPublicReviews();
-
-    generateHTMLReviews(allPublicReviews);
+    triggerRebuild();
 
     res.json({ success: true, updated: validChanges.length });
   } catch (error) {

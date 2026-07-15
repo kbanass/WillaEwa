@@ -1,0 +1,71 @@
+---
+---
+
+<div class="phone-banner" aria-label="Numer kontaktowy">
+  <div class="phone-banner__content container">
+    <h2 class="phone-banner__title animate fade-in">
+      Masz pytania lub chcesz dokonać rezerwacji?
+    </h2>
+    <p class="phone-banner__lead animate fade-in">
+      Serdecznie zapraszamy do kontaktu telefonicznego
+    </p>
+    <div class="phone-banner__numbers animate stagger">
+      <a class="button-outline" href="tel:+48508273502">508 273 502</a>
+      <a class="button-outline" href="tel:+48511611064">511 611 064</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .phone-banner {
+    background-color: var(--c-bg-dark);
+    color: var(--c-font-light);
+  }
+
+  .phone-banner__content {
+    padding-block: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+    justify-content: center;
+    align-items: center;
+  }
+
+  .phone-banner__title {
+    font-family: var(--font-serif);
+    font-weight: var(--weight-normal);
+    font-size: var(--font-size-l);
+    text-align: center;
+  }
+
+  .phone-banner__lead {
+    font-weight: var(--weight-light);
+    color: var(--c-font-secondary);
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .phone-banner__numbers {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-m);
+  }
+
+  .phone-banner__numbers .button-outline {
+    padding: 8px 16px;
+    font-size: var(--font-size-l);
+    font-weight: var(--weight-light);
+  }
+
+  .phone-banner__numbers .button-outline:hover {
+    background: hsl(from var(--c-font-light) h s l / 0.2);
+  }
+
+  @media (min-width: 780px) {
+    .phone-banner__numbers {
+      flex-direction: row;
+    }
+  }
+</style>

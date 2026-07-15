@@ -17,7 +17,15 @@
   "author": "",
   "license": "ISC",
   "type": "module",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "jose": "^5.9.6"
+  },
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "@cloudflare/workers-types": "^4.20240917.0",
+    "@types/bcryptjs": "^2.4.6",
+    "concurrently": "^9.2.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
   }
 }
