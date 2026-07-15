@@ -112,7 +112,7 @@ const slides: HeroSlide[] = (hero?.images ?? [])
     const INTERVAL = 5000;
 
     function shouldLoadFull(): boolean {
-      return window.innerWidth * window.devicePixelRatio > 1920;
+      return window.innerWidth * window.devicePixelRatio > 1200;
     }
 
     function loadMid(slide: HTMLElement): Promise<void> {
