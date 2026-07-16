@@ -76,4 +76,5 @@ a {
 html {
   scroll-behavior: smooth;
   font-size: 100%;
+  overflow-x: clip;
 }
