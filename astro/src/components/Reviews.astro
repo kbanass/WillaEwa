@@ -21,8 +21,8 @@ let avgRating = 5.0;
 
 try {
   const data = await sanityClient.fetch(publicReviewsQuery);
-  reviews = data?.reviews ?? [];
-  const googleRatings: number[] = data?.googleRatings ?? [];
+  reviews = (data?.reviews ?? []) as Review[];
+  const googleRatings: number[] = (data?.googleRatings ?? []).filter((r): r is number => r !== null);
   if (googleRatings.length > 0) {
     const sum = googleRatings.reduce((a: number, b: number) => a + b, 0);
     avgRating = Math.round((sum / googleRatings.length) * 10) / 10;

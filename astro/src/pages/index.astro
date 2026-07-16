@@ -13,10 +13,10 @@ import { sanityClient, heroImagesQuery, urlFor } from "../lib/sanity";
 const hero = await sanityClient.fetch(heroImagesQuery);
 const firstHeroImg = (hero?.images ?? []).find((img: any) => img?.image);
 const firstSmallUrl: string | null = firstHeroImg
-  ? urlFor(firstHeroImg.image).width(800).quality(75).auto("format").url()
+  ? urlFor(firstHeroImg.image!).width(800).quality(75).auto("format").url()
   : null;
 const firstMidUrl: string | null = firstHeroImg
-  ? urlFor(firstHeroImg.image).width(1200).quality(75).auto("format").url()
+  ? urlFor(firstHeroImg.image!).width(1200).quality(75).auto("format").url()
   : null;
 const firstSrcset: string | null =
   firstSmallUrl && firstMidUrl ? `${firstSmallUrl} 800w, ${firstMidUrl} 1200w` : null;
