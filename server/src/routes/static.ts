@@ -2,18 +2,17 @@ import { Router } from "express";
 import { protectedRoute } from "../middleware/auth.js";
 import path from "path";
 
-const CLIENT_DIR =
-  process.env.CLIENT_DIR ?? path.join(process.cwd(), "../client/dist");
+const STATIC_DIR =
+  process.env.STATIC_DIR ?? path.join(process.cwd(), "../astro/dist");
 
 const router = Router();
 
 router.get("/panel", protectedRoute, (_req, res) => {
-  res.sendFile(path.join(CLIENT_DIR, "admin.html"));
+  res.sendFile(path.join(STATIC_DIR, "panel.html"));
 });
 
 router.get("/login", (_req, res) => {
-  res.sendFile(path.join(CLIENT_DIR, "login.html"));
+  res.sendFile(path.join(STATIC_DIR, "login.html"));
 });
-
 
 export default router;
