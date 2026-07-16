@@ -147,6 +147,8 @@ const slides: HeroSlide[] = (hero?.images ?? [])
         const preload = new Image();
         preload.onload = () => {
           if (midLoaded.has(slide)) {
+            img.removeAttribute('srcset');
+            img.removeAttribute('sizes');
             img.src = src;
             fullLoaded.add(slide);
           }
