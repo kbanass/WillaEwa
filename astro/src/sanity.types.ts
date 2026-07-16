@@ -15,6 +15,23 @@
 export declare const internalGroqTypeReferenceTo: unique symbol;
 
 // Source: schema.json
+export type Review = {
+  _id: string;
+  _type: "review";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  author?: string;
+  quote?: string;
+  rating?: number;
+  source?: string;
+  status?: string;
+  googleReviewId?: string;
+  email?: string;
+  time?: number;
+  createdAt?: number;
+};
+
 export type SanityImageAssetReference = {
   _ref: string;
   _type: "reference";
@@ -268,6 +285,7 @@ export type Geopoint = {
 };
 
 export type AllSanitySchemaTypes =
+  | Review
   | SanityImageAssetReference
   | HeroImages
   | SanityImageCrop
@@ -288,19 +306,21 @@ export type AllSanitySchemaTypes =
 
 // Source: ../../astro/src/lib/sanity.ts
 // Variable: heroImagesQuery
-// Query: *[_type == "heroImages"][0]{    images[]{ _key, alt, image, ... }  }
+// Query: *[_type == "heroImages"][0]{    images[]{      _key,      alt,      image,      "lqip": image.asset->metadata.lqip,      "width": image.asset->metadata.dimensions.width,      "height": image.asset->metadata.dimensions.height,    }  }
 export type HeroImagesQueryResult = {
   images: Array<{
     _key: string;
-    alt?: string;
-    image?: {
+    alt: string | null;
+    image: {
       asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
       _type: "image";
-    };
-    _type: "heroImage";
+    } | null;
+    lqip: string | null;
+    width: number | null;
+    height: number | null;
   }> | null;
 } | null;
 
@@ -430,15 +450,31 @@ export type SiteSettingsQueryResult = {
   address?: string;
 } | null;
 
+// Source: ../../astro/src/lib/sanity.ts
+// Variable: publicReviewsQuery
+// Query: {    "reviews": *[_type == "review" && status == "accepted"] | order(time desc) {      "id": _id,      author,      quote,      rating,      source,      time,    },    "googleRatings": *[_type == "review" && status == "accepted" && source == "google"].rating  }
+export type PublicReviewsQueryResult = {
+  reviews: Array<{
+    id: string;
+    author: string | null;
+    quote: string | null;
+    rating: number | null;
+    source: string | null;
+    time: number | null;
+  }>;
+  googleRatings: Array<number | null>;
+};
+
 // Query TypeMap
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    '\n  *[_type == "heroImages"][0]{\n    images[]{ _key, alt, image, ... }\n  }\n': HeroImagesQueryResult;
+    '\n  *[_type == "heroImages"][0]{\n    images[]{\n      _key,\n      alt,\n      image,\n      "lqip": image.asset->metadata.lqip,\n      "width": image.asset->metadata.dimensions.width,\n      "height": image.asset->metadata.dimensions.height,\n    }\n  }\n': HeroImagesQueryResult;
     '\n  *[_type == "gallery"][0]{\n    images[]{\n      _key,\n      image,\n      alt,\n      caption,\n      captionUrl,\n      "lqip": image.asset->metadata.lqip,\n      "width": image.asset->metadata.dimensions.width,\n      "height": image.asset->metadata.dimensions.height,\n    }\n  }\n': GalleryQueryResult;
     '\n  *[_type == "roomsSlider"][0]{\n    images[]{\n      _key,\n      image,\n      alt,\n      "lqip": image.asset->metadata.lqip,\n      "width": image.asset->metadata.dimensions.width,\n      "height": image.asset->metadata.dimensions.height,\n    }\n  }\n': RoomsSliderQueryResult;
     '\n  *[_type == "article"] | order(publishedAt desc){\n    _id,\n    title,\n    slug,\n    coverImage,\n    excerpt,\n    publishedAt,\n  }\n': ArticlesQueryResult;
     '\n  *[_type == "article" && slug.current == $slug][0]{\n    _id,\n    title,\n    slug,\n    coverImage,\n    excerpt,\n    publishedAt,\n    body,\n  }\n': ArticleBySlugQueryResult;
     '\n  *[_type == "siteSettings"][0]\n': SiteSettingsQueryResult;
+    '\n  {\n    "reviews": *[_type == "review" && status == "accepted"] | order(time desc) {\n      "id": _id,\n      author,\n      quote,\n      rating,\n      source,\n      time,\n    },\n    "googleRatings": *[_type == "review" && status == "accepted" && source == "google"].rating\n  }\n': PublicReviewsQueryResult;
   }
 }

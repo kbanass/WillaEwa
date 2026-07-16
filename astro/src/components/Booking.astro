@@ -1,19 +1,29 @@
 ---
+
 ---
 
 <section class="booking">
   <div class="container">
     <div class="section-header">
       <span class="section-label">kontakt mailowy</span>
-      <h2 class="section-title animate fade-in" id="booking-title">Zapytaj o dostępność</h2>
+      <h2 class="section-title animate fade-in" id="booking-title">
+        Zapytaj o dostępność
+      </h2>
       <p class="section-lead animate fade-in" id="booking-lead">
         Wypełnij formularz, a skontaktujemy się z Tobą w sprawie rezerwacji.
       </p>
     </div>
-    <form class="booking__form animate slide-from-left" id="booking-form" novalidate autocomplete="on">
+    <form
+      class="booking__form animate slide-from-left"
+      id="booking-form"
+      novalidate
+      autocomplete="on"
+    >
       <div class="booking__field">
         <label class="booking__label" for="booking-name"
-          >Imię i nazwisko <span class="booking__required" aria-hidden="true">*</span></label
+          >Imię i nazwisko <span class="booking__required" aria-hidden="true"
+            >*</span
+          ></label
         >
         <input
           type="text"
@@ -27,7 +37,8 @@
       <div class="booking__row">
         <div class="booking__field">
           <label class="booking__label" for="booking-email"
-            >E-mail <span class="booking__required" aria-hidden="true">*</span></label
+            >E-mail <span class="booking__required" aria-hidden="true">*</span
+            ></label
           >
           <input
             type="email"
@@ -40,7 +51,8 @@
         </div>
         <div class="booking__field">
           <label class="booking__label" for="booking-phone"
-            >Telefon <span class="booking__required" aria-hidden="true">*</span></label
+            >Telefon <span class="booking__required" aria-hidden="true">*</span
+            ></label
           >
           <input
             type="tel"
@@ -55,13 +67,15 @@
       <div class="booking__row">
         <div class="booking__field">
           <label class="booking__label" for="booking-date-from"
-            >Przyjazd <span class="booking__required" aria-hidden="true">*</span></label
+            >Przyjazd <span class="booking__required" aria-hidden="true">*</span
+            ></label
           >
           <input type="date" id="booking-date-from" name="dateFrom" required />
         </div>
         <div class="booking__field">
           <label class="booking__label" for="booking-date-to"
-            >Wyjazd <span class="booking__required" aria-hidden="true">*</span></label
+            >Wyjazd <span class="booking__required" aria-hidden="true">*</span
+            ></label
           >
           <input type="date" id="booking-date-to" name="dateTo" required />
         </div>
@@ -69,7 +83,8 @@
       <div class="booking__row">
         <div class="booking__field">
           <label class="booking__label" for="booking-adults"
-            >Dorośli <span class="booking__required" aria-hidden="true">*</span></label
+            >Dorośli <span class="booking__required" aria-hidden="true">*</span
+            ></label
           >
           <input
             type="number"
@@ -77,13 +92,14 @@
             name="adults"
             min="1"
             max="20"
-            value="2"
+            placeholder="2"
             required
           />
         </div>
         <div class="booking__field">
           <label class="booking__label" for="booking-children"
-            >Dzieci <span class="booking__optional">(wiek, np. 8, 10)</span></label
+            >Dzieci <span class="booking__optional">(wiek, np. 8, 10)</span
+            ></label
           >
           <input
             type="text"
@@ -121,7 +137,9 @@
     localStorage.setItem(INQUIRY_KEY, String(Date.now()));
   }
 
-  const bookingForm = document.getElementById("booking-form") as HTMLFormElement | null;
+  const bookingForm = document.getElementById(
+    "booking-form",
+  ) as HTMLFormElement | null;
   const bookingTitle = document.getElementById("booking-title");
   const bookingLead = document.getElementById("booking-lead");
 
@@ -137,26 +155,62 @@
 
   bookingForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const errorEl = bookingForm.querySelector<HTMLParagraphElement>(".booking__error");
-    const submitBtn = bookingForm.querySelector<HTMLButtonElement>('button[type="submit"]');
+    const errorEl =
+      bookingForm.querySelector<HTMLParagraphElement>(".booking__error");
+    const submitBtn = bookingForm.querySelector<HTMLButtonElement>(
+      'button[type="submit"]',
+    );
     if (!errorEl || !submitBtn) return;
 
     errorEl.textContent = "";
-    const name = bookingForm.querySelector<HTMLInputElement>('[name="name"]')?.value.trim() ?? "";
-    const email = bookingForm.querySelector<HTMLInputElement>('[name="email"]')?.value.trim() ?? "";
-    const phone = bookingForm.querySelector<HTMLInputElement>('[name="phone"]')?.value.trim() ?? "";
-    const dateFrom = bookingForm.querySelector<HTMLInputElement>('[name="dateFrom"]')?.value ?? "";
-    const dateTo = bookingForm.querySelector<HTMLInputElement>('[name="dateTo"]')?.value ?? "";
-    const adults = bookingForm.querySelector<HTMLInputElement>('[name="adults"]')?.value ?? "2";
-    const childrenAges = bookingForm.querySelector<HTMLInputElement>('[name="childrenAges"]')?.value.trim() ?? "";
-    const website = bookingForm.querySelector<HTMLInputElement>('[name="website"]')?.value ?? "";
+    const name =
+      bookingForm
+        .querySelector<HTMLInputElement>('[name="name"]')
+        ?.value.trim() ?? "";
+    const email =
+      bookingForm
+        .querySelector<HTMLInputElement>('[name="email"]')
+        ?.value.trim() ?? "";
+    const phone =
+      bookingForm
+        .querySelector<HTMLInputElement>('[name="phone"]')
+        ?.value.trim() ?? "";
+    const dateFrom =
+      bookingForm.querySelector<HTMLInputElement>('[name="dateFrom"]')?.value ??
+      "";
+    const dateTo =
+      bookingForm.querySelector<HTMLInputElement>('[name="dateTo"]')?.value ??
+      "";
+    const adults =
+      bookingForm.querySelector<HTMLInputElement>('[name="adults"]')?.value ??
+      "2";
+    const childrenAges =
+      bookingForm
+        .querySelector<HTMLInputElement>('[name="childrenAges"]')
+        ?.value.trim() ?? "";
+    const website =
+      bookingForm.querySelector<HTMLInputElement>('[name="website"]')?.value ??
+      "";
 
-    if (!name) { errorEl.textContent = "Podaj imię i nazwisko"; return; }
-    if (!email) { errorEl.textContent = "Podaj adres e-mail"; return; }
-    if (!phone) { errorEl.textContent = "Podaj numer telefonu"; return; }
-    if (!dateFrom || !dateTo) { errorEl.textContent = "Wybierz zakres dat"; return; }
+    if (!name) {
+      errorEl.textContent = "Podaj imię i nazwisko";
+      return;
+    }
+    if (!email) {
+      errorEl.textContent = "Podaj adres e-mail";
+      return;
+    }
+    if (!phone) {
+      errorEl.textContent = "Podaj numer telefonu";
+      return;
+    }
+    if (!dateFrom || !dateTo) {
+      errorEl.textContent = "Wybierz zakres dat";
+      return;
+    }
     if (new Date(dateFrom) >= new Date(dateTo)) {
-      errorEl.textContent = "Data wyjazdu musi być późniejsza niż data przyjazdu";
+      errorEl.textContent =
+        "Data wyjazdu musi być późniejsza niż data przyjazdu";
       return;
     }
 

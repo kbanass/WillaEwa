@@ -71,9 +71,10 @@ const [addressStreet, ...addressRest] = address
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <script is:inline>
-      var l=document.createElement("link");
-      l.rel="stylesheet";
-      l.href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap";
+      var l = document.createElement("link");
+      l.rel = "stylesheet";
+      l.href =
+        "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap";
       document.head.appendChild(l);
     </script>
     <noscript>
@@ -104,7 +105,7 @@ const [addressStreet, ...addressRest] = address
             }
           });
         },
-        { threshold: 0.9 },
+        { threshold: 0.6 },
       );
 
       // Stagger containers can be taller than the viewport, so a 40% threshold
