@@ -119,13 +119,13 @@ const [addressStreet, ...addressRest] = address
                 entry.target.children,
               ) as HTMLElement[];
               children.forEach((child, i) => {
-                child.style.transitionDelay = `${i * 120}ms`;
+                child.style.transitionDelay = `${i * 150 + 200}ms`;
               });
               entry.target.classList.add("visible");
               staggerObserver.unobserve(entry.target);
               // Remove inline delays after last item finishes so hover
               // transitions on those elements are not delayed afterward.
-              const cleanupMs = (children.length - 1) * 120 + 900;
+              const cleanupMs = (children.length - 1) * 150 + 200 + 900;
               setTimeout(() => {
                 children.forEach((child) => (child.style.transitionDelay = ""));
               }, cleanupMs);
