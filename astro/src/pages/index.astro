@@ -19,21 +19,25 @@ const firstMidUrl: string | null = firstHeroImg
   ? urlFor(firstHeroImg.image!).width(1200).quality(75).auto("format").url()
   : null;
 const firstSrcset: string | null =
-  firstSmallUrl && firstMidUrl ? `${firstSmallUrl} 800w, ${firstMidUrl} 1200w` : null;
+  firstSmallUrl && firstMidUrl
+    ? `${firstSmallUrl} 800w, ${firstMidUrl} 1200w`
+    : null;
 ---
 
 <BaseLayout title="Willa Ewa — Krynica Morska">
   <Fragment slot="head">
-    {firstMidUrl && (
-      <link
-        rel="preload"
-        as="image"
-        href={firstMidUrl}
-        imagesrcset={firstSrcset ?? undefined}
-        imagesizes={firstSrcset ? "100vw" : undefined}
-        fetchpriority="high"
-      />
-    )}
+    {
+      firstMidUrl && (
+        <link
+          rel="preload"
+          as="image"
+          href={firstMidUrl}
+          imagesrcset={firstSrcset ?? undefined}
+          imagesizes={firstSrcset ? "100vw" : undefined}
+          fetchpriority="high"
+        />
+      )
+    }
   </Fragment>
   <Hero hero={hero} />
   <Rooms />
