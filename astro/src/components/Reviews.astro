@@ -268,7 +268,10 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
         <a href="/opinie">Dodaj opinię</a>
       </button>
       <div class="reviews__navigation">
-        <button class="button-outline reviews__nav-btn--prev">
+        <button
+          class="button-outline reviews__nav-btn--prev"
+          aria-label="Poprzednia opinia"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -287,7 +290,10 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
           </svg>
         </button>
         <div class="reviews__navigation-page"></div>
-        <button class="button-outline reviews__nav-btn--next">
+        <button
+          class="button-outline reviews__nav-btn--next"
+          aria-label="Następna opinia"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
