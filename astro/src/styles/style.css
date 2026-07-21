@@ -117,7 +117,7 @@ footer {
   opacity: 1;
   transform: scale(1);
   filter: blur(0);
-  transition-delay: 180ms;
+  transition-delay: 120ms;
 }
 
 .slide-from-left {
@@ -135,7 +135,7 @@ footer {
   opacity: 1;
   transform: translateX(0) scale(1);
   filter: blur(0);
-  transition-delay: 180ms;
+  transition-delay: 120ms;
 }
 
 .slide-from-right {
@@ -153,7 +153,7 @@ footer {
   opacity: 1;
   transform: translateX(0) scale(1);
   filter: blur(0);
-  transition-delay: 180ms;
+  transition-delay: 120ms;
 }
 
 .stagger > * {
@@ -166,7 +166,7 @@ footer {
     transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
     filter 0.8s ease;
 
-  transition-delay: calc(var(--stagger) * 150ms);
+  transition-delay: calc(var(--stagger) * 80ms);
 }
 
 .stagger.visible > * {

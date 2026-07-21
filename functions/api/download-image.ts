@@ -12,15 +12,19 @@ export const onRequestGet = async (context: {
     return Response.json({ error: 'Nieprawidłowy URL' }, { status: 400 })
   }
 
-  const res = await fetch(url)
+  const res = await fetch(url, {
+    headers: { Accept: 'image/jpeg,image/png,image/webp,image/*,*/*;q=0.8' },
+  })
   if (!res.ok) {
     return Response.json({ error: 'Błąd pobierania obrazu' }, { status: 502 })
   }
 
-  const contentType = res.headers.get('content-type') ?? 'image/jpeg'
+  const rawType = res.headers.get('content-type') ?? ''
+  const contentType = rawType.startsWith('image/') ? rawType : 'image/jpeg'
   let ext = 'jpg'
   if (contentType.includes('webp')) ext = 'webp'
   else if (contentType.includes('png')) ext = 'png'
+  else if (contentType.includes('avif')) ext = 'avif'
 
   const headers = new Headers()
   headers.set('Content-Type', contentType)

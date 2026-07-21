@@ -1,4 +1,9 @@
 ---
+import { getSiteSettings } from "../lib/sanity";
+
+const settings = await getSiteSettings().catch(() => null);
+const phone1 = settings?.contactPhone ?? "+48 508 273 502";
+const phone2 = settings?.contactPhone2 ?? "+48 511 611 064";
 ---
 
 <div class="phone-banner" aria-label="Numer kontaktowy">
@@ -10,8 +15,8 @@
       Serdecznie zapraszamy do kontaktu telefonicznego
     </p>
     <div class="phone-banner__numbers animate stagger">
-      <a class="button-outline" href="tel:+48508273502">508 273 502</a>
-      <a class="button-outline" href="tel:+48511611064">511 611 064</a>
+      <a class="button-outline" href={`tel:${phone1.replace(/\s/g, "")}`}>{phone1}</a>
+      <a class="button-outline" href={`tel:${phone2.replace(/\s/g, "")}`}>{phone2}</a>
     </div>
   </div>
 </div>

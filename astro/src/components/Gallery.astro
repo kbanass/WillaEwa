@@ -99,10 +99,23 @@ const preview = items.slice(0, 5);
 
   const DOWNLOAD_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/><path d="M7 11l5 5l5 -5"/><path d="M12 4l0 12"/></svg>`;
 
-  function downloadImage(src: string): void {
+  async function downloadImage(src: string): Promise<void> {
+    const filename = `willa-ewa-${Date.now()}.jpg`;
+    try {
+      const response = await fetch(`/api/download-image?url=${encodeURIComponent(src)}`);
+      const blob = await response.blob();
+      const file = new File([blob], filename, { type: blob.type || "image/jpeg" });
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file] });
+        return;
+      }
+    } catch (err) {
+      if ((err as Error).name === "AbortError") return;
+    }
+    // fallback dla desktop
     const a = document.createElement("a");
     a.href = `/api/download-image?url=${encodeURIComponent(src)}`;
-    a.download = `willa-ewa-${Date.now()}.jpg`;
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
