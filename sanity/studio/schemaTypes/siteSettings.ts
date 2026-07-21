@@ -42,12 +42,6 @@ export const siteSettingsType = defineType({
       type: 'string',
 
     }),
-    defineField({
-      name: 'address',
-      title: 'Adres',
-      type: 'string',
-
-    }),
   ],
   preview: {
     prepare() {

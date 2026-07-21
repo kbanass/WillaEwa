@@ -30,10 +30,6 @@ const {
 
 const settings = await getSiteSettings().catch(() => null);
 const phone = settings?.contactPhone ?? "+48 508 273 502";
-const address = settings?.address ?? "ul. Szałwiowa 1, 82-120 Krynica Morska";
-const [addressStreet, ...addressRest] = address
-  .split(",")
-  .map((s: string) => s.trim());
 ---
 
 <!doctype html>
@@ -208,8 +204,8 @@ const [addressStreet, ...addressRest] = address
           <div class="footer__address">
             <p class="footer__address-title">Adres</p>
             <address>
-              {addressStreet}<br />
-              {addressRest.join(", ")}
+              ul. Szałwiowa 1<br />
+              82-120 Krynica Morska
             </address>
           </div>
           <div class="footer__contact">
