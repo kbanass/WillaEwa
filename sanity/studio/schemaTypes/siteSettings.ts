@@ -32,7 +32,13 @@ export const siteSettingsType = defineType({
     }),
     defineField({
       name: 'contactPhone',
-      title: 'Telefon kontaktowy',
+      title: 'Telefon kontaktowy (główny)',
+      type: 'string',
+
+    }),
+    defineField({
+      name: 'contactPhone2',
+      title: 'Telefon kontaktowy (drugi)',
       type: 'string',
 
     }),
