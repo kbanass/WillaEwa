@@ -22,7 +22,9 @@ let avgRating = 5.0;
 try {
   const data = await sanityClient.fetch(publicReviewsQuery);
   reviews = (data?.reviews ?? []) as Review[];
-  const googleRatings: number[] = (data?.googleRatings ?? []).filter((r): r is number => r !== null);
+  const googleRatings: number[] = (data?.googleRatings ?? []).filter(
+    (r): r is number => r !== null,
+  );
   if (googleRatings.length > 0) {
     const sum = googleRatings.reduce((a: number, b: number) => a + b, 0);
     avgRating = Math.round((sum / googleRatings.length) * 10) / 10;
@@ -166,7 +168,7 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
       </div>
     </div>
 
-    <div class="reviews__grid animate stagger">
+    <div class="reviews__grid">
       {
         reviews.map((review) => {
           const stars = buildStars(review.rating);
@@ -176,7 +178,6 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
               class={`review-card${isLong ? " long-quote" : ""}`}
               data-id={review.id}
             >
-
               <div class="review-card__source">
                 <div class="review-card__source-logo-wrap">
                   {review.source === "google" ? (

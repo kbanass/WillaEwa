@@ -34,5 +34,8 @@
     "printWidth": 100,
     "semi": false,
     "singleQuote": true
-  }
+  },
+  "description": "Congratulations, you have now installed the Sanity Content Studio, an open-source real-time content editing environment connected to the Sanity backend.",
+  "author": "",
+  "type": "commonjs"
 }
