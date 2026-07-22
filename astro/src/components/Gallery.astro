@@ -93,18 +93,20 @@ const preview = items.slice(0, 5);
   };
 
   const dataEl = document.getElementById("gallery-data");
-  const allItems: GalleryItem[] = JSON.parse(
-    dataEl?.dataset.items ?? "[]",
-  );
+  const allItems: GalleryItem[] = JSON.parse(dataEl?.dataset.items ?? "[]");
 
   const DOWNLOAD_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/><path d="M7 11l5 5l5 -5"/><path d="M12 4l0 12"/></svg>`;
 
   async function downloadImage(src: string): Promise<void> {
     const filename = `willa-ewa-${Date.now()}.jpg`;
     try {
-      const response = await fetch(`/api/download-image?url=${encodeURIComponent(src)}`);
+      const response = await fetch(
+        `/api/download-image?url=${encodeURIComponent(src)}`,
+      );
       const blob = await response.blob();
-      const file = new File([blob], filename, { type: blob.type || "image/jpeg" });
+      const file = new File([blob], filename, {
+        type: blob.type || "image/jpeg",
+      });
       if (navigator.canShare?.({ files: [file] })) {
         await navigator.share({ files: [file] });
         return;
@@ -176,16 +178,47 @@ const preview = items.slice(0, 5);
           isButton: false,
           appendTo: "wrapper",
           onInit(el) {
-            function positionCaption() {
-              const imgEl = pswp!.currSlide?.content?.element as HTMLElement | null;
-              if (!imgEl || el.style.display === "none") return;
+            // Bumped on every slide change to invalidate any in-flight
+            // positioning attempts from the slide the user has since left —
+            // without this, a late rAF/timeout callback from slide N could
+            // still be running once slide N+2 is showing and would apply
+            // stale positioning (or reveal the caption) for the wrong photo.
+            let generation = 0;
+
+            function applyPosition(imgEl: HTMLElement): boolean {
               const imgRect = imgEl.getBoundingClientRect();
-              const clampedTop = Math.min(imgRect.bottom + 10, window.innerHeight - 80);
+              if (imgRect.height === 0) return false;
+              const clampedTop = Math.min(
+                imgRect.bottom + 10,
+                window.innerHeight - 80,
+              );
               el.style.bottom = "auto";
               el.style.top = `${clampedTop}px`;
+              el.style.opacity = "1";
+              return true;
+            }
+
+            function positionCaption() {
+              if (el.style.display === "none") return;
+              const imgEl = pswp!.currSlide?.content
+                ?.element as HTMLElement | null;
+              if (!imgEl) return;
+              applyPosition(imgEl);
+            }
+
+            function pollUntilPositioned(myGeneration: number, framesLeft: number) {
+              if (myGeneration !== generation) return; // slide changed again, abandon
+              const imgEl = pswp!.currSlide?.content
+                ?.element as HTMLElement | null;
+              if (imgEl && applyPosition(imgEl)) return;
+              if (framesLeft <= 0) return;
+              requestAnimationFrame(() =>
+                pollUntilPositioned(myGeneration, framesLeft - 1),
+              );
             }
 
             function updateCaption() {
+              const myGeneration = ++generation;
               const data = dataSource[pswp!.currIndex];
               if (!data) return;
               if (data.caption) {
@@ -193,7 +226,11 @@ const preview = items.slice(0, 5);
                   ? `<a href="${data.captionUrl}" target="_blank" rel="noopener noreferrer">${data.caption}</a>`
                   : data.caption;
                 el.style.display = "";
-                setTimeout(positionCaption, 80);
+                el.style.opacity = "0";
+                // Poll for up to ~1s (60 frames) — robust against slow
+                // image loads, mid-transition layout, and recycled slide
+                // elements, since each attempt re-reads the live current slide.
+                pollUntilPositioned(myGeneration, 60);
               } else {
                 el.style.display = "none";
               }
@@ -298,11 +335,13 @@ const preview = items.slice(0, 5);
     top: 0; /* overridden by JS to sit just below the image */
     left: 50%;
     transform: translateX(-50%);
+    opacity: 0; /* revealed by JS once positioned to avoid a top-of-screen flash */
+    transition: opacity 120ms ease;
     font-family: var(--font-serif);
     font-size: var(--font-size-m);
     color: #fff;
     text-align: center;
-    max-width: min(80vw, 480px);
+    max-width: min(90vw, 720px);
     background: rgba(0, 0, 0, 0.45);
     padding: 6px 14px;
     pointer-events: none;
