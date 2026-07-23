@@ -291,6 +291,22 @@ footer {
 
 /* ─── PhotoSwipe download button loading state ──────────────────── */
 
+/*
+ * The default PhotoSwipe button has no centering of its own (just a
+ * display:block box), so a plain inline svg lands wherever inline layout
+ * happens to put it — not necessarily true-center. Pin the icon to the same
+ * center point the spinner below uses, so swapping between the two doesn't
+ * shift anything.
+ */
+.pswp__button--download-button svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+}
+
 .pswp__button--download-button.is-loading {
   pointer-events: none;
 }
