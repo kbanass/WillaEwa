@@ -107,17 +107,9 @@ const photos = (roomsData?.images ?? [])
   import Swiper from "swiper";
   import { Navigation, Pagination, Keyboard, A11y } from "swiper/modules";
   import PhotoSwipe from "photoswipe";
+  import { downloadImage } from "../lib/download";
 
   const DOWNLOAD_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/><path d="M7 11l5 5l5 -5"/><path d="M12 4l0 12"/></svg>`;
-
-  function downloadImage(src: string): void {
-    const a = document.createElement("a");
-    a.href = `/api/download-image?url=${encodeURIComponent(src)}`;
-    a.download = `willa-ewa-${Date.now()}.jpg`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  }
 
   const swiperEl = document.querySelector<HTMLElement>(".rooms-swiper");
   if (swiperEl) {
@@ -167,7 +159,6 @@ const photos = (roomsData?.images ?? [])
         counter: true,
         arrowKeys: true,
         preload: [1, 1],
-        padding: { top: 48, bottom: 80, left: 48, right: 48 },
         imageClickAction: "zoom",
         tapAction: "zoom",
         bgClickAction: "close",
@@ -184,9 +175,15 @@ const photos = (roomsData?.images ?? [])
           appendTo: "bar",
           html: DOWNLOAD_ICON,
           title: "Pobierz zdjęcie",
-          onClick: () => {
+          onClick: (_event, buttonEl) => {
             const data = dataSource[pswp!.currIndex];
-            if (data) downloadImage(data.src);
+            if (data) {
+              downloadImage(
+                `/api/download-image?url=${encodeURIComponent(data.src)}`,
+                `willa-ewa-${Date.now()}.jpg`,
+                buttonEl,
+              );
+            }
           },
         });
       });

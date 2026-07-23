@@ -288,3 +288,33 @@ footer {
   border-top: 1px solid var(--c-font-primary);
   padding-top: var(--space-l);
 }
+
+/* ─── PhotoSwipe download button loading state ──────────────────── */
+
+.pswp__button--download-button.is-loading {
+  pointer-events: none;
+}
+
+.pswp__button--download-button.is-loading svg {
+  opacity: 0;
+}
+
+.pswp__button--download-button.is-loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: pswp-download-spin 0.6s linear infinite;
+}
+
+@keyframes pswp-download-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

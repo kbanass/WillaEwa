@@ -78,6 +78,7 @@ const preview = items.slice(0, 5);
 
 <script>
   import PhotoSwipe from "photoswipe";
+  import { downloadImage } from "../lib/download";
 
   type GalleryItem = {
     _key: string;
@@ -96,32 +97,6 @@ const preview = items.slice(0, 5);
   const allItems: GalleryItem[] = JSON.parse(dataEl?.dataset.items ?? "[]");
 
   const DOWNLOAD_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/><path d="M7 11l5 5l5 -5"/><path d="M12 4l0 12"/></svg>`;
-
-  async function downloadImage(src: string): Promise<void> {
-    const filename = `willa-ewa-${Date.now()}.jpg`;
-    try {
-      const response = await fetch(
-        `/api/download-image?url=${encodeURIComponent(src)}`,
-      );
-      const blob = await response.blob();
-      const file = new File([blob], filename, {
-        type: blob.type || "image/jpeg",
-      });
-      if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file] });
-        return;
-      }
-    } catch (err) {
-      if ((err as Error).name === "AbortError") return;
-    }
-    // fallback dla desktop
-    const a = document.createElement("a");
-    a.href = `/api/download-image?url=${encodeURIComponent(src)}`;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  }
 
   if (allItems.length > 0) {
     const dataSource = allItems.map((img) => ({
@@ -149,7 +124,6 @@ const preview = items.slice(0, 5);
         counter: true,
         arrowKeys: true,
         preload: [1, 1],
-        padding: { top: 48, bottom: 80, left: 48, right: 48 },
         imageClickAction: "zoom",
         tapAction: "zoom",
         bgClickAction: "close",
@@ -166,78 +140,40 @@ const preview = items.slice(0, 5);
           appendTo: "bar",
           html: DOWNLOAD_ICON,
           title: "Pobierz zdjęcie",
-          onClick: () => {
+          onClick: (_event, buttonEl) => {
             const data = dataSource[pswp!.currIndex];
-            if (data) downloadImage(data.src);
+            if (data) {
+              downloadImage(
+                `/api/download-image?url=${encodeURIComponent(data.src)}`,
+                `willa-ewa-${Date.now()}.jpg`,
+                buttonEl,
+              );
+            }
           },
         });
 
+        // Caption element positioned via CSS (bottom-anchored, see
+        // .pswp__gallery-caption below) rather than measured against the
+        // image — matches the pattern from the PhotoSwipe docs
+        // (https://photoswipe.com/caption/) and avoids depending on the
+        // image's layout timing.
         pswp!.ui!.registerElement({
           name: "gallery-caption",
           order: 9,
           isButton: false,
-          appendTo: "wrapper",
+          appendTo: "root",
           onInit(el) {
-            // Bumped on every slide change to invalidate any in-flight
-            // positioning attempts from the slide the user has since left —
-            // without this, a late rAF/timeout callback from slide N could
-            // still be running once slide N+2 is showing and would apply
-            // stale positioning (or reveal the caption) for the wrong photo.
-            let generation = 0;
-
-            function applyPosition(imgEl: HTMLElement): boolean {
-              const imgRect = imgEl.getBoundingClientRect();
-              if (imgRect.height === 0) return false;
-              const clampedTop = Math.min(
-                imgRect.bottom + 10,
-                window.innerHeight - 80,
-              );
-              el.style.bottom = "auto";
-              el.style.top = `${clampedTop}px`;
-              el.style.opacity = "1";
-              return true;
-            }
-
-            function positionCaption() {
-              if (el.style.display === "none") return;
-              const imgEl = pswp!.currSlide?.content
-                ?.element as HTMLElement | null;
-              if (!imgEl) return;
-              applyPosition(imgEl);
-            }
-
-            function pollUntilPositioned(myGeneration: number, framesLeft: number) {
-              if (myGeneration !== generation) return; // slide changed again, abandon
-              const imgEl = pswp!.currSlide?.content
-                ?.element as HTMLElement | null;
-              if (imgEl && applyPosition(imgEl)) return;
-              if (framesLeft <= 0) return;
-              requestAnimationFrame(() =>
-                pollUntilPositioned(myGeneration, framesLeft - 1),
-              );
-            }
-
-            function updateCaption() {
-              const myGeneration = ++generation;
+            pswp!.on("change", () => {
               const data = dataSource[pswp!.currIndex];
-              if (!data) return;
-              if (data.caption) {
+              if (data?.caption) {
                 el.innerHTML = data.captionUrl
                   ? `<a href="${data.captionUrl}" target="_blank" rel="noopener noreferrer">${data.caption}</a>`
                   : data.caption;
                 el.style.display = "";
-                el.style.opacity = "0";
-                // Poll for up to ~1s (60 frames) — robust against slow
-                // image loads, mid-transition layout, and recycled slide
-                // elements, since each attempt re-reads the live current slide.
-                pollUntilPositioned(myGeneration, 60);
               } else {
                 el.style.display = "none";
               }
-            }
-
-            pswp!.on("change", updateCaption);
-            pswp!.on("zoomPanUpdate", positionCaption);
+            });
           },
         });
       });
@@ -332,11 +268,9 @@ const preview = items.slice(0, 5);
 
   :global(.pswp__gallery-caption) {
     position: absolute;
-    top: 0; /* overridden by JS to sit just below the image */
     left: 50%;
+    bottom: 16px;
     transform: translateX(-50%);
-    opacity: 0; /* revealed by JS once positioned to avoid a top-of-screen flash */
-    transition: opacity 120ms ease;
     font-family: var(--font-serif);
     font-size: var(--font-size-m);
     color: #fff;

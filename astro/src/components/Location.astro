@@ -316,17 +316,9 @@ const CAR_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
 
 <script>
   import PhotoSwipe from "photoswipe";
+  import { downloadImage } from "../lib/download";
 
   const DOWNLOAD_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/><path d="M7 11l5 5l5 -5"/><path d="M12 4l0 12"/></svg>`;
-
-  function downloadImage(src: string): void {
-    const a = document.createElement("a");
-    a.href = src; // same-origin: a[download] works directly without proxy
-    a.download = `willa-ewa-mapa-${Date.now()}.png`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  }
 
   document
     .querySelectorAll<HTMLImageElement>(".location__map-image")
@@ -346,7 +338,6 @@ const CAR_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
           close: true,
           counter: false,
           arrowKeys: false,
-          padding: { top: 48, bottom: 48, left: 48, right: 48 },
         });
         pswp.on("uiRegister", () => {
           pswp.ui!.registerElement({
@@ -356,7 +347,8 @@ const CAR_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
             appendTo: "bar",
             html: DOWNLOAD_ICON,
             title: "Pobierz mapę",
-            onClick: () => downloadImage(src),
+            onClick: (_event, buttonEl) =>
+              downloadImage(src, `willa-ewa-mapa-${Date.now()}.png`, buttonEl),
           });
         });
         pswp.init();

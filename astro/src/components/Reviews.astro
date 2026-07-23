@@ -225,7 +225,7 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
                   „{review.quote}"
                 </blockquote>
               )}
-              <button class="review-toggle">Czytaj więcej</button>
+              {isLong && <button class="review-toggle">Czytaj więcej</button>}
               <div class="review-card__author">
                 <div class="review-card__avatar" aria-hidden="true">
                   {getInitials(review.author)}
@@ -590,10 +590,6 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
 
   .review-card.long-quote .expanded {
     max-height: 1000px;
-  }
-
-  .review-card:not(.long-quote) .review-toggle {
-    display: none;
   }
 
   .review-card.long-quote .review-toggle {
