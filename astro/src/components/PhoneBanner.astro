@@ -8,15 +8,19 @@ const phone2 = settings?.contactPhone2 ?? "+48 511 611 064";
 
 <div class="phone-banner" aria-label="Numer kontaktowy">
   <div class="phone-banner__content container">
-    <h2 class="phone-banner__title animate fade-in">
+    <h2 class="phone-banner__title">
       Masz pytania lub chcesz dokonać rezerwacji?
     </h2>
     <p class="phone-banner__lead animate fade-in">
       Serdecznie zapraszamy do kontaktu telefonicznego
     </p>
-    <div class="phone-banner__numbers animate stagger">
-      <a class="button-outline" href={`tel:${phone1.replace(/\s/g, "")}`}>{phone1}</a>
-      <a class="button-outline" href={`tel:${phone2.replace(/\s/g, "")}`}>{phone2}</a>
+    <div class="phone-banner__numbers">
+      <a class="button-outline" href={`tel:${phone1.replace(/\s/g, "")}`}
+        >{phone1}</a
+      >
+      <a class="button-outline" href={`tel:${phone2.replace(/\s/g, "")}`}
+        >{phone2}</a
+      >
     </div>
   </div>
 </div>

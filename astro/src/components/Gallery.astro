@@ -117,13 +117,18 @@ const preview = items.slice(0, 5);
       pswp = new PhotoSwipe({
         dataSource,
         index: startIndex,
-        bgOpacity: 0.88,
+        bgOpacity: 0.38,
         wheelToZoom: true,
         zoom: true,
         close: true,
         counter: true,
         arrowKeys: true,
         preload: [1, 1],
+        // top must clear the 60px button bar, or wide/landscape images end
+        // up rendered underneath it (buttons overlapping the photo, shadow
+        // hidden behind them) — only narrow/portrait slides had visible
+        // clearance there before.
+        padding: { top: 76, bottom: 16, left: 16, right: 16 },
         imageClickAction: "zoom",
         tapAction: "zoom",
         bgClickAction: "close",
@@ -170,6 +175,10 @@ const preview = items.slice(0, 5);
                   ? `<a href="${data.captionUrl}" target="_blank" rel="noopener noreferrer">${data.caption}</a>`
                   : data.caption;
                 el.style.display = "";
+                // Restart the reveal animation on every slide change.
+                el.style.animation = "none";
+                void el.offsetWidth;
+                el.style.animation = "pswp-caption-reveal 0.6s ease forwards";
               } else {
                 el.style.display = "none";
               }
@@ -266,6 +275,10 @@ const preview = items.slice(0, 5);
     padding: 8px 16px;
   }
 
+  :global(.pswp) {
+    --pswp-bg: hsl(30, 40%, 95%);
+  }
+
   :global(.pswp__gallery-caption) {
     position: absolute;
     left: 50%;
@@ -275,11 +288,22 @@ const preview = items.slice(0, 5);
     font-size: var(--font-size-m);
     color: #fff;
     text-align: center;
-    max-width: min(90vw, 70ch);
+    max-width: min(90vw, 75ch);
+    width: max-content;
     background: rgba(0, 0, 0, 0.85);
     padding: 12px 16px;
     pointer-events: none;
     z-index: 100;
+    clip-path: inset(0 0 0 0);
+  }
+
+  @keyframes pswp-caption-reveal {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
   }
 
   :global(.pswp__gallery-caption a) {

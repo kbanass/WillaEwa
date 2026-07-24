@@ -169,7 +169,7 @@ import "../styles/style-opinie.css";
             <p class="footer__brand-desc">
               Obiekt noclegowy na Mierzei Wiślanej. Stworzony dla tych, którzy
               szukają ciszy, przestrzeni i prawdziwego wypoczynku z dala od
-              zgiełku.
+              zgiełku
             </p>
           </div>
           <div class="footer__address">
@@ -199,7 +199,9 @@ import "../styles/style-opinie.css";
 
   const form = document.querySelector<HTMLFormElement>(".add-review__form")!;
   const errorEl = form.querySelector<HTMLParagraphElement>(".error")!;
-  const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+  const submitBtn = form.querySelector<HTMLButtonElement>(
+    'button[type="submit"]',
+  )!;
 
   function hasSubmitted() {
     if (localStorage.getItem(SUBMITTED_KEY) === "1") return true;
@@ -215,9 +217,13 @@ import "../styles/style-opinie.css";
   }
 
   function showSentState() {
-    form.querySelectorAll<HTMLInputElement | HTMLButtonElement>("input, textarea, button").forEach((el) => {
-      el.disabled = true;
-    });
+    form
+      .querySelectorAll<HTMLInputElement | HTMLButtonElement>(
+        "input, textarea, button",
+      )
+      .forEach((el) => {
+        el.disabled = true;
+      });
     submitBtn.textContent = "Wysłano";
     form.classList.add("add-review__form--sent");
     const sectionHeader = document.querySelector(".add-review .section-header");
@@ -236,11 +242,21 @@ import "../styles/style-opinie.css";
     e.preventDefault();
     errorEl.textContent = "";
 
-    const author = form.querySelector<HTMLInputElement>('input[name="author"]')!.value.trim();
-    const content = form.querySelector<HTMLTextAreaElement>('textarea[name="content"]')!.value.trim();
-    const rating = form.querySelector<HTMLInputElement>('input[name="rating"]:checked')?.value;
-    const email = form.querySelector<HTMLInputElement>('input[name="email"]')!.value.trim();
-    const website = form.querySelector<HTMLInputElement>('input[name="website"]')!.value;
+    const author = form
+      .querySelector<HTMLInputElement>('input[name="author"]')!
+      .value.trim();
+    const content = form
+      .querySelector<HTMLTextAreaElement>('textarea[name="content"]')!
+      .value.trim();
+    const rating = form.querySelector<HTMLInputElement>(
+      'input[name="rating"]:checked',
+    )?.value;
+    const email = form
+      .querySelector<HTMLInputElement>('input[name="email"]')!
+      .value.trim();
+    const website = form.querySelector<HTMLInputElement>(
+      'input[name="website"]',
+    )!.value;
 
     if (!rating) {
       errorEl.textContent = "Wybierz ocenę";

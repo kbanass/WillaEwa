@@ -408,7 +408,7 @@
         },
         "optional": true
       },
-      "address": {
+      "contactPhone2": {
         "type": "objectAttribute",
         "value": {
           "type": "string"

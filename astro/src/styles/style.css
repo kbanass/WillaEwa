@@ -289,6 +289,144 @@ footer {
   padding-top: var(--space-l);
 }
 
+/* ─── PhotoSwipe backdrop blur ───────────────────────────────────── */
+
+/*
+ * Must go on .pswp itself, not .pswp__bg: .pswp establishes its own
+ * stacking context (position: fixed + z-index + transform), which becomes
+ * the backdrop root for anything inside it — so backdrop-filter on the
+ * child .pswp__bg can only "see" other content painted inside .pswp, never
+ * the actual page behind the modal. Applied to .pswp, there's no
+ * transformed/isolated ancestor above it (body/html), so it correctly
+ * reaches the page content.
+ */
+.pswp {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* ─── PhotoSwipe buttons: dark icons + border (previous site's look) ─── */
+
+/*
+ * !important is load-bearing here: photoswipe.css is imported inside each
+ * component (Gallery/Rooms/Location), which ends up bundled *after* this
+ * global stylesheet, so at equal specificity the library's own
+ * `.pswp { --pswp-icon-color: #fff }` / `.pswp__button { border: 0 }`
+ * (including its :hover/:active/:focus variants) would otherwise win back.
+ */
+/*
+ * --pswp-icon-color-secondary isn't just a duller variant of the main
+ * color: the zoom icon's "+"/"-" bars are filled with `currentColor`, which
+ * resolves to this variable (see `.pswp__icn { color: var(--pswp-icon-color-
+ * secondary) }` in photoswipe.css) — while the magnifying-glass ring itself
+ * uses --pswp-icon-color as its fill. Setting both to the same dark value
+ * made the bars invisible against the ring. Keep it light so the bars read
+ * against the now-dark ring, mirroring the original (white ring / dark
+ * bars) relationship, just inverted.
+ */
+.pswp {
+  --pswp-modal-dark: hsl(30, 20%, 12%);
+  --pswp-icon-color: var(--pswp-modal-dark) !important;
+  --pswp-icon-color-secondary: var(--c-bg-primary) !important;
+  --pswp-icon-stroke-color: var(--pswp-modal-dark) !important;
+}
+
+.pswp__button {
+  border: 1px solid var(--pswp-modal-dark) !important;
+  width: 44px !important;
+  height: 44px !important;
+  aspect-ratio: 1 / 1 !important;
+}
+
+@media (hover: hover) {
+  .pswp__button:hover {
+    background: hsl(from var(--c-font-light) h s l / 0.2);
+  }
+}
+
+/*
+ * Built-in icons (.pswp__icn) are absolutely positioned with fixed offsets
+ * sized for the library's default 50x60 button — those offsets (and the
+ * arrow icon's own 60x60 override, which is larger than our 44x44 button)
+ * no longer line up now that buttons are a fixed 44x44 square. Re-center
+ * every icon at 24px, matching the custom download-button icon.
+ */
+.pswp__icn {
+  top: 50% !important;
+  left: 50% !important;
+  right: auto !important;
+  width: 24px !important;
+  height: 24px !important;
+  margin: -12px 0 0 -12px !important;
+}
+
+/* Spacing between top-bar buttons and away from the screen edge — the
+   library packs them flush against each other and the corner by default. */
+.pswp__top-bar {
+  gap: 8px;
+  padding-block-start: 12px;
+  padding-inline-end: 12px;
+}
+
+/* Same for the prev/next arrows, which default to sitting flush at 0px. */
+.pswp__button--arrow--prev {
+  left: 16px !important;
+}
+
+.pswp__button--arrow--next {
+  right: 16px !important;
+}
+
+/*
+ * The library vertically centers arrows via `top: 50%; margin-top: -50px`,
+ * which assumes its own default 100px button height. Now that .pswp__button
+ * is forced to 44px, that fixed -50px offset overshoots and the arrows sit
+ * noticeably above center. Center with a transform instead, which stays
+ * correct regardless of the button's actual height.
+ */
+.pswp__button--arrow {
+  top: 50% !important;
+  margin-top: 0 !important;
+  transform: translateY(-50%) !important;
+}
+
+/*
+ * The chevron glyph itself (path "M29 43l-3 3-16-16 16-16 3 3-13 13 13 13z",
+ * in a 0-0-60-60 viewBox) isn't centered in its own viewBox — its bounding
+ * box is x:[10,29], so its visual center sits at x=19.5 vs the viewBox's
+ * center at x=30. Centering the icon *box* (as .pswp__icn does above)
+ * therefore leaves the visible chevron sitting ~4px left of true center.
+ * Nudge it back. The "next" arrow reuses the same glyph mirrored via
+ * scale(-1,1), so its correction has to happen before the mirroring.
+ */
+.pswp__button--arrow--prev .pswp__icn {
+  transform: translateX(4px);
+}
+
+.pswp__button--arrow--next .pswp__icn {
+  transform: scale(-1, 1) translateX(4px) !important;
+}
+
+/* The counter inherits --pswp-icon-color/-secondary for its text-shadow,
+   which made sense against the library's default black backdrop but just
+   looks like a smudge against ours — drop it. */
+.pswp__counter {
+  text-shadow: none !important;
+}
+
+/* ─── PhotoSwipe image: small margin + shadow ───────────────────── */
+
+/*
+ * .pswp__item clips overflow, and the slide area only reserves 16px of
+ * padding around the image — a shadow with more bleed than that (blur +
+ * offset) gets cut off by that clip whenever the image nearly fills the
+ * available height, which reads as the shadow randomly popping in/out as
+ * slides/zoom change the image's rendered size. Keep total bleed under 16px.
+ */
+.pswp__img {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
 /* ─── PhotoSwipe download button loading state ──────────────────── */
 
 /*
@@ -302,9 +440,9 @@ footer {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 20px;
-  height: 20px;
-  margin: -10px 0 0 -10px;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
 }
 
 .pswp__button--download-button.is-loading {
@@ -320,9 +458,9 @@ footer {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 16px;
-  height: 16px;
-  margin: -8px 0 0 -8px;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
   border: 2px solid currentColor;
   border-top-color: transparent;
   border-radius: 50%;

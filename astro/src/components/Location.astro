@@ -52,18 +52,18 @@ const CAR_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
     </div>
     <div class="location-content">
       <img
-        class="location__map-image mobile animate fade-in"
+        class="location__map-image mobile"
         src="/map-mobile1.png"
         loading="lazy"
         alt="Mapa okolicy Willi Ewa"
       />
       <img
-        class="location__map-image desktop animate fade-in"
+        class="location__map-image desktop"
         src="/map-desktop1.png"
         loading="lazy"
         alt="Mapa okolicy Willi Ewa"
       />
-      <ul class="map-legend animate stagger">
+      <ul class="map-legend">
         <li class="map-legend__item map-legend__item--home">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -189,7 +189,7 @@ const CAR_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
               fill="#211A12"></path></svg
           >
           <span class="map-legend__label"
-            ><a href="https://maps.app.goo.gl/4fawEyuJL5CYXcjL7">POLO market</a
+            ><a href="https://maps.app.goo.gl/4fawEyuJL5CYXcjL7">POLOmarket</a
             ></span
           >
           <span class="map-legend__time"
@@ -361,6 +361,9 @@ const CAR_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
           close: true,
           counter: false,
           arrowKeys: false,
+          // top must clear the 60px button bar, or wide/landscape images end
+          // up rendered underneath it (buttons overlapping the photo).
+          padding: { top: 76, bottom: 16, left: 16, right: 16 },
         });
         pswp.on("uiRegister", () => {
           pswp.ui!.registerElement({

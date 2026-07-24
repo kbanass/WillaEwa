@@ -159,6 +159,9 @@ const photos = (roomsData?.images ?? [])
         counter: true,
         arrowKeys: true,
         preload: [1, 1],
+        // top must clear the 60px button bar, or wide/landscape images end
+        // up rendered underneath it (buttons overlapping the photo).
+        padding: { top: 76, bottom: 16, left: 16, right: 16 },
         imageClickAction: "zoom",
         tapAction: "zoom",
         bgClickAction: "close",

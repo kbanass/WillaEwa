@@ -86,7 +86,7 @@ export type SiteSettings = {
   priceTo?: number;
   contactEmail?: string;
   contactPhone?: string;
-  address?: string;
+  contactPhone2?: string;
 };
 
 export type Article = {
@@ -447,7 +447,7 @@ export type SiteSettingsQueryResult = {
   priceTo?: number;
   contactEmail?: string;
   contactPhone?: string;
-  address?: string;
+  contactPhone2?: string;
 } | null;
 
 // Source: ../../astro/src/lib/sanity.ts

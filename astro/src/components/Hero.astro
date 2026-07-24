@@ -28,8 +28,16 @@ const slides: HeroSlide[] = (hero?.images ?? [])
   .filter((img) => img.image)
   .map((img): HeroSlide => {
     const origWidth: number = img.width ?? 1920;
-    const smallUrl: string = urlFor(img.image).width(800).quality(75).auto("format").url();
-    const midUrl: string = urlFor(img.image).width(1200).quality(75).auto("format").url();
+    const smallUrl: string = urlFor(img.image)
+      .width(800)
+      .quality(75)
+      .auto("format")
+      .url();
+    const midUrl: string = urlFor(img.image)
+      .width(1200)
+      .quality(75)
+      .auto("format")
+      .url();
     const fullUrl: string | null =
       origWidth > 1200
         ? urlFor(img.image)
@@ -49,26 +57,34 @@ const slides: HeroSlide[] = (hero?.images ?? [])
 ---
 
 <section class="hero" aria-label="Widoki z Krynicy Morskiej">
-  {slides.map((slide, i) => (
-    <div
-      class={`hero__slide${i === 0 ? " hero__slide--active" : ""}`}
-      style={slide.lqip ? `background-image: url('${slide.lqip}')` : undefined}
-      aria-hidden="true"
-    >
-      <img
-        class="hero__slide-img"
-        src={i === 0 ? slide.midUrl : undefined}
-        srcset={i === 0 ? `${slide.smallUrl} 800w, ${slide.midUrl} 1200w` : undefined}
-        sizes={i === 0 ? "100vw" : undefined}
-        data-mid={slide.midUrl}
-        data-full={slide.fullUrl ?? undefined}
-        alt=""
-        loading={i === 0 ? "eager" : "lazy"}
-        fetchpriority={i === 0 ? "high" : undefined}
-        decoding="async"
-      />
-    </div>
-  ))}
+  {
+    slides.map((slide, i) => (
+      <div
+        class={`hero__slide${i === 0 ? " hero__slide--active" : ""}`}
+        style={
+          slide.lqip ? `background-image: url('${slide.lqip}')` : undefined
+        }
+        aria-hidden="true"
+      >
+        <img
+          class="hero__slide-img"
+          src={i === 0 ? slide.midUrl : undefined}
+          srcset={
+            i === 0
+              ? `${slide.smallUrl} 800w, ${slide.midUrl} 1200w`
+              : undefined
+          }
+          sizes={i === 0 ? "100vw" : undefined}
+          data-mid={slide.midUrl}
+          data-full={slide.fullUrl ?? undefined}
+          alt=""
+          loading={i === 0 ? "eager" : "lazy"}
+          fetchpriority={i === 0 ? "high" : undefined}
+          decoding="async"
+        />
+      </div>
+    ))
+  }
   <div class="hero__overlay" aria-hidden="true"></div>
   <div class="hero__content container">
     <h1 class="hero__content-header animate slide-from-left">
@@ -147,8 +163,8 @@ const slides: HeroSlide[] = (hero?.images ?? [])
         const preload = new Image();
         preload.onload = () => {
           if (midLoaded.has(slide)) {
-            img.removeAttribute('srcset');
-            img.removeAttribute('sizes');
+            img.removeAttribute("srcset");
+            img.removeAttribute("sizes");
             img.src = src;
             fullLoaded.add(slide);
           }
@@ -301,7 +317,7 @@ const slides: HeroSlide[] = (hero?.images ?? [])
   @keyframes pulseLocation {
     0%,
     100% {
-      opacity: 0.2;
+      opacity: 0.6;
     }
     50% {
       opacity: 1;
