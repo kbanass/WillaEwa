@@ -6,6 +6,10 @@ interface Env {
   SANITY_API_TOKEN: string
   TELEGRAM_BOT_TOKEN?: string
   TELEGRAM_CHAT_ID?: string
+  RESEND_API_KEY?: string
+  MAIL_FROM?: string
+  OWNER_EMAIL?: string
+  DOMAIN_NAME?: string
 }
 
 const SANITY_API_VERSION = '2024-01-01'
@@ -53,8 +57,11 @@ async function googleReviewExists(env: Env, googleReviewId: string): Promise<boo
 }
 
 async function sendTelegram(env: Env, text: string): Promise<void> {
-  if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_CHAT_ID) return
-  await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+  if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_CHAT_ID) {
+    console.error('[cron] Telegram not configured, skipping notification')
+    return
+  }
+  const res = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -63,6 +70,45 @@ async function sendTelegram(env: Env, text: string): Promise<void> {
       parse_mode: 'HTML',
     }),
   })
+  if (!res.ok) {
+    console.error(`[cron] Telegram notification failed (${res.status}): ${await res.text()}`)
+  }
+}
+
+// Mirrors sendNewReviewNotification in functions/_shared/notifications.ts,
+// so a Google-sourced review reads the same as one submitted on the site.
+async function sendNewReviewEmail(
+  env: Env,
+  review: { author: string; rating: number; quote: string },
+): Promise<void> {
+  if (!env.RESEND_API_KEY || !env.MAIL_FROM || !env.OWNER_EMAIL) {
+    console.error('[cron] Email not configured, skipping notification')
+    return
+  }
+  const domain = env.DOMAIN_NAME ?? 'willaewanadmorzem.pl'
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: env.MAIL_FROM,
+      to: env.OWNER_EMAIL,
+      subject: `Nowa opinia – ${review.author}`,
+      html: `
+        <table>
+          <tr><td>Autor</td><td><strong>${review.author}</strong></td></tr>
+          <tr><td>Ocena</td><td>${review.rating} / 5</td></tr>
+          <tr><td>Treść</td><td>${review.quote}</td></tr>
+        </table>
+        <p><a href="https://${domain}/panel">Przejdź do panelu</a></p>
+      `,
+    }),
+  })
+  if (!res.ok) {
+    console.error(`[cron] Email notification failed (${res.status}): ${await res.text()}`)
+  }
 }
 
 interface SerpApiReview {
@@ -89,6 +135,7 @@ async function syncGoogleReviews(env: Env): Promise<number> {
       engine: 'google_maps_reviews',
       place_id: env.GOOGLE_PLACE_ID,
       hl: 'pl',
+      sort_by: 'newestFirst',
       api_key: env.SERPAPI_API_KEY,
     })
     if (nextPageToken) params.set('next_page_token', nextPageToken)
@@ -110,11 +157,12 @@ async function syncGoogleReviews(env: Env): Promise<number> {
 
       allExist = false
       const now = Math.floor(Date.now() / 1000)
+      const quote = r.snippet ?? r.extracted_snippet?.original ?? ''
       await sanityCreate(env, {
         _type: 'review',
         googleReviewId: r.review_id,
         author: r.user.name,
-        quote: r.snippet ?? r.extracted_snippet?.original ?? '',
+        quote,
         rating: r.rating,
         time: Math.floor(new Date(r.iso_date).getTime() / 1000),
         source: 'google',
@@ -122,6 +170,7 @@ async function syncGoogleReviews(env: Env): Promise<number> {
         createdAt: now,
       })
       savedCount++
+      await sendNewReviewEmail(env, { author: r.user.name, rating: r.rating, quote })
     }
 
     nextPageToken = data.serpapi_pagination?.next_page_token
@@ -132,18 +181,22 @@ async function syncGoogleReviews(env: Env): Promise<number> {
   return savedCount
 }
 
+async function runSync(env: Env): Promise<void> {
+  console.log('[cron] Starting Google Reviews sync')
+  try {
+    const count = await syncGoogleReviews(env)
+    console.log(`[cron] Saved ${count} new reviews`)
+    if (count > 0) {
+      await sendTelegram(env, `<b>Google Reviews sync</b>\nDodano ${count} nowych opinii (oczekują na moderację)`)
+    }
+  } catch (err) {
+    console.error('[cron] Sync failed:', err)
+    await sendTelegram(env, `<b>⚠️ Google Reviews sync — błąd</b>\n${String(err)}`)
+  }
+}
+
 export default {
   async scheduled(_event: ScheduledEvent, env: Env, _ctx: ExecutionContext): Promise<void> {
-    console.log('[cron] Starting Google Reviews sync')
-    try {
-      const count = await syncGoogleReviews(env)
-      console.log(`[cron] Saved ${count} new reviews`)
-      if (count > 0) {
-        await sendTelegram(env, `<b>Google Reviews sync</b>\nDodano ${count} nowych opinii (oczekują na moderację)`)
-      }
-    } catch (err) {
-      console.error('[cron] Sync failed:', err)
-      await sendTelegram(env, `<b>⚠️ Google Reviews sync — błąd</b>\n${String(err)}`)
-    }
+    await runSync(env)
   },
 }
