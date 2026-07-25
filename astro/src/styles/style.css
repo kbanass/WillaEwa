@@ -289,41 +289,6 @@ footer {
   padding-top: var(--space-l);
 }
 
-/* ─── PhotoSwipe backdrop blur ───────────────────────────────────── */
-
-/*
- * Must go on .pswp itself, not .pswp__bg: .pswp establishes its own
- * stacking context (position: fixed + z-index + transform), which becomes
- * the backdrop root for anything inside it — so backdrop-filter on the
- * child .pswp__bg can only "see" other content painted inside .pswp, never
- * the actual page behind the modal. Applied to .pswp, there's no
- * transformed/isolated ancestor above it (body/html), so it correctly
- * reaches the page content.
- */
-.pswp {
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-/* ─── PhotoSwipe buttons: dark icons + border (previous site's look) ─── */
-
-/*
- * !important is load-bearing here: photoswipe.css is imported inside each
- * component (Gallery/Rooms/Location), which ends up bundled *after* this
- * global stylesheet, so at equal specificity the library's own
- * `.pswp { --pswp-icon-color: #fff }` / `.pswp__button { border: 0 }`
- * (including its :hover/:active/:focus variants) would otherwise win back.
- */
-/*
- * --pswp-icon-color-secondary isn't just a duller variant of the main
- * color: the zoom icon's "+"/"-" bars are filled with `currentColor`, which
- * resolves to this variable (see `.pswp__icn { color: var(--pswp-icon-color-
- * secondary) }` in photoswipe.css) — while the magnifying-glass ring itself
- * uses --pswp-icon-color as its fill. Setting both to the same dark value
- * made the bars invisible against the ring. Keep it light so the bars read
- * against the now-dark ring, mirroring the original (white ring / dark
- * bars) relationship, just inverted.
- */
 .pswp {
   --pswp-modal-dark: hsl(30, 20%, 12%);
   --pswp-icon-color: var(--pswp-modal-dark) !important;
@@ -344,13 +309,6 @@ footer {
   }
 }
 
-/*
- * Built-in icons (.pswp__icn) are absolutely positioned with fixed offsets
- * sized for the library's default 50x60 button — those offsets (and the
- * arrow icon's own 60x60 override, which is larger than our 44x44 button)
- * no longer line up now that buttons are a fixed 44x44 square. Re-center
- * every icon at 24px, matching the custom download-button icon.
- */
 .pswp__icn {
   top: 50% !important;
   left: 50% !important;
