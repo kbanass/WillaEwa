@@ -297,6 +297,20 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       });
     }
 
+    // Reviews are rendered via innerHTML below, and author/quote for
+    // source: "page" reviews come straight from the public, unauthenticated
+    // add-review form (only length/URL-checked, not HTML-checked) — escape
+    // before interpolating so a malicious submission can't run script in
+    // this authenticated admin session.
+    function escapeHtml(str: string): string {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
     function getInitials(author: string): string {
       return author
         .split(" ")
@@ -481,10 +495,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           <h3>Czy na pewno chcesz usunąć tę opinię?</h3>
           <div class="delete-confirm-details">
             <table>
-              <tr><td>Autor</td><td><strong>${review.author}</strong></td></tr>
+              <tr><td>Autor</td><td><strong>${escapeHtml(review.author)}</strong></td></tr>
               <tr><td>Ocena</td><td><div class="stars">${renderStars(review.rating)}</div></td></tr>
               <tr><td>Data</td><td>${formatDate(review.time)}</td></tr>
-              <tr><td>Treść</td><td class="delete-confirm-details__quote">${review.quote}</td></tr>
+              <tr><td>Treść</td><td class="delete-confirm-details__quote">${escapeHtml(review.quote)}</td></tr>
             </table>
           </div>
           <p class="delete-confirm-warning">Tej operacji nie można cofnąć.</p>
@@ -541,13 +555,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             </div>
             <div class="review-card__stars">${renderStars(review.rating)}</div>
           </div>
-          ${review.quote ? `<blockquote class="review-card__quote">„${review.quote}"</blockquote>` : ""}
+          ${review.quote ? `<blockquote class="review-card__quote">„${escapeHtml(review.quote)}"</blockquote>` : ""}
           <button class="review-toggle">Czytaj więcej</button>
           <div class="review-card__bottom">
             <div class="review-card__author">
-              <div class="review-card__avatar" aria-hidden="true">${getInitials(review.author)}</div>
+              <div class="review-card__avatar" aria-hidden="true">${escapeHtml(getInitials(review.author))}</div>
               <div>
-                <p class="review-card__name">${review.author}</p>
+                <p class="review-card__name">${escapeHtml(review.author)}</p>
                 <p class="review-card__date">${formatDate(review.time)}</p>
               </div>
             </div>

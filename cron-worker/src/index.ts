@@ -14,6 +14,15 @@ interface Env {
 
 const SANITY_API_VERSION = '2024-01-01'
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 async function sanityQuery<T>(
   env: Env,
   groq: string,
@@ -98,9 +107,9 @@ async function sendNewReviewEmail(
       subject: `Nowa opinia – ${review.author}`,
       html: `
         <table>
-          <tr><td>Autor</td><td><strong>${review.author}</strong></td></tr>
+          <tr><td>Autor</td><td><strong>${escapeHtml(review.author)}</strong></td></tr>
           <tr><td>Ocena</td><td>${review.rating} / 5</td></tr>
-          <tr><td>Treść</td><td>${review.quote}</td></tr>
+          <tr><td>Treść</td><td>${escapeHtml(review.quote)}</td></tr>
         </table>
         <p><a href="https://${domain}/panel">Przejdź do panelu</a></p>
       `,

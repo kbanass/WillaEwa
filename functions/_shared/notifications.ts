@@ -2,6 +2,19 @@ import type { Env } from './env'
 
 const isProd = true // always treat CF as production
 
+// Notification bodies below interpolate user-submitted fields (review
+// author/quote, inquiry name/dates) straight from public, unauthenticated
+// forms — escape before building the HTML email so a crafted submission
+// can't inject markup into it.
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 // ── Email ─────────────────────────────────────────────────────────────────────
 
 export async function sendEmail(
@@ -34,9 +47,9 @@ export async function sendNewReviewNotification(
     subject: `Nowa opinia – ${review.author}`,
     html: `
       <table>
-        <tr><td>Autor</td><td><strong>${review.author}</strong></td></tr>
+        <tr><td>Autor</td><td><strong>${escapeHtml(review.author)}</strong></td></tr>
         <tr><td>Ocena</td><td>${review.rating} / 5</td></tr>
-        <tr><td>Treść</td><td>${review.quote}</td></tr>
+        <tr><td>Treść</td><td>${escapeHtml(review.quote)}</td></tr>
       </table>
       <p><a href="https://${domain}/panel">Przejdź do panelu</a></p>
     `,
@@ -60,13 +73,13 @@ export async function sendInquiryNotification(
     subject: `Zapytanie o dostępność – ${data.name} (${data.dateFrom} → ${data.dateTo})`,
     html: `
       <table>
-        <tr><td>Imię i nazwisko</td><td><strong>${data.name}</strong></td></tr>
-        <tr><td>E-mail</td><td>${data.email}</td></tr>
-        <tr><td>Telefon</td><td>${data.phone}</td></tr>
-        <tr><td>Od</td><td>${data.dateFrom}</td></tr>
-        <tr><td>Do</td><td>${data.dateTo}</td></tr>
+        <tr><td>Imię i nazwisko</td><td><strong>${escapeHtml(data.name)}</strong></td></tr>
+        <tr><td>E-mail</td><td>${escapeHtml(data.email)}</td></tr>
+        <tr><td>Telefon</td><td>${escapeHtml(data.phone)}</td></tr>
+        <tr><td>Od</td><td>${escapeHtml(data.dateFrom)}</td></tr>
+        <tr><td>Do</td><td>${escapeHtml(data.dateTo)}</td></tr>
         <tr><td>Dorośli</td><td>${data.adults}</td></tr>
-        ${data.childrenAges ? `<tr><td>Dzieci (wiek)</td><td>${data.childrenAges}</td></tr>` : ''}
+        ${data.childrenAges ? `<tr><td>Dzieci (wiek)</td><td>${escapeHtml(data.childrenAges)}</td></tr>` : ''}
       </table>
     `,
   })
