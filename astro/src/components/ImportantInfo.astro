@@ -1,0 +1,172 @@
+---
+import { getImportantInfo, urlFor } from "../lib/sanity";
+
+const info = await getImportantInfo();
+const rawItems = (info?.items ?? []).filter((item) => item.icon && item.label);
+
+// Icons are admin-uploaded SVGs in Sanity. Fetch the raw markup at build
+// time and inline it (rather than <img src=...>) so it's a real SVG in the
+// DOM — sizeable/colorable via CSS (currentColor) instead of an opaque
+// external image.
+function sanitizeSvg(svg: string): string {
+  return svg
+    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/\son\w+\s*=\s*"[^"]*"/gi, "")
+    .replace(/\son\w+\s*=\s*'[^']*'/gi, "");
+}
+
+// We force width/height to 24px in CSS regardless of the uploaded file's
+// own dimensions (e.g. an icon exported at 400x400). That only scales the
+// artwork down correctly if the <svg> has a viewBox — without one, the
+// browser has no coordinate mapping to scale by and just clips to the
+// top-left corner instead. Backfill a viewBox from width/height when it's
+// missing, so a large, viewBox-less upload still shrinks instead of
+// clipping.
+function ensureViewBox(svg: string): string {
+  return svg.replace(/<svg\b([^>]*)>/i, (tag, attrs: string) => {
+    if (/\bviewBox\s*=/i.test(attrs)) return tag;
+    const w = attrs.match(/\bwidth\s*=\s*["']?([\d.]+)/i)?.[1];
+    const h = attrs.match(/\bheight\s*=\s*["']?([\d.]+)/i)?.[1];
+    if (!w || !h) return tag;
+    return `<svg${attrs} viewBox="0 0 ${w} ${h}">`;
+  });
+}
+
+const items = await Promise.all(
+  rawItems.map(async (item) => {
+    let iconSvg = "";
+    try {
+      const res = await fetch(urlFor(item.icon!).url());
+      const text = res.ok ? await res.text() : "";
+      if (text.includes("<svg")) iconSvg = ensureViewBox(sanitizeSvg(text));
+    } catch {
+      // build-time fetch failed — render the row without an icon
+    }
+    return { ...item, iconSvg };
+  }),
+);
+---
+
+{
+  items.length > 0 && (
+    <section class="important-info">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">Informacje praktyczne</span>
+          <h2 class="section-title">Dobrze wiedzieć przed przyjazdem</h2>
+          <p class="section-lead">
+            Kilka szczegółów, które pomogą Państwu zaplanować pobyt w Willi Ewa.
+          </p>
+        </div>
+        <ul class="important-info__list animate stagger">
+          {items.map((item) => (
+            <li class="important-info__item">
+              <span class="important-info__icon" set:html={item.iconSvg} />
+              <span class="important-info__label">{item.label}</span>
+              <span class="important-info__value">{item.value}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .important-info {
+    background-color: var(--c-bg-secondary);
+  }
+
+  .important-info__list {
+    list-style: none;
+    margin: 0;
+    padding: var(--space-l);
+    border: 1px solid var(--c-border-light);
+    background-color: var(--c-bg-secondary);
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: var(--space-l);
+  }
+
+  @media (min-width: 780px) {
+    .important-info__list {
+      grid-template-columns: 1fr;
+      column-gap: var(--space-xl);
+      row-gap: var(--space-xl);
+    }
+
+    .important-info__item {
+      border-bottom: 1px solid var(--c-border-light);
+      padding-bottom: var(--space-m);
+    }
+  }
+
+  /*
+   * Grid instead of a single flex row: on narrow screens label + value
+   * often don't both fit on one line (e.g. "Opłata klimatyczna" +
+   * "2,50zł / os. / doba"), so they stack as two lines in the same column,
+   * with the icon spanning both rows. From 780px up there's enough width
+   * to put everything back on one line with the value right-aligned.
+   */
+  .important-info__item {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    column-gap: var(--space-s);
+    row-gap: 2px;
+    min-width: 0;
+  }
+
+  .important-info__item:not(.important-info__item:last-child) {
+    border-bottom: 1px solid var(--c-border-light);
+    padding-bottom: var(--space-m);
+  }
+
+  .important-info__icon {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    align-self: center;
+    display: inline-flex;
+    width: 24px;
+    height: 24px;
+    color: var(--c-font-primary);
+  }
+
+  .important-info__icon :global(svg) {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .important-info__label {
+    grid-column: 2;
+    font-family: var(--font-sans-serif);
+    font-weight: var(--weight-normal);
+    font-size: var(--font-size-normal);
+    color: var(--c-font-primary);
+  }
+
+  .important-info__value {
+    grid-column: 2;
+    font-family: var(--font-sans-serif);
+    font-weight: var(--weight-bold);
+    color: var(--c-font-primary);
+    text-align: left;
+  }
+
+  @media (min-width: 780px) {
+    .important-info__item {
+      grid-template-columns: 24px 1fr auto;
+      align-items: center;
+    }
+
+    .important-info__icon {
+      grid-row: 1;
+    }
+
+    .important-info__value {
+      grid-column: 3;
+      text-align: right;
+    }
+  }
+</style>

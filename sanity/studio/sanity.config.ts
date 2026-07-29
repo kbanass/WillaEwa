@@ -3,7 +3,7 @@ import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './schemaTypes'
 
-const SINGLETONS = ['gallery', 'roomsSlider', 'siteSettings', 'heroImages']
+const SINGLETONS = ['gallery', 'roomsSlider', 'siteSettings', 'heroImages', 'importantInfo']
 
 export default defineConfig({
   name: 'default',
@@ -34,6 +34,15 @@ export default defineConfig({
               .title('Galeria zdjęć')
               .id('gallery')
               .child(S.document().schemaType('gallery').documentId('gallery')),
+
+            S.listItem()
+              .title('Ważne informacje')
+              .id('importantInfo')
+              .child(
+                S.document()
+                  .schemaType('importantInfo')
+                  .documentId('importantInfo')
+              ),
 
             S.divider(),
             S.listItem()

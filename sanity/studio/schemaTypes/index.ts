@@ -4,5 +4,6 @@ import {articleType} from './article'
 import {siteSettingsType} from './siteSettings'
 import { heroType } from './heroImages';
 import { reviewType } from './review';
+import { importantInfoType } from './importantInfo';
 
-export const schemaTypes = [galleryType, roomsSliderType, articleType, siteSettingsType, heroType, reviewType]
+export const schemaTypes = [galleryType, roomsSliderType, articleType, siteSettingsType, heroType, reviewType, importantInfoType]

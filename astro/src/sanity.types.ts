@@ -15,6 +15,50 @@
 export declare const internalGroqTypeReferenceTo: unique symbol;
 
 // Source: schema.json
+export type SanityImageAssetReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+};
+
+export type ImportantInfo = {
+  _id: string;
+  _type: "importantInfo";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  items?: Array<{
+    icon?: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    };
+    label?: string;
+    value?: string;
+    _type: "importantInfoItem";
+    _key: string;
+  }>;
+};
+
+export type SanityImageCrop = {
+  _type: "sanity.imageCrop";
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+};
+
+export type SanityImageHotspot = {
+  _type: "sanity.imageHotspot";
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
+};
+
 export type Review = {
   _id: string;
   _type: "review";
@@ -30,13 +74,6 @@ export type Review = {
   email?: string;
   time?: number;
   createdAt?: number;
-};
-
-export type SanityImageAssetReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
 };
 
 export type HeroImages = {
@@ -57,22 +94,6 @@ export type HeroImages = {
     _type: "heroImage";
     _key: string;
   }>;
-};
-
-export type SanityImageCrop = {
-  _type: "sanity.imageCrop";
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
-};
-
-export type SanityImageHotspot = {
-  _type: "sanity.imageHotspot";
-  x?: number;
-  y?: number;
-  height?: number;
-  width?: number;
 };
 
 export type SiteSettings = {
@@ -285,11 +306,12 @@ export type Geopoint = {
 };
 
 export type AllSanitySchemaTypes =
-  | Review
   | SanityImageAssetReference
-  | HeroImages
+  | ImportantInfo
   | SanityImageCrop
   | SanityImageHotspot
+  | Review
+  | HeroImages
   | SiteSettings
   | Article
   | Slug
@@ -451,6 +473,24 @@ export type SiteSettingsQueryResult = {
 } | null;
 
 // Source: ../../astro/src/lib/sanity.ts
+// Variable: importantInfoQuery
+// Query: *[_type == "importantInfo"][0]{    items[]{      _key,      icon,      label,      value,    }  }
+export type ImportantInfoQueryResult = {
+  items: Array<{
+    _key: string;
+    icon: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    } | null;
+    label: string | null;
+    value: string | null;
+  }> | null;
+} | null;
+
+// Source: ../../astro/src/lib/sanity.ts
 // Variable: publicReviewsQuery
 // Query: {    "reviews": *[_type == "review" && status == "accepted"] | order(time desc) {      "id": _id,      author,      quote,      rating,      source,      time,    },    "googleRatings": *[_type == "review" && status == "accepted" && source == "google"].rating  }
 export type PublicReviewsQueryResult = {
@@ -475,6 +515,7 @@ declare module "@sanity/client" {
     '\n  *[_type == "article"] | order(publishedAt desc){\n    _id,\n    title,\n    slug,\n    coverImage,\n    excerpt,\n    publishedAt,\n  }\n': ArticlesQueryResult;
     '\n  *[_type == "article" && slug.current == $slug][0]{\n    _id,\n    title,\n    slug,\n    coverImage,\n    excerpt,\n    publishedAt,\n    body,\n  }\n': ArticleBySlugQueryResult;
     '\n  *[_type == "siteSettings"][0]\n': SiteSettingsQueryResult;
+    '\n  *[_type == "importantInfo"][0]{\n    items[]{\n      _key,\n      icon,\n      label,\n      value,\n    }\n  }\n': ImportantInfoQueryResult;
     '\n  {\n    "reviews": *[_type == "review" && status == "accepted"] | order(time desc) {\n      "id": _id,\n      author,\n      quote,\n      rating,\n      source,\n      time,\n    },\n    "googleRatings": *[_type == "review" && status == "accepted" && source == "google"].rating\n  }\n': PublicReviewsQueryResult;
   }
 }

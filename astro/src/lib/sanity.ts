@@ -88,6 +88,17 @@ export const siteSettingsQuery = defineQuery(`
   *[_type == "siteSettings"][0]
 `);
 
+export const importantInfoQuery = defineQuery(`
+  *[_type == "importantInfo"][0]{
+    items[]{
+      _key,
+      icon,
+      label,
+      value,
+    }
+  }
+`);
+
 export const publicReviewsQuery = defineQuery(`
   {
     "reviews": *[_type == "review" && status == "accepted"] | order(time desc) {
@@ -122,4 +133,8 @@ export async function getArticleBySlug(slug: string) {
 
 export async function getSiteSettings() {
   return sanityClient.fetch(siteSettingsQuery);
+}
+
+export async function getImportantInfo() {
+  return sanityClient.fetch(importantInfoQuery);
 }
