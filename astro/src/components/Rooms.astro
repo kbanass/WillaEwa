@@ -340,21 +340,21 @@ const photos = (roomsData?.images ?? [])
     cursor: zoom-in;
   }
 
+  /* No hover/press effect at all — `all: unset` above doesn't stop the
+     global button:hover inset shadow / button:active scale, since those
+     are separate rules; this class+pseudo selector simply outweighs their
+     type+pseudo specificity. */
+  :global(.rooms-swiper__btn:hover),
+  :global(.rooms-swiper__btn:active) {
+    box-shadow: none;
+    transform: none;
+  }
+
   :global(.rooms-swiper__img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
     user-select: none;
-    transition:
-      opacity 200ms,
-      transform 200ms;
-  }
-
-  @media (hover: hover) {
-    :global(.rooms-swiper__btn:hover .rooms-swiper__img) {
-      opacity: 0.92;
-      transform: scale(0.99);
-    }
   }
 </style>

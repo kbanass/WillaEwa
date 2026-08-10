@@ -125,9 +125,7 @@ const preview = items.slice(0, 5);
         arrowKeys: true,
         preload: [1, 1],
         // top must clear the 60px button bar, or wide/landscape images end
-        // up rendered underneath it (buttons overlapping the photo, shadow
-        // hidden behind them) — only narrow/portrait slides had visible
-        // clearance there before.
+        // up rendered underneath it (buttons overlapping the photo).
         padding: { top: 76, bottom: 16, left: 16, right: 16 },
         imageClickAction: "zoom",
         tapAction: "zoom",

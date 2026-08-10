@@ -385,19 +385,6 @@ footer {
   text-shadow: none !important;
 }
 
-/* ─── PhotoSwipe image: small margin + shadow ───────────────────── */
-
-/*
- * .pswp__item clips overflow, and the slide area only reserves 16px of
- * padding around the image — a shadow with more bleed than that (blur +
- * offset) gets cut off by that clip whenever the image nearly fills the
- * available height, which reads as the shadow randomly popping in/out as
- * slides/zoom change the image's rendered size. Keep total bleed under 16px.
- */
-.pswp__img {
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
 /* ─── PhotoSwipe download button loading state ──────────────────── */
 
 /*
