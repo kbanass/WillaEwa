@@ -4,19 +4,10 @@ node_modules/
 .env.local
 .env.production
 
-# vite / client
-client/dist/
-
-# server
-server/dist/
-server/data/willa-ewa.db
-server/data/*.db-journal
-
 # logi
 logs/
 *.log
 npm-debug.log*
-
 
 .DS_Store
 Thumbs.db
@@ -25,3 +16,14 @@ desktop.ini
 .vscode/
 .idea/
 *.swp
+*.tsbuildinfo
+/dist/
+
+# lokalne narzędzia AI — nie trzymamy w repo
+CLAUDE.md
+AGENTS.md
+.claude/settings.local.json
+.claude/worktrees/
+
+# lokalne raporty (np. Lighthouse) wyeksportowane ręcznie
+*.pages.dev-*.json

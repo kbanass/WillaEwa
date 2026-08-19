@@ -1,28 +1,47 @@
-# Infra
+# WillaEwa
 
-## Nginx
+Strona [willaewanadmorzem.pl](https://willaewanadmorzem.pl) — pensjonat w Krynicy Morskiej.
 
-Skopiuj konfigurację na serwer:
+## Architektura
 
-```bash
-sudo cp nginx.conf /etc/nginx/sites-available/krynica-morska
-sudo ln -s /etc/nginx/sites-available/krynica-morska /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl reload nginx
+Statyczna strona Astro hostowana na Cloudflare Pages, z backendem jako Cloudflare Pages
+Functions (bez osobnego serwera/VPS) i treścią w Sanity CMS.
+
+```
+astro/         strona (Astro, output: "static"), Cloudflare Pages
+functions/     API strony — Cloudflare Pages Functions (/api/*)
+sanity/studio/ CMS (Sanity Studio) — treść: galeria, pokoje, artykuły, opinie, ustawienia
+cron-worker/   osobny Cloudflare Worker — codzienna synchronizacja opinii Google (SerpAPI → Sanity)
 ```
 
-## SSL
+- **Deploy strony**: git push na `main` → Cloudflare Pages buduje `astro/` i wdraża
+  `functions/` automatycznie. Brak ręcznego wdrażania.
+- **Webhook Sanity**: zmiana treści (galeria, pokoje, artykuły, ustawienia) w Sanity
+  wywołuje rebuild Cloudflare Pages przez deploy hook.
+- **cron-worker**: uruchamia się codziennie (patrz `cron-worker/wrangler.toml`), pobiera
+  nowe opinie z Google Maps przez SerpAPI, zapisuje je jako dokumenty `review` w Sanity
+  (status `pending` — wymagają akceptacji w panelu), wysyła powiadomienia (Telegram/e-mail)
+  i aktualizuje ogólną ocenę/liczbę opinii Google widoczną na stronie. Wdraża się osobno:
+  `cd cron-worker && npx wrangler deploy`.
 
-```bash
-sudo certbot --nginx -d twojadomena.pl -d www.twojadomena.pl
+## Rozwój lokalny
+
+```sh
+cd astro && npm install && npm run dev
 ```
 
-## PM2
+`npm run dev` w `astro/` sam odpala `sanity typegen` przed buildem (typy z Sanity Schema).
+Do edycji CMS lokalnie: `cd sanity/studio && npm install && npm run dev`.
 
-```bash
-pm2 start dist/index.js --name krynica-morska
-pm2 save
-pm2 startup
-```
+## Zmienne środowiskowe
 
-cd server && npx tsx src/scripts/importReviews.ts
+Cloudflare Pages Functions (`functions/`) i `cron-worker` używają sekretów ustawianych
+przez dashboard Cloudflare / `wrangler secret put` (nie w repo):
+
+- `SANITY_PROJECT_ID`, `SANITY_DATASET`, `SANITY_API_TOKEN`
+- `JWT_SECRET`, `ADMIN_PASSWORD_HASH` — logowanie do panelu
+- `SERPAPI_API_KEY`, `GOOGLE_PLACE_ID` — synchronizacja opinii (cron-worker)
+- `RESEND_API_KEY`, `MAIL_FROM`, `OWNER_EMAIL` — powiadomienia e-mail
+- `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` — powiadomienia Telegram (opcjonalne)
+- `CF_PAGES_DEPLOY_HOOK` — wyzwala rebuild Cloudflare Pages po nowych opiniach
+- `DOMAIN_NAME`, `REBUILD_SECRET` (opcjonalny sekret webhooka Sanity)
