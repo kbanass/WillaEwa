@@ -287,6 +287,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       time: number;
       status: ReviewStatus;
       source: "google" | "page";
+      reply?: string;
     }
 
     function formatDate(timestamp: number): string {
@@ -420,6 +421,19 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         return;
       }
 
+      const replySaveBtn = target.closest(
+        ".review-card__reply-save",
+      ) as HTMLElement | null;
+      if (replySaveBtn) {
+        const card = replySaveBtn.closest(".review-card") as HTMLElement;
+        const id = card?.dataset.id;
+        const textarea = card?.querySelector<HTMLTextAreaElement>(
+          ".review-card__reply-input",
+        );
+        if (id && textarea) saveReply(id, textarea.value);
+        return;
+      }
+
       const statusBtn = target.closest(
         "[class*='status-picker__btn']",
       ) as HTMLElement | null;
@@ -533,6 +547,23 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       renderReviews();
     }
 
+    async function saveReply(id: string, replyValue: string): Promise<void> {
+      const res = await fetch(`/api/admin/reviews/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reply: replyValue }),
+      });
+      if (!res.ok) {
+        alert("Błąd zapisywania odpowiedzi");
+        return;
+      }
+      const review = allReviews.find((r) => r.id === id);
+      const trimmed = replyValue.trim();
+      if (review) review.reply = trimmed || undefined;
+      renderReviews();
+      alert(trimmed ? "Zapisano odpowiedź" : "Usunięto odpowiedź");
+    }
+
     function renderReview(review: Review): string {
       const pendingStatus = pendingChanges.get(review.id);
       const pendingAttr = pendingStatus
@@ -579,6 +610,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
               </div>
             </div>
           </div>
+          ${
+            review.source === "page"
+              ? `<div class="review-card__reply">
+                  <label for="reply-${review.id}">Odpowiedź właścicielki</label>
+                  <textarea id="reply-${review.id}" class="review-card__reply-input" placeholder="Napisz odpowiedź na tę opinię…">${escapeHtml(review.reply ?? "")}</textarea>
+                  <button type="button" class="review-card__reply-save">${review.reply ? "Zapisz odpowiedź" : "Dodaj odpowiedź"}</button>
+                </div>`
+              : ""
+          }
           ${
             currentStatusFilter === "deleted" && review.source === "page"
               ? `<button class="review-card__hard-delete">
@@ -914,6 +954,54 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       border: 1px solid var(--c-font-accent);
       color: var(--c-font-primary);
       box-shadow: 0px 1px 2px var(--c-font-accent);
+    }
+
+    /* ── Reply to review ──────────────────────────────────────── */
+    .review-card__reply {
+      width: 100%;
+      border-top: 1px solid var(--c-border-light);
+      padding-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .review-card__reply label {
+      font-size: var(--font-size-s);
+      color: var(--c-font-secondary);
+    }
+
+    .review-card__reply-input {
+      width: 100%;
+      min-height: 4.5rem;
+      padding: 12px;
+      border: 1px solid var(--c-border-light);
+      background-color: transparent;
+      color: var(--c-font-primary);
+      font-family: var(--font-sans-serif);
+      font-size: var(--font-size-s);
+      resize: vertical;
+    }
+
+    .review-card__reply-input:focus {
+      outline: none;
+      border-color: var(--c-font-accent);
+    }
+
+    .review-card__reply-save {
+      align-self: flex-end;
+      padding: 10px 20px;
+      background-color: transparent;
+      border: 1px solid var(--c-font-accent);
+      color: var(--c-font-accent);
+      font-size: var(--font-size-s);
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .review-card__reply-save:hover {
+      opacity: 0.75;
+      transform: none;
     }
 
     /* ── Hard delete button ───────────────────────────────────── */
