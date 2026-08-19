@@ -108,6 +108,8 @@ export const publicReviewsQuery = defineQuery(`
       rating,
       source,
       time,
+      reply,
+      replyTime,
     }
   }
 `);

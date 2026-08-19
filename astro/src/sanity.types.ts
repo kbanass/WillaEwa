@@ -498,7 +498,7 @@ export type ImportantInfoQueryResult = {
 
 // Source: ../../astro/src/lib/sanity.ts
 // Variable: publicReviewsQuery
-// Query: {    "reviews": *[_type == "review" && status == "accepted"] | order(time desc) {      "id": _id,      author,      quote,      rating,      source,      time,    }  }
+// Query: {    "reviews": *[_type == "review" && status == "accepted"] | order(time desc) {      "id": _id,      author,      quote,      rating,      source,      time,      reply,      replyTime,    }  }
 export type PublicReviewsQueryResult = {
   reviews: Array<{
     id: string;
@@ -507,6 +507,8 @@ export type PublicReviewsQueryResult = {
     rating: number | null;
     source: string | null;
     time: number | null;
+    reply: string | null;
+    replyTime: number | null;
   }>;
 };
 
@@ -521,6 +523,6 @@ declare module "@sanity/client" {
     '\n  *[_type == "article" && slug.current == $slug][0]{\n    _id,\n    title,\n    slug,\n    coverImage,\n    excerpt,\n    publishedAt,\n    body,\n  }\n': ArticleBySlugQueryResult;
     '\n  *[_type == "siteSettings"][0]\n': SiteSettingsQueryResult;
     '\n  *[_type == "importantInfo"][0]{\n    items[]{\n      _key,\n      icon,\n      label,\n      value,\n    }\n  }\n': ImportantInfoQueryResult;
-    '\n  {\n    "reviews": *[_type == "review" && status == "accepted"] | order(time desc) {\n      "id": _id,\n      author,\n      quote,\n      rating,\n      source,\n      time,\n    }\n  }\n': PublicReviewsQueryResult;
+    '\n  {\n    "reviews": *[_type == "review" && status == "accepted"] | order(time desc) {\n      "id": _id,\n      author,\n      quote,\n      rating,\n      source,\n      time,\n      reply,\n      replyTime,\n    }\n  }\n': PublicReviewsQueryResult;
   }
 }
