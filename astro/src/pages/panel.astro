@@ -613,7 +613,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           ${
             review.source === "page"
               ? `<div class="review-card__reply">
-                  <label for="reply-${review.id}">Odpowiedź właścicielki</label>
+                  <label for="reply-${review.id}">Odpowiedź</label>
                   <textarea id="reply-${review.id}" class="review-card__reply-input" placeholder="Napisz odpowiedź na tę opinię…">${escapeHtml(review.reply ?? "")}</textarea>
                   <button type="button" class="review-card__reply-save">${review.reply ? "Zapisz odpowiedź" : "Dodaj odpowiedź"}</button>
                 </div>`
