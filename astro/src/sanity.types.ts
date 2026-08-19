@@ -74,6 +74,8 @@ export type Review = {
   email?: string;
   time?: number;
   createdAt?: number;
+  reply?: string;
+  replyTime?: number;
 };
 
 export type HeroImages = {

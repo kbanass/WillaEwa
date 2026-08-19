@@ -14,6 +14,8 @@ export const reviewType = defineType({
     defineField({ name: 'email', type: 'string', title: 'E-mail' }),
     defineField({ name: 'time', type: 'number', title: 'Czas (Unix timestamp)' }),
     defineField({ name: 'createdAt', type: 'number', title: 'Data dodania (Unix timestamp)' }),
+    defineField({ name: 'reply', type: 'text', title: 'Odpowiedź właścicielki' }),
+    defineField({ name: 'replyTime', type: 'number', title: 'Data odpowiedzi (Unix timestamp)' }),
   ],
   preview: {
     select: {
