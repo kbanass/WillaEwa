@@ -22,6 +22,8 @@ export const onRequestGet = async (context: {
       createdAt,
       email,
       googleReviewId,
+      reply,
+      replyTime,
     }`,
   )
 
