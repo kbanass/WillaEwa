@@ -1,5 +1,9 @@
 ---
-import { sanityClient, publicReviewsQuery } from "../lib/sanity";
+import {
+  sanityClient,
+  publicReviewsQuery,
+  getSiteSettings,
+} from "../lib/sanity";
 
 interface Review {
   id: string;
@@ -17,17 +21,31 @@ interface Stars {
 }
 
 let reviews: Review[] = [];
+// Score badge shows Google's own aggregate for the whole listing (kept in
+// sync daily by cron-worker from SerpAPI's place_info) — not derived from
+// the reviews we've chosen to accept/display, so it always matches what a
+// visitor sees on Google Maps itself, count included.
 let avgRating = 5.0;
+let googleReviewCount = 0;
 
 try {
-  const data = await sanityClient.fetch(publicReviewsQuery);
+  const [data, settings] = await Promise.all([
+    sanityClient.fetch(publicReviewsQuery),
+    getSiteSettings().catch(() => null),
+  ]);
   reviews = (data?.reviews ?? []) as Review[];
-  const googleRatings: number[] = (data?.googleRatings ?? []).filter(
-    (r): r is number => r !== null,
-  );
-  if (googleRatings.length > 0) {
-    const sum = googleRatings.reduce((a: number, b: number) => a + b, 0);
-    avgRating = Math.round((sum / googleRatings.length) * 10) / 10;
+
+  if (settings?.googleRating != null && settings?.googleReviewCount != null) {
+    avgRating = settings.googleRating;
+    googleReviewCount = settings.googleReviewCount;
+  } else {
+    // Fallback before the first cron sync has ever populated siteSettings.
+    const googleReviews = reviews.filter((r) => r.source === "google");
+    googleReviewCount = googleReviews.length;
+    if (googleReviews.length > 0) {
+      const sum = googleReviews.reduce((a, r) => a + r.rating, 0);
+      avgRating = Math.round((sum / googleReviews.length) * 10) / 10;
+    }
   }
 } catch {
   // Sanity niedostępne podczas builda — pomiń opinie
@@ -163,9 +181,7 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
         <a
           href="https://www.google.com/maps?cid=16206240161214872810"
         >
-          <small
-            >({reviews.filter((r) => r.source === "google").length} opinii)</small
-          >
+          <small>({googleReviewCount} opinii)</small>
         </a>
       </div>
     </div>

@@ -542,6 +542,20 @@
           "type": "string"
         },
         "optional": true
+      },
+      "googleRating": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "number"
+        },
+        "optional": true
+      },
+      "googleReviewCount": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "number"
+        },
+        "optional": true
       }
     }
   },

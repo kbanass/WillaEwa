@@ -42,6 +42,22 @@ export const siteSettingsType = defineType({
       type: 'string',
 
     }),
+    defineField({
+      name: 'googleRating',
+      title: 'Ocena Google (wszystkie opinie)',
+      description:
+        'Ustawiane automatycznie przez cron synchronizujący opinie z Google — nie edytować ręcznie.',
+      type: 'number',
+      readOnly: true,
+    }),
+    defineField({
+      name: 'googleReviewCount',
+      title: 'Liczba opinii Google (wszystkie)',
+      description:
+        'Ustawiane automatycznie przez cron synchronizujący opinie z Google — nie edytować ręcznie.',
+      type: 'number',
+      readOnly: true,
+    }),
   ],
   preview: {
     prepare() {

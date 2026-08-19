@@ -108,8 +108,7 @@ export const publicReviewsQuery = defineQuery(`
       rating,
       source,
       time,
-    },
-    "googleRatings": *[_type == "review" && status == "accepted" && source == "google"].rating
+    }
   }
 `);
 
