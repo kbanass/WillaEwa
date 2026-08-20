@@ -312,6 +312,24 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         .replace(/'/g, "&#39;");
     }
 
+    // Bare fetch() has no default timeout — a request that never resolves
+    // (dead connection, hung server) leaves callers stuck awaiting it
+    // forever with no way to detect that. This aborts after timeoutMs so a
+    // stuck request surfaces as a normal error instead of an infinite spinner.
+    async function fetchWithTimeout(
+      url: string,
+      options: RequestInit,
+      timeoutMs = 15000,
+    ): Promise<Response> {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        return await fetch(url, { ...options, signal: controller.signal });
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
     function getInitials(author: string): string {
       return author
         .split(" ")
@@ -558,7 +576,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       textarea.disabled = true;
       button.textContent = "Zapisywanie…";
       try {
-        const res = await fetch(`/api/admin/reviews/${id}`, {
+        const res = await fetchWithTimeout(`/api/admin/reviews/${id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ reply: replyValue }),
@@ -572,6 +590,12 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         if (review) review.reply = trimmed || undefined;
         renderReviews();
         alert(trimmed ? "Zapisano odpowiedź" : "Usunięto odpowiedź");
+      } catch (err) {
+        alert(
+          err instanceof DOMException && err.name === "AbortError"
+            ? "Przekroczono czas oczekiwania na odpowiedź serwera — spróbuj ponownie"
+            : "Błąd połączenia — spróbuj ponownie",
+        );
       } finally {
         // No-op if the card was already re-rendered (success path) — these
         // nodes are detached by then. Only matters for the error path,
