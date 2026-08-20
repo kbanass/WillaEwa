@@ -423,14 +423,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
       const replySaveBtn = target.closest(
         ".review-card__reply-save",
-      ) as HTMLElement | null;
+      ) as HTMLButtonElement | null;
       if (replySaveBtn) {
         const card = replySaveBtn.closest(".review-card") as HTMLElement;
         const id = card?.dataset.id;
         const textarea = card?.querySelector<HTMLTextAreaElement>(
           ".review-card__reply-input",
         );
-        if (id && textarea) saveReply(id, textarea.value);
+        if (id && textarea) saveReply(id, textarea.value, replySaveBtn, textarea);
         return;
       }
 
@@ -547,21 +547,39 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       renderReviews();
     }
 
-    async function saveReply(id: string, replyValue: string): Promise<void> {
-      const res = await fetch(`/api/admin/reviews/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reply: replyValue }),
-      });
-      if (!res.ok) {
-        alert("Błąd zapisywania odpowiedzi");
-        return;
+    async function saveReply(
+      id: string,
+      replyValue: string,
+      button: HTMLButtonElement,
+      textarea: HTMLTextAreaElement,
+    ): Promise<void> {
+      const originalLabel = button.textContent;
+      button.disabled = true;
+      textarea.disabled = true;
+      button.textContent = "Zapisywanie…";
+      try {
+        const res = await fetch(`/api/admin/reviews/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ reply: replyValue }),
+        });
+        if (!res.ok) {
+          alert("Błąd zapisywania odpowiedzi");
+          return;
+        }
+        const review = allReviews.find((r) => r.id === id);
+        const trimmed = replyValue.trim();
+        if (review) review.reply = trimmed || undefined;
+        renderReviews();
+        alert(trimmed ? "Zapisano odpowiedź" : "Usunięto odpowiedź");
+      } finally {
+        // No-op if the card was already re-rendered (success path) — these
+        // nodes are detached by then. Only matters for the error path,
+        // where the same card stays in the DOM and needs to be usable again.
+        button.disabled = false;
+        textarea.disabled = false;
+        button.textContent = originalLabel;
       }
-      const review = allReviews.find((r) => r.id === id);
-      const trimmed = replyValue.trim();
-      if (review) review.reply = trimmed || undefined;
-      renderReviews();
-      alert(trimmed ? "Zapisano odpowiedź" : "Usunięto odpowiedź");
     }
 
     function renderReview(review: Review): string {
@@ -1002,6 +1020,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     .review-card__reply-save:hover {
       opacity: 0.75;
       transform: none;
+    }
+
+    .review-card__reply-save:disabled {
+      opacity: 0.5;
+      cursor: wait;
+    }
+
+    .review-card__reply-input:disabled {
+      opacity: 0.6;
     }
 
     /* ── Hard delete button ───────────────────────────────────── */
