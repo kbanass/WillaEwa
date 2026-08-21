@@ -208,7 +208,6 @@ async function syncGoogleReviews(env: Env): Promise<number> {
     if (data.place_info) placeInfo = data.place_info
 
     const reviews = data.reviews ?? []
-    let allExist = true
 
     for (const r of reviews) {
       const existing = await getExistingGoogleReview(env, r.review_id)
@@ -216,14 +215,17 @@ async function syncGoogleReviews(env: Env): Promise<number> {
 
       if (existing) {
         // Review already synced — still worth checking whether the owner
-        // has since replied to it directly on Google Maps.
+        // has since replied to it directly on Google Maps. This runs even
+        // for old, already-known reviews (see the removed early-break
+        // below) since a reply can land on a review from a year ago just
+        // as easily as a recent one — there's no way to know in advance
+        // which older review just got a reply without checking all of them.
         if (reply && reply !== existing.reply) {
           await sanityPatchReply(env, existing._id, reply)
         }
         continue
       }
 
-      allExist = false
       const now = Math.floor(Date.now() / 1000)
       const quote = r.snippet ?? r.extracted_snippet?.original ?? ''
       await sanityCreate(env, {
@@ -243,8 +245,11 @@ async function syncGoogleReviews(env: Env): Promise<number> {
     }
 
     nextPageToken = data.serpapi_pagination?.next_page_token
-    // Stop paginating when an entire page of reviews already exists
-    if (allExist && reviews.length > 0) break
+    // No early-exit once a page is fully known — a reply can appear on any
+    // review regardless of age, so every page has to be walked every run to
+    // catch replies added to old reviews. Fine at this review count; would
+    // need revisiting (e.g. tracking a per-review last-checked time) if the
+    // review history grows enough to make full pagination costly.
   } while (nextPageToken)
 
   if (placeInfo) await updateGoogleAggregate(env, placeInfo)
