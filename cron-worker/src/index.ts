@@ -67,15 +67,17 @@ async function sanityPatchReply(env: Env, id: string, reply: string): Promise<vo
   ])
 }
 
-async function getExistingGoogleReview(
+// One query for the whole known set instead of one round trip per review —
+// now that syncGoogleReviews walks every page on every run (see below), that
+// would otherwise mean a Sanity request per review, every day.
+async function getExistingGoogleReviews(
   env: Env,
-  googleReviewId: string,
-): Promise<{ _id: string; reply?: string } | null> {
-  return sanityQuery<{ _id: string; reply?: string } | null>(
+): Promise<Map<string, { _id: string; reply?: string }>> {
+  const results = await sanityQuery<{ _id: string; googleReviewId: string; reply?: string }[]>(
     env,
-    `*[_type == "review" && googleReviewId == $id][0]{ _id, reply }`,
-    { id: googleReviewId },
+    `*[_type == "review" && source == "google" && defined(googleReviewId)]{ _id, googleReviewId, reply }`,
   )
+  return new Map(results.map((r) => [r.googleReviewId, { _id: r._id, reply: r.reply }]))
 }
 
 async function sendTelegram(env: Env, text: string): Promise<void> {
@@ -186,6 +188,7 @@ async function syncGoogleReviews(env: Env): Promise<number> {
   let savedCount = 0
   let nextPageToken: string | undefined
   let placeInfo: SerpApiPlaceInfo | undefined
+  const existingReviews = await getExistingGoogleReviews(env)
 
   do {
     const params = new URLSearchParams({
@@ -210,7 +213,7 @@ async function syncGoogleReviews(env: Env): Promise<number> {
     const reviews = data.reviews ?? []
 
     for (const r of reviews) {
-      const existing = await getExistingGoogleReview(env, r.review_id)
+      const existing = existingReviews.get(r.review_id)
       const reply = r.response?.snippet?.trim() || undefined
 
       if (existing) {
