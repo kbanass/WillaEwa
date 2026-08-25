@@ -12,6 +12,7 @@ interface Review {
   rating: number;
   time: number;
   source: string;
+  reply?: string;
 }
 
 interface Stars {
@@ -178,9 +179,7 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
             ))
           }
         </div>
-        <a
-          href="https://www.google.com/maps?cid=16206240161214872810"
-        >
+        <a href="https://www.google.com/maps?cid=16206240161214872810">
           <small>({googleReviewCount} opinii)</small>
         </a>
       </div>
@@ -191,9 +190,10 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
         reviews.map((review) => {
           const stars = buildStars(review.rating);
           const isLong = review.quote.length > 450;
+          const hasReply = Boolean(review.reply);
           return (
             <div
-              class={`review-card${isLong ? " long-quote" : ""}`}
+              class={`review-card${isLong ? " long-quote" : ""}${hasReply ? " has-reply" : ""}`}
               data-id={review.id}
             >
               <div class="review-card__source">
@@ -253,6 +253,12 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
                   <p class="review-card__date">{formatDate(review.time)}</p>
                 </div>
               </div>
+              {review.reply && (
+                <div class="review-card__reply">
+                  <p class="review-card__reply-label">Odpowiedź właścicielki</p>
+                  <p class="review-card__reply-text">{review.reply}</p>
+                </div>
+              )}
             </div>
           );
         })
@@ -402,7 +408,9 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
     const id = el.dataset.id;
     if (!id) return;
     cardMap.set(id, el);
-    reviewsData.push({ id, size: el.classList.contains("long-quote") ? 2 : 1 });
+    const isBig =
+      el.classList.contains("long-quote") || el.classList.contains("has-reply");
+    reviewsData.push({ id, size: isBig ? 2 : 1 });
   });
 
   const reviewsPages = buildReviewsPages(reviewsData);
@@ -596,7 +604,8 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
     font-weight: var(--weight-light);
   }
 
-  .review-card.long-quote {
+  .review-card.long-quote,
+  .review-card.has-reply {
     grid-column-end: span 2;
   }
 
@@ -655,6 +664,28 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
     aspect-ratio: 1/1;
     border-radius: 50%;
     text-transform: uppercase;
+  }
+
+  .review-card__reply {
+    width: 100%;
+    background-color: var(--c-bg-primary);
+    border-left: 2px solid var(--c-font-accent);
+    padding: 16px;
+  }
+
+  .review-card__reply-label {
+    font-size: var(--font-size-s);
+    font-weight: var(--weight-bold);
+    color: var(--c-font-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin: 0 0 6px;
+  }
+
+  .review-card__reply-text {
+    font-size: var(--font-size-s);
+    color: var(--c-font-primary);
+    margin: 0;
   }
 
   .reviews-bottom {

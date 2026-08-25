@@ -43,7 +43,7 @@ async function sanityQuery<T>(
   return data.result
 }
 
-async function sanityCreate(env: Env, doc: Record<string, unknown>): Promise<void> {
+async function sanityMutate(env: Env, mutations: unknown[]): Promise<void> {
   await fetch(
     `https://${env.SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API_VERSION}/data/mutate/${env.SANITY_DATASET}`,
     {
@@ -52,18 +52,32 @@ async function sanityCreate(env: Env, doc: Record<string, unknown>): Promise<voi
         Authorization: `Bearer ${env.SANITY_API_TOKEN}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ mutations: [{ create: doc }] }),
+      body: JSON.stringify({ mutations }),
     },
   )
 }
 
-async function googleReviewExists(env: Env, googleReviewId: string): Promise<boolean> {
-  const result = await sanityQuery<{ _id: string } | null>(
+async function sanityCreate(env: Env, doc: Record<string, unknown>): Promise<void> {
+  await sanityMutate(env, [{ create: doc }])
+}
+
+async function sanityPatchReply(env: Env, id: string, reply: string): Promise<void> {
+  await sanityMutate(env, [
+    { patch: { id, set: { reply, replyTime: Math.floor(Date.now() / 1000) } } },
+  ])
+}
+
+// One query for the whole known set instead of one round trip per review —
+// now that syncGoogleReviews walks every page on every run (see below), that
+// would otherwise mean a Sanity request per review, every day.
+async function getExistingGoogleReviews(
+  env: Env,
+): Promise<Map<string, { _id: string; reply?: string }>> {
+  const results = await sanityQuery<{ _id: string; googleReviewId: string; reply?: string }[]>(
     env,
-    `*[_type == "review" && googleReviewId == $id][0]{ _id }`,
-    { id: googleReviewId },
+    `*[_type == "review" && source == "google" && defined(googleReviewId)]{ _id, googleReviewId, reply }`,
   )
-  return result !== null
+  return new Map(results.map((r) => [r.googleReviewId, { _id: r._id, reply: r.reply }]))
 }
 
 async function sendTelegram(env: Env, text: string): Promise<void> {
@@ -128,6 +142,10 @@ interface SerpApiReview {
   extracted_snippet?: { original?: string }
   rating: number
   iso_date: string
+  // Owner's reply to the review, if any — not confirmed in SerpAPI's public
+  // docs example, so this is read defensively: if it's absent, the reply
+  // fields below just stay unset.
+  response?: { snippet?: string; iso_date?: string; date?: string }
 }
 
 interface SerpApiPlaceInfo {
@@ -152,36 +170,25 @@ async function updateGoogleAggregate(
   placeInfo: SerpApiPlaceInfo,
 ): Promise<void> {
   if (placeInfo.rating == null || placeInfo.reviews == null) return
-  await fetch(
-    `https://${env.SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API_VERSION}/data/mutate/${env.SANITY_DATASET}`,
+  await sanityMutate(env, [
+    { createIfNotExists: { _id: 'siteSettings', _type: 'siteSettings' } },
     {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${env.SANITY_API_TOKEN}`,
-        'Content-Type': 'application/json',
+      patch: {
+        id: 'siteSettings',
+        set: {
+          googleRating: placeInfo.rating,
+          googleReviewCount: placeInfo.reviews,
+        },
       },
-      body: JSON.stringify({
-        mutations: [
-          { createIfNotExists: { _id: 'siteSettings', _type: 'siteSettings' } },
-          {
-            patch: {
-              id: 'siteSettings',
-              set: {
-                googleRating: placeInfo.rating,
-                googleReviewCount: placeInfo.reviews,
-              },
-            },
-          },
-        ],
-      }),
     },
-  )
+  ])
 }
 
 async function syncGoogleReviews(env: Env): Promise<number> {
   let savedCount = 0
   let nextPageToken: string | undefined
   let placeInfo: SerpApiPlaceInfo | undefined
+  const existingReviews = await getExistingGoogleReviews(env)
 
   do {
     const params = new URLSearchParams({
@@ -204,13 +211,24 @@ async function syncGoogleReviews(env: Env): Promise<number> {
     if (data.place_info) placeInfo = data.place_info
 
     const reviews = data.reviews ?? []
-    let allExist = true
 
     for (const r of reviews) {
-      const exists = await googleReviewExists(env, r.review_id)
-      if (exists) continue
+      const existing = existingReviews.get(r.review_id)
+      const reply = r.response?.snippet?.trim() || undefined
 
-      allExist = false
+      if (existing) {
+        // Review already synced — still worth checking whether the owner
+        // has since replied to it directly on Google Maps. This runs even
+        // for old, already-known reviews (see the removed early-break
+        // below) since a reply can land on a review from a year ago just
+        // as easily as a recent one — there's no way to know in advance
+        // which older review just got a reply without checking all of them.
+        if (reply && reply !== existing.reply) {
+          await sanityPatchReply(env, existing._id, reply)
+        }
+        continue
+      }
+
       const now = Math.floor(Date.now() / 1000)
       const quote = r.snippet ?? r.extracted_snippet?.original ?? ''
       await sanityCreate(env, {
@@ -223,14 +241,18 @@ async function syncGoogleReviews(env: Env): Promise<number> {
         source: 'google',
         status: 'pending',
         createdAt: now,
+        ...(reply && { reply, replyTime: now }),
       })
       savedCount++
       await sendNewReviewEmail(env, { author: r.user.name, rating: r.rating, quote })
     }
 
     nextPageToken = data.serpapi_pagination?.next_page_token
-    // Stop paginating when an entire page of reviews already exists
-    if (allExist && reviews.length > 0) break
+    // No early-exit once a page is fully known — a reply can appear on any
+    // review regardless of age, so every page has to be walked every run to
+    // catch replies added to old reviews. Fine at this review count; would
+    // need revisiting (e.g. tracking a per-review last-checked time) if the
+    // review history grows enough to make full pagination costly.
   } while (nextPageToken)
 
   if (placeInfo) await updateGoogleAggregate(env, placeInfo)
