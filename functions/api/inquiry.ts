@@ -1,20 +1,18 @@
 import { sendInquiryNotification, sendInquiryTelegram } from '../_shared/notifications'
 import type { Env } from '../_shared/env'
+import { jsonError } from '../_shared/http'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const PHONE_REGEX = /^[\d\s+\-()]+$/
 
-export const onRequestPost = async (context: {
-  request: Request
-  env: Env
-}): Promise<Response> => {
+export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context
 
   let body: Record<string, unknown>
   try {
     body = (await request.json()) as Record<string, unknown>
   } catch {
-    return Response.json({ error: 'Nieprawidłowe dane' }, { status: 400 })
+    return jsonError('Nieprawidłowe dane', 400)
   }
 
   // Honeypot
@@ -30,24 +28,24 @@ export const onRequestPost = async (context: {
     typeof body.childrenAges === 'string' ? body.childrenAges.trim() : undefined
 
   if (name.length < 2 || name.length > 100) {
-    return Response.json({ error: 'Imię i nazwisko: 2–100 znaków' }, { status: 400 })
+    return jsonError('Imię i nazwisko: 2–100 znaków', 400)
   }
   if (!EMAIL_REGEX.test(email) || email.length > 254) {
-    return Response.json({ error: 'Nieprawidłowy e-mail' }, { status: 400 })
+    return jsonError('Nieprawidłowy e-mail', 400)
   }
   if (!PHONE_REGEX.test(phone) || phone.length > 20) {
-    return Response.json({ error: 'Nieprawidłowy numer telefonu' }, { status: 400 })
+    return jsonError('Nieprawidłowy numer telefonu', 400)
   }
   const dateFromMs = new Date(dateFrom).getTime()
   const dateToMs = new Date(dateTo).getTime()
   if (isNaN(dateFromMs) || isNaN(dateToMs) || dateFromMs >= dateToMs) {
-    return Response.json({ error: 'Nieprawidłowe daty' }, { status: 400 })
+    return jsonError('Nieprawidłowe daty', 400)
   }
   if (isNaN(adults) || !Number.isInteger(adults) || adults < 1 || adults > 20) {
-    return Response.json({ error: 'Liczba dorosłych: 1–20' }, { status: 400 })
+    return jsonError('Liczba dorosłych: 1–20', 400)
   }
   if (childrenAges && (!/^[\d,\s]+$/.test(childrenAges) || childrenAges.length > 50)) {
-    return Response.json({ error: 'Nieprawidłowy wiek dzieci' }, { status: 400 })
+    return jsonError('Nieprawidłowy wiek dzieci', 400)
   }
 
   const data = { name, email, phone, dateFrom, dateTo, adults, childrenAges }

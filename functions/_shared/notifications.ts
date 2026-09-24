@@ -15,6 +15,22 @@ function escapeHtml(str: string): string {
 
 // ── Email ─────────────────────────────────────────────────────────────────────
 
+export interface NewReview {
+  author: string
+  rating: number
+  quote: string
+}
+
+export interface Inquiry {
+  name: string
+  email: string
+  phone: string
+  dateFrom: string
+  dateTo: string
+  adults: number
+  childrenAges?: string
+}
+
 export async function sendEmail(
   env: Env,
   opts: { to: string; subject: string; html: string },
@@ -37,9 +53,9 @@ export async function sendEmail(
 
 export async function sendNewReviewNotification(
   env: Env,
-  review: { author: string; rating: number; quote: string },
+  review: NewReview,
 ): Promise<void> {
-  const domain = env.DOMAIN_NAME ?? 'willaewanadmorzem.pl'
+  const domain = env.DOMAIN_NAME || 'willaewanadmorzem.pl'
   await sendEmail(env, {
     to: env.OWNER_EMAIL,
     subject: `Nowa opinia – ${review.author}`,
@@ -56,15 +72,7 @@ export async function sendNewReviewNotification(
 
 export async function sendInquiryNotification(
   env: Env,
-  data: {
-    name: string
-    email: string
-    phone: string
-    dateFrom: string
-    dateTo: string
-    adults: number
-    childrenAges?: string
-  },
+  data: Inquiry,
 ): Promise<void> {
   await sendEmail(env, {
     to: env.OWNER_EMAIL,
@@ -109,7 +117,7 @@ async function sendTelegram(env: Env, text: string): Promise<void> {
 
 export async function sendNewReviewTelegram(
   env: Env,
-  review: { author: string; rating: number; quote: string },
+  review: NewReview,
 ): Promise<void> {
   const stars = '⭐'.repeat(Math.round(review.rating))
   await sendTelegram(
@@ -120,15 +128,7 @@ export async function sendNewReviewTelegram(
 
 export async function sendInquiryTelegram(
   env: Env,
-  data: {
-    name: string
-    email: string
-    phone: string
-    dateFrom: string
-    dateTo: string
-    adults: number
-    childrenAges?: string
-  },
+  data: Inquiry,
 ): Promise<void> {
   await sendTelegram(
     env,

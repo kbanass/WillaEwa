@@ -1,15 +1,13 @@
 import { verifyAuth, unauthorized } from '../../_shared/auth'
 import { sanityMutate } from '../../_shared/sanity'
 import type { Env } from '../../_shared/env'
+import { triggerRebuild, jsonError } from '../../_shared/http'
 
 type ReviewStatus = 'pending' | 'accepted' | 'deleted'
 
 const VALID_STATUSES: ReviewStatus[] = ['pending', 'accepted', 'deleted']
 
-export const onRequestPost = async (context: {
-  request: Request
-  env: Env
-}): Promise<Response> => {
+export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context
   if (!(await verifyAuth(request, env))) return unauthorized()
 
@@ -19,7 +17,7 @@ export const onRequestPost = async (context: {
       reviews?: { id: unknown; status: unknown }[]
     }
     if (!Array.isArray(body.reviews) || body.reviews.length === 0) {
-      return Response.json({ error: 'Brak danych' }, { status: 400 })
+      return jsonError('Brak danych', 400)
     }
     reviews = body.reviews.map((r) => {
       if (typeof r.id !== 'string' || !VALID_STATUSES.includes(r.status as ReviewStatus)) {
@@ -28,7 +26,7 @@ export const onRequestPost = async (context: {
       return { id: r.id, status: r.status as ReviewStatus }
     })
   } catch (e) {
-    return Response.json({ error: (e as Error).message }, { status: 400 })
+    return jsonError((e as Error).message, 400)
   }
 
   const mutations = reviews.map((r) => ({
@@ -37,10 +35,7 @@ export const onRequestPost = async (context: {
 
   await sanityMutate(env, mutations)
 
-  // Trigger Cloudflare Pages rebuild
-  if (env.CF_PAGES_DEPLOY_HOOK) {
-    await fetch(env.CF_PAGES_DEPLOY_HOOK, { method: 'POST' }).catch(() => {})
-  }
+  await triggerRebuild(env)
 
   return Response.json({ success: true, updated: reviews.length })
 }

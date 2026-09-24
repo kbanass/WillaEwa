@@ -1,11 +1,9 @@
 import bcrypt from 'bcryptjs'
 import { SignJWT } from 'jose'
 import type { Env } from '../../_shared/env'
+import { jsonError } from '../../_shared/http'
 
-export const onRequestPost = async (context: {
-  request: Request
-  env: Env
-}): Promise<Response> => {
+export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context
 
   let password: string
@@ -13,21 +11,21 @@ export const onRequestPost = async (context: {
     const body = (await request.json()) as { password?: string }
     password = body.password ?? ''
   } catch {
-    return Response.json({ error: 'Nieprawidłowe dane' }, { status: 400 })
+    return jsonError('Nieprawidłowe dane', 400)
   }
 
   if (!password) {
-    return Response.json({ error: 'Brak hasła' }, { status: 400 })
+    return jsonError('Brak hasła', 400)
   }
 
   const hash = env.ADMIN_PASSWORD_HASH
   if (!hash) {
-    return Response.json({ error: 'Błąd konfiguracji' }, { status: 500 })
+    return jsonError('Błąd konfiguracji', 500)
   }
 
   const valid = await bcrypt.compare(password, hash)
   if (!valid) {
-    return Response.json({ error: 'Nieprawidłowe hasło' }, { status: 401 })
+    return jsonError('Nieprawidłowe hasło', 401)
   }
 
   const secret = new TextEncoder().encode(env.JWT_SECRET)
