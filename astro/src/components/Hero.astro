@@ -1,89 +1,79 @@
 ---
-import { urlFor } from "../lib/sanity";
+import {
+  firstHeroSlides,
+  heroSrcset,
+  HERO_DESKTOP_MEDIA,
+  HERO_MOBILE_MEDIA,
+  type HeroSlide,
+} from "../lib/hero";
 
 interface Props {
-  hero: {
-    images: Array<{
-      _key: string;
-      alt: string | null;
-      image: any;
-      lqip: string | null;
-      width: number | null;
-      height: number | null;
-    }> | null;
-  } | null;
+  slides: HeroSlide[];
 }
 
-const { hero } = Astro.props;
+const { slides } = Astro.props;
+const first = firstHeroSlides(slides);
 
-type HeroSlide = {
-  lqip: string;
-  smallUrl: string;
-  midUrl: string;
-  fullUrl: string | null;
-  alt: string;
-};
-
-const slides: HeroSlide[] = (hero?.images ?? [])
-  .filter((img) => img.image)
-  .map((img): HeroSlide => {
-    const origWidth: number = img.width ?? 1920;
-    const smallUrl: string = urlFor(img.image)
-      .width(800)
-      .quality(75)
-      .auto("format")
-      .url();
-    const midUrl: string = urlFor(img.image)
-      .width(1200)
-      .quality(75)
-      .auto("format")
-      .url();
-    const fullUrl: string | null =
-      origWidth > 1200
-        ? urlFor(img.image)
-            .width(Math.min(origWidth, 4500))
-            .quality(80)
-            .auto("format")
-            .url()
-        : null;
-    return {
-      lqip: (img.lqip ?? "") as string,
-      smallUrl,
-      midUrl,
-      fullUrl,
-      alt: (img.alt ?? "") as string,
-    };
-  });
+// 1×1 transparent GIF: stops the browser from fetching an initial slide's
+// image on the device where that slide is not shown first.
+const BLANK_IMG =
+  "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 ---
 
 <section class="hero" aria-label="Widoki z Krynicy Morskiej">
   {
-    slides.map((slide, i) => (
-      <div
-        class={`hero__slide${i === 0 ? " hero__slide--active" : ""}`}
-        style={
-          slide.lqip ? `background-image: url('${slide.lqip}')` : undefined
-        }
-        aria-hidden="true"
-      >
-        <img
-          class="hero__slide-img"
-          src={i === 0 ? slide.midUrl : undefined}
-          srcset={
-            i === 0
-              ? `${slide.smallUrl} 800w, ${slide.midUrl} 1200w`
-              : undefined
+    slides.map((slide, i) => {
+      const firstOnMobile = i === first.mobile;
+      const firstOnDesktop = i === first.desktop;
+      const eager = firstOnMobile || firstOnDesktop;
+      // Initial for one device only → block the fetch on the other one.
+      const blockMedia =
+        firstOnMobile && !firstOnDesktop
+          ? HERO_DESKTOP_MEDIA
+          : firstOnDesktop && !firstOnMobile
+            ? HERO_MOBILE_MEDIA
+            : null;
+      const classes = [
+        "hero__slide",
+        slide.visibility === "mobile" && "hero__slide--mobile-only",
+        slide.visibility === "desktop" && "hero__slide--desktop-only",
+        firstOnMobile && "hero__slide--initial-mobile",
+        firstOnDesktop && "hero__slide--initial-desktop",
+      ]
+        .filter(Boolean)
+        .join(" ");
+      return (
+        <div
+          class={classes}
+          style={
+            slide.lqip ? `background-image: url('${slide.lqip}')` : undefined
           }
-          sizes={i === 0 ? "100vw" : undefined}
-          data-mid={slide.midUrl}
-          data-full={slide.fullUrl ?? undefined}
-          alt=""
-          loading={i === 0 ? "eager" : "lazy"}
-          fetchpriority={i === 0 ? "high" : undefined}
-          decoding="async"
-        />
-      </div>
-    ))
+          aria-hidden="true"
+        >
+          <picture>
+            {blockMedia && (
+              <source
+                class="hero__slide-blocker"
+                media={blockMedia}
+                srcset={BLANK_IMG}
+              />
+            )}
+            <img
+              class="hero__slide-img"
+              src={eager ? slide.midUrl : undefined}
+              srcset={eager ? heroSrcset(slide) : undefined}
+              sizes={eager ? "100vw" : undefined}
+              data-mid={slide.midUrl}
+              data-full={slide.fullUrl ?? undefined}
+              alt=""
+              loading={eager ? "eager" : "lazy"}
+              fetchpriority={eager ? "high" : undefined}
+              decoding="async"
+            />
+          </picture>
+        </div>
+      );
+    })
   }
   <div class="hero__overlay" aria-hidden="true"></div>
   <div class="hero__content container">
@@ -118,14 +108,23 @@ const slides: HeroSlide[] = (hero?.images ?? [])
 </section>
 
 <script>
-  const slides = Array.from(
+  const allSlides = Array.from(
     document.querySelectorAll<HTMLElement>(".hero__slide"),
   );
 
-  if (slides.length > 0) {
+  if (allSlides.length > 0) {
     const midLoaded = new WeakSet<Element>();
     const fullLoaded = new WeakSet<Element>();
     const INTERVAL = 5000;
+    // Same breakpoint as the <style> below; slides hidden by CSS on the
+    // current device (mobile-only / desktop-only) are left out of rotation.
+    const desktopQuery = window.matchMedia("(min-width: 780px)");
+
+    let slides: HTMLElement[] = [];
+    let current = 0;
+    // Bumped whenever the rotation restarts, so pending switches from the
+    // previous rotation are dropped.
+    let generation = 0;
 
     function shouldLoadFull(): boolean {
       return window.innerWidth * window.devicePixelRatio > 1200;
@@ -135,10 +134,14 @@ const slides: HeroSlide[] = (hero?.images ?? [])
       if (midLoaded.has(slide)) return Promise.resolve();
       const img = slide.querySelector<HTMLImageElement>(".hero__slide-img")!;
       const src = img.dataset.mid!;
+      // A blocker <source> keeps the slide on a blank GIF on this device;
+      // drop it so the real image loads.
+      const blocker = slide.querySelector(".hero__slide-blocker");
+      blocker?.remove();
       return new Promise<void>((resolve) => {
         // Already loaded — e.g. first slide whose src was set in HTML and fetched
         // from the preload cache before JS ran.
-        if (img.complete && img.naturalWidth > 0) {
+        if (!blocker && img.complete && img.naturalWidth > 0) {
           midLoaded.add(slide);
           resolve();
           return;
@@ -148,8 +151,9 @@ const slides: HeroSlide[] = (hero?.images ?? [])
           resolve();
         };
         img.onerror = () => resolve();
-        // For slide 0 src is already set in HTML; this is a no-op if unchanged.
-        if (img.src !== src) img.src = src;
+        // Re-setting src (even unchanged) makes the browser re-pick the image
+        // after the blocker is gone.
+        if (blocker || img.src !== src) img.src = src;
       });
     }
 
@@ -179,49 +183,69 @@ const slides: HeroSlide[] = (hero?.images ?? [])
       }
     }
 
-    // First slide: browser already started fetching src from the preload cache.
-    // loadMid detects img.complete and resolves immediately if it finished.
-    loadMid(slides[0]).then(() => {
-      if (shouldLoadFull()) loadFull(slides[0]);
-    });
-
-    if (slides.length > 1) {
-      let current = 0;
-
-      function preloadSlide(idx: number): void {
-        const slide = slides[idx];
-        if (slide && !midLoaded.has(slide)) loadMid(slide);
-      }
-
-      setTimeout(() => preloadSlide(1), INTERVAL - 1500);
-
-      setInterval(() => {
-        const prevIdx = current;
-        const nextIdx = (current + 1) % slides.length;
-        current = nextIdx;
-
-        const prev = slides[prevIdx];
-        const next = slides[nextIdx];
-        const expectedCurrent = nextIdx;
-
-        const doSwitch = () => {
-          if (current !== expectedCurrent) return;
-          prev.classList.remove("hero__slide--active");
-          next.classList.add("hero__slide--active");
-          if (shouldLoadFull()) loadFull(next);
-          setTimeout(
-            () => preloadSlide((current + 1) % slides.length),
-            INTERVAL - 1500,
-          );
-        };
-
-        if (midLoaded.has(next)) {
-          doSwitch();
-        } else {
-          loadMid(next).then(doSwitch);
-        }
-      }, INTERVAL);
+    function preloadSlide(idx: number): void {
+      const slide = slides[idx];
+      if (slide && !midLoaded.has(slide)) loadMid(slide);
     }
+
+    function showOnly(slide: HTMLElement): void {
+      for (const s of allSlides) {
+        if (s !== slide) s.classList.remove("hero__slide--active");
+      }
+      slide.classList.add("hero__slide--active");
+    }
+
+    // Starts the rotation from the first slide visible on this device.
+    function startRotation(): void {
+      generation++;
+      slides = allSlides.filter((s) => getComputedStyle(s).display !== "none");
+      current = 0;
+      const first = slides[0];
+      if (first) showOnly(first);
+      // From now on --active decides what is visible, not the SSR classes.
+      for (const s of allSlides) {
+        s.classList.remove(
+          "hero__slide--initial-mobile",
+          "hero__slide--initial-desktop",
+        );
+      }
+      if (!first) return;
+
+      // First slide: browser already started fetching src from the preload cache.
+      // loadMid detects img.complete and resolves immediately if it finished.
+      loadMid(first).then(() => {
+        if (shouldLoadFull()) loadFull(first);
+      });
+      if (slides.length > 1) setTimeout(() => preloadSlide(1), INTERVAL - 1500);
+    }
+
+    startRotation();
+    desktopQuery.addEventListener("change", startRotation);
+
+    setInterval(() => {
+      if (slides.length < 2) return;
+      const nextIdx = (current + 1) % slides.length;
+      current = nextIdx;
+
+      const next = slides[nextIdx];
+      const expectedGeneration = generation;
+
+      const doSwitch = () => {
+        if (generation !== expectedGeneration || current !== nextIdx) return;
+        showOnly(next);
+        if (shouldLoadFull()) loadFull(next);
+        setTimeout(
+          () => preloadSlide((current + 1) % slides.length),
+          INTERVAL - 1500,
+        );
+      };
+
+      if (midLoaded.has(next)) {
+        doSwitch();
+      } else {
+        loadMid(next).then(doSwitch);
+      }
+    }, INTERVAL);
   }
 </script>
 
@@ -247,6 +271,34 @@ const slides: HeroSlide[] = (hero?.images ?? [])
     animation: slowZoom 5s ease-out forwards;
   }
 
+  /* Breakpoint must match HERO_*_MEDIA in lib/hero.ts and the script above.
+     --initial-* show the right first slide before the script runs. */
+  @media (max-width: 779.98px) {
+    .hero__slide--desktop-only {
+      display: none;
+    }
+
+    .hero__slide--initial-mobile {
+      opacity: 1;
+      animation: slowZoom 5s ease-out forwards;
+    }
+  }
+
+  @media (min-width: 780px) {
+    .hero__slide--mobile-only {
+      display: none;
+    }
+
+    .hero__slide--initial-desktop {
+      opacity: 1;
+      animation: slowZoom 5s ease-out forwards;
+    }
+  }
+
+  .hero__slide picture {
+    display: contents;
+  }
+
   .hero__slide-img {
     width: 100%;
     height: 100%;
@@ -254,7 +306,6 @@ const slides: HeroSlide[] = (hero?.images ?? [])
     object-position: center;
     display: block;
   }
-
   @keyframes slowZoom {
     from {
       transform: scale(1.015);

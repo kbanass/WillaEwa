@@ -93,6 +93,8 @@ export type HeroImages = {
       _type: "image";
     };
     alt?: string;
+    mobileOnly?: boolean;
+    desktopOnly?: boolean;
     _type: "heroImage";
     _key: string;
   }>;
@@ -332,7 +334,7 @@ export type AllSanitySchemaTypes =
 
 // Source: ../../astro/src/lib/sanity.ts
 // Variable: heroImagesQuery
-// Query: *[_type == "heroImages"][0]{    images[]{      _key,      alt,      image,      "lqip": image.asset->metadata.lqip,      "width": image.asset->metadata.dimensions.width,      "height": image.asset->metadata.dimensions.height,    }  }
+// Query: *[_type == "heroImages"][0]{    images[]{      _key,      alt,      image,      mobileOnly,      desktopOnly,      "lqip": image.asset->metadata.lqip,      "width": image.asset->metadata.dimensions.width,      "height": image.asset->metadata.dimensions.height,    }  }
 export type HeroImagesQueryResult = {
   images: Array<{
     _key: string;
@@ -344,6 +346,8 @@ export type HeroImagesQueryResult = {
       crop?: SanityImageCrop;
       _type: "image";
     } | null;
+    mobileOnly: boolean | null;
+    desktopOnly: boolean | null;
     lqip: string | null;
     width: number | null;
     height: number | null;
@@ -516,7 +520,7 @@ export type PublicReviewsQueryResult = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    '\n  *[_type == "heroImages"][0]{\n    images[]{\n      _key,\n      alt,\n      image,\n      "lqip": image.asset->metadata.lqip,\n      "width": image.asset->metadata.dimensions.width,\n      "height": image.asset->metadata.dimensions.height,\n    }\n  }\n': HeroImagesQueryResult;
+    '\n  *[_type == "heroImages"][0]{\n    images[]{\n      _key,\n      alt,\n      image,\n      mobileOnly,\n      desktopOnly,\n      "lqip": image.asset->metadata.lqip,\n      "width": image.asset->metadata.dimensions.width,\n      "height": image.asset->metadata.dimensions.height,\n    }\n  }\n': HeroImagesQueryResult;
     '\n  *[_type == "gallery"][0]{\n    images[]{\n      _key,\n      image,\n      alt,\n      caption,\n      captionUrl,\n      "lqip": image.asset->metadata.lqip,\n      "width": image.asset->metadata.dimensions.width,\n      "height": image.asset->metadata.dimensions.height,\n    }\n  }\n': GalleryQueryResult;
     '\n  *[_type == "roomsSlider"][0]{\n    images[]{\n      _key,\n      image,\n      alt,\n      "lqip": image.asset->metadata.lqip,\n      "width": image.asset->metadata.dimensions.width,\n      "height": image.asset->metadata.dimensions.height,\n    }\n  }\n': RoomsSliderQueryResult;
     '\n  *[_type == "article"] | order(publishedAt desc){\n    _id,\n    title,\n    slug,\n    coverImage,\n    excerpt,\n    publishedAt,\n  }\n': ArticlesQueryResult;
