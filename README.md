@@ -30,8 +30,20 @@ cron-worker/   osobny Cloudflare Worker — codzienna synchronizacja opinii Goog
 cd astro && npm install && npm run dev
 ```
 
-`npm run dev` w `astro/` sam odpala `sanity typegen` przed buildem (typy z Sanity Schema).
 Do edycji CMS lokalnie: `cd sanity/studio && npm install && npm run dev`.
+
+### Typy z Sanity
+
+`sanity/studio/schema.json` i `astro/src/sanity.types.ts` są wygenerowane i trzymane w repo —
+build na Cloudflare ich nie generuje (nie instaluje zależności Sanity Studio). Po każdej zmianie
+schematu w `sanity/studio/schemaTypes/` albo zapytania GROQ w `astro/src/lib/sanity.ts` odpal:
+
+```sh
+cd sanity/studio && npm run typegen
+```
+
+i zacommituj oba pliki. `npm run dev:all` w `astro/` generuje typy zapytań na bieżąco
+(bez ekstrakcji schematu).
 
 ## Zmienne środowiskowe
 
