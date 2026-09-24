@@ -26,6 +26,8 @@ export const heroImagesQuery = defineQuery(`
       _key,
       alt,
       image,
+      mobileOnly,
+      desktopOnly,
       "lqip": image.asset->metadata.lqip,
       "width": image.asset->metadata.dimensions.width,
       "height": image.asset->metadata.dimensions.height,

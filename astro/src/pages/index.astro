@@ -9,38 +9,53 @@ import Reviews from "../components/Reviews.astro";
 import Location from "../components/Location.astro";
 import ImportantInfo from "../components/ImportantInfo.astro";
 import Booking from "../components/Booking.astro";
-import { sanityClient, heroImagesQuery, urlFor } from "../lib/sanity";
+import { sanityClient, heroImagesQuery } from "../lib/sanity";
+import {
+  buildHeroSlides,
+  firstHeroSlides,
+  heroSrcset,
+  HERO_DESKTOP_MEDIA,
+  HERO_MOBILE_MEDIA,
+} from "../lib/hero";
 
 const hero = await sanityClient.fetch(heroImagesQuery);
-const firstHeroImg = (hero?.images ?? []).find((img: any) => img?.image);
-const firstSmallUrl: string | null = firstHeroImg
-  ? urlFor(firstHeroImg.image!).width(800).quality(75).auto("format").url()
-  : null;
-const firstMidUrl: string | null = firstHeroImg
-  ? urlFor(firstHeroImg.image!).width(1200).quality(75).auto("format").url()
-  : null;
-const firstSrcset: string | null =
-  firstSmallUrl && firstMidUrl
-    ? `${firstSmallUrl} 800w, ${firstMidUrl} 1200w`
-    : null;
+const heroSlides = buildHeroSlides(hero);
+const first = firstHeroSlides(heroSlides);
+
+// Preload the first slide for each device. When both devices start with the
+// same slide a single preload without `media` covers both.
+const heroPreloads: Array<{ index: number; media?: string }> =
+  first.mobile === first.desktop
+    ? first.mobile >= 0
+      ? [{ index: first.mobile }]
+      : []
+    : [
+        ...(first.mobile >= 0
+          ? [{ index: first.mobile, media: HERO_MOBILE_MEDIA }]
+          : []),
+        ...(first.desktop >= 0
+          ? [{ index: first.desktop, media: HERO_DESKTOP_MEDIA }]
+          : []),
+      ];
 ---
 
 <BaseLayout title="Willa Ewa — Krynica Morska" showNav>
   <Fragment slot="head">
     {
-      firstMidUrl && (
+      heroPreloads.map(({ index, media }) => (
         <link
           rel="preload"
           as="image"
-          href={firstMidUrl}
-          imagesrcset={firstSrcset ?? undefined}
-          imagesizes={firstSrcset ? "100vw" : undefined}
+          href={heroSlides[index].midUrl}
+          imagesrcset={heroSrcset(heroSlides[index])}
+          imagesizes="100vw"
+          media={media}
           fetchpriority="high"
         />
-      )
+      ))
     }
   </Fragment>
-  <Hero hero={hero} />
+  <Hero slides={heroSlides} />
   <Rooms />
   <Facilities />
   <PhoneBanner />
