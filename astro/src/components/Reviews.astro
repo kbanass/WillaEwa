@@ -5,6 +5,16 @@ import {
   getSiteSettings,
 } from "../lib/sanity";
 import { SITE } from "../lib/site";
+import {
+  formatReviewDate,
+  getInitials,
+  LONG_QUOTE_LENGTH,
+  SOURCE_ICON,
+  SOURCE_LABEL,
+  starsHtml,
+  type ReviewSource,
+} from "../lib/reviews";
+import "../styles/review-card.css";
 
 interface Review {
   id: string;
@@ -12,14 +22,8 @@ interface Review {
   quote: string;
   rating: number;
   time: number;
-  source: string;
+  source: ReviewSource;
   reply?: string;
-}
-
-interface Stars {
-  full: number;
-  half: boolean;
-  empty: number;
 }
 
 let reviews: Review[] = [];
@@ -50,32 +54,6 @@ try {
 } catch {
   // Sanity niedostępne podczas builda — pomiń opinie
 }
-
-function getInitials(author: string): string {
-  return author
-    .split(" ")
-    .map((w) => w[0] ?? "")
-    .join("")
-    .slice(0, 2)
-    .toLowerCase();
-}
-
-function formatDate(ts: number): string {
-  return new Date(ts * 1000).toLocaleDateString("pl-PL", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-}
-
-function buildStars(rating: number): Stars {
-  const full = Math.floor(rating);
-  const half = rating % 1 >= 0.5;
-  const empty = 5 - full - (half ? 1 : 0);
-  return { full, half, empty };
-}
-
-const avgStars = buildStars(Math.round(avgRating * 2) / 2);
 
 const ldSchema = {
   "@context": "https://schema.org",
@@ -161,19 +139,10 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
               fill="#3686F7"></path>
           </svg>
         </div>
-        <div class="review-card__stars">
-          {
-            Array.from({ length: avgStars.full }).map(() => (
-              <div class="star star--filled" />
-            ))
-          }
-          {avgStars.half && <div class="star star--half" />}
-          {
-            Array.from({ length: avgStars.empty }).map(() => (
-              <div class="star" />
-            ))
-          }
-        </div>
+        <div
+          class="stars"
+          set:html={starsHtml(Math.round(avgRating * 2) / 2)}
+        />
         <a href={SITE.googleMapsUrl}>
           <small>({googleReviewCount} opinii)</small>
         </a>
@@ -183,55 +152,27 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
     <div class="reviews__grid">
       {
         reviews.map((review) => {
-          const stars = buildStars(review.rating);
-          const isLong = review.quote.length > 450;
+          const isLong = review.quote.length > LONG_QUOTE_LENGTH;
           const hasReply = Boolean(review.reply);
           return (
             <div
-              class={`review-card${isLong ? " long-quote" : ""}${hasReply ? " has-reply" : ""}`}
+              class:list={[
+                "review-card",
+                { "long-quote": isLong, "has-reply": hasReply },
+              ]}
               data-id={review.id}
             >
               <div class="review-card__source">
                 <div class="review-card__source-logo-wrap">
-                  {review.source === "google" ? (
-                    <>
-                      <div class="review-card__source-logo logo-google">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                        >
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                          <path d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z" />
-                        </svg>
-                      </div>
-                      <span class="review-card__source-name">Google</span>
-                    </>
-                  ) : (
-                    <>
-                      <div class="review-card__source-logo">
-                        <img
-                          src="/favicon/favicon.svg"
-                          width="24"
-                          height="24"
-                          alt="Willa Ewa"
-                        />
-                      </div>
-                      <span class="review-card__source-name">Strona</span>
-                    </>
-                  )}
+                  <div
+                    class="review-card__source-logo"
+                    set:html={SOURCE_ICON[review.source]}
+                  />
+                  <span class="review-card__source-name">
+                    {SOURCE_LABEL[review.source]}
+                  </span>
                 </div>
-                <div class="review-card__stars">
-                  {Array.from({ length: stars.full }).map(() => (
-                    <div class="star star--filled" />
-                  ))}
-                  {stars.half && <div class="star star--half" />}
-                  {Array.from({ length: stars.empty }).map(() => (
-                    <div class="star" />
-                  ))}
-                </div>
+                <div class="stars" set:html={starsHtml(review.rating)} />
               </div>
               {review.quote && (
                 <blockquote class="review-card__quote">
@@ -245,7 +186,9 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
                 </div>
                 <div>
                   <p class="review-card__name">{review.author}</p>
-                  <p class="review-card__date">{formatDate(review.time)}</p>
+                  <p class="review-card__date">
+                    {formatReviewDate(review.time)}
+                  </p>
                 </div>
               </div>
               {review.reply && (
@@ -261,10 +204,10 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
     </div>
 
     <div class="reviews-bottom">
-      <button class="button-outline add-review-button" id="add-review">
+      <a class="button-outline add-review-button" href="/opinie">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          fill="#000000"
+          fill="currentColor"
           width="24px"
           height="24px"
           viewBox="0 0 64 64"
@@ -284,8 +227,8 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
             ></path>
           </g>
         </svg>
-        <a href="/opinie">Dodaj opinię</a>
-      </button>
+        Dodaj opinię
+      </a>
       <div class="reviews__navigation">
         <button
           class="button-outline reviews__nav-btn--prev"
@@ -523,13 +466,6 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
   }
 
   .review-card {
-    border: 1px solid var(--c-font-accent);
-    padding: 32px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: var(--space-l);
     transition: opacity 200ms ease;
   }
 
@@ -542,123 +478,15 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
     opacity: 0;
   }
 
-  .review-card__source {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    align-items: start;
-    font-size: var(--font-size-s);
-    color: var(--c-font-secondary);
-  }
-
-  .review-card__source-logo-wrap {
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .review-card__stars {
-    display: flex;
-    gap: 2px;
-  }
-
-  .star {
-    width: 18px;
-    height: 18px;
-    background: var(--c-star-empty);
-    clip-path: polygon(
-      50% 0%,
-      61% 35%,
-      98% 35%,
-      68% 57%,
-      79% 91%,
-      50% 70%,
-      21% 91%,
-      32% 57%,
-      2% 35%,
-      39% 35%
-    );
-  }
-
-  .star--filled {
-    background: var(--c-star);
-  }
-
-  .star--half {
-    background: linear-gradient(
-      to right,
-      var(--c-star) 50%,
-      var(--c-star-empty) 50%
-    );
-  }
-
-  .review-card__quote {
-    font-family: var(--font-serif);
-    font-weight: var(--weight-light);
-  }
-
   .review-card.long-quote,
   .review-card.has-reply {
     grid-column-end: span 2;
   }
 
-  .review-card.long-quote .review-card__quote {
-    overflow: hidden;
-    max-height: 6.5rem;
-    transition: max-height 250ms ease-out;
-  }
-
-  .review-card.long-quote .expanded {
-    max-height: 1000px;
-  }
-
-  .review-card.long-quote .review-toggle {
-    align-self: flex-end;
-    background: none;
-    border: 1px solid var(--c-font-accent);
-    color: var(--c-font-accent);
-    padding: 8px 16px;
-    cursor: pointer;
-  }
-
   .review-card__author {
-    font-size: var(--font-size-s);
     width: 100%;
     padding-top: 16px;
     border-top: 1px solid var(--c-font-accent);
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .review-card__name {
-    font-weight: var(--weight-bold);
-    text-transform: capitalize;
-  }
-
-  .review-card__date {
-    font-weight: var(--weight-light);
-    font-size: var(--font-size-s);
-  }
-
-  .review-card__avatar {
-    background-color: hsl(32, 26%, 73%);
-    color: var(--c-font-light);
-    font-weight: var(--weight-medium);
-    font-family: var(--font-serif);
-    font-size: var(--font-size-m);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    height: 4ch;
-    aspect-ratio: 1/1;
-    border-radius: 50%;
-    text-transform: uppercase;
   }
 
   .review-card__reply {
@@ -699,7 +527,7 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
     gap: 16px;
   }
 
-  .reviews-bottom button {
+  .reviews-bottom .button-outline {
     padding: 12px;
     background-color: transparent;
     border: 1px solid var(--c-font-accent);

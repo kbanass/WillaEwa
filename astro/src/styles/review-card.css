@@ -1,0 +1,123 @@
+/* Review card shared by the reviews section (Reviews.astro) and the admin
+   panel (panel.astro). Global because the panel builds its cards in the
+   browser, where scoped styles don't reach. Markup: lib/reviews.ts. */
+
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+.star {
+  width: 18px;
+  height: 18px;
+  background: var(--c-star-empty);
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
+}
+
+.star--filled {
+  background: var(--c-star);
+}
+
+.star--half {
+  background: linear-gradient(
+    to right,
+    var(--c-star) 50%,
+    var(--c-star-empty) 50%
+  );
+}
+
+.review-card {
+  border: 1px solid var(--c-font-accent);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-l);
+}
+
+.review-card__source {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: start;
+  font-size: var(--font-size-s);
+  color: var(--c-font-secondary);
+}
+
+.review-card__source-logo-wrap {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.review-card__quote {
+  font-family: var(--font-serif);
+  font-weight: var(--weight-light);
+}
+
+.review-card.long-quote .review-card__quote {
+  overflow: hidden;
+  max-height: 6.5rem;
+  transition: max-height 250ms ease-out;
+}
+
+.review-card.long-quote .expanded {
+  max-height: 1000px;
+}
+
+.review-card.long-quote .review-toggle {
+  align-self: flex-end;
+  background: none;
+  border: 1px solid var(--c-font-accent);
+  color: var(--c-font-accent);
+  padding: 8px 16px;
+}
+
+.review-card__author {
+  font-size: var(--font-size-s);
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 16px;
+}
+
+.review-card__name {
+  font-weight: var(--weight-bold);
+  text-transform: capitalize;
+}
+
+.review-card__date {
+  font-weight: var(--weight-light);
+  font-size: var(--font-size-s);
+}
+
+.review-card__avatar {
+  background-color: var(--c-avatar);
+  color: var(--c-font-light);
+  font-weight: var(--weight-medium);
+  font-family: var(--font-serif);
+  font-size: var(--font-size-m);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 4ch;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  text-transform: uppercase;
+}
