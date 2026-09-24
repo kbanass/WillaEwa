@@ -1,0 +1,172 @@
+/* PhotoSwipe (lightbox for the gallery, rooms slider and map): library
+   styles plus our overrides. Imported by lib/lightbox.ts' callers. */
+@import "photoswipe/dist/photoswipe.css";
+
+.pswp {
+  --pswp-bg: var(--c-bg-primary);
+  --pswp-modal-dark: hsl(30, 20%, 12%);
+  --pswp-icon-color: var(--pswp-modal-dark) !important;
+  --pswp-icon-color-secondary: var(--c-bg-primary) !important;
+  --pswp-icon-stroke-color: var(--pswp-modal-dark) !important;
+}
+
+.pswp__button {
+  border: 1px solid var(--pswp-modal-dark) !important;
+  width: 44px !important;
+  height: 44px !important;
+  aspect-ratio: 1 / 1 !important;
+}
+
+@media (hover: hover) {
+  .pswp__button:hover {
+    background: hsl(from var(--c-font-light) h s l / 0.2);
+  }
+}
+
+.pswp__icn {
+  top: 50% !important;
+  left: 50% !important;
+  right: auto !important;
+  width: 24px !important;
+  height: 24px !important;
+  margin: -12px 0 0 -12px !important;
+}
+
+/* Spacing between top-bar buttons and away from the screen edge — the
+   library packs them flush against each other and the corner by default. */
+.pswp__top-bar {
+  gap: 8px;
+  padding-block-start: 12px;
+  padding-inline-end: 12px;
+}
+
+/* Same for the prev/next arrows, which default to sitting flush at 0px. */
+.pswp__button--arrow--prev {
+  left: 16px !important;
+}
+
+.pswp__button--arrow--next {
+  right: 16px !important;
+}
+
+/*
+ * The library vertically centers arrows via `top: 50%; margin-top: -50px`,
+ * which assumes its own default 100px button height. Now that .pswp__button
+ * is forced to 44px, that fixed -50px offset overshoots and the arrows sit
+ * noticeably above center. Center with a transform instead, which stays
+ * correct regardless of the button's actual height.
+ */
+.pswp__button--arrow {
+  top: 50% !important;
+  margin-top: 0 !important;
+  transform: translateY(-50%) !important;
+}
+
+/*
+ * The chevron glyph itself (path "M29 43l-3 3-16-16 16-16 3 3-13 13 13 13z",
+ * in a 0-0-60-60 viewBox) isn't centered in its own viewBox — its bounding
+ * box is x:[10,29], so its visual center sits at x=19.5 vs the viewBox's
+ * center at x=30. Centering the icon *box* (as .pswp__icn does above)
+ * therefore leaves the visible chevron sitting ~4px left of true center.
+ * Nudge it back. The "next" arrow reuses the same glyph mirrored via
+ * scale(-1,1), so its correction has to happen before the mirroring.
+ */
+.pswp__button--arrow--prev .pswp__icn {
+  transform: translateX(4px);
+}
+
+.pswp__button--arrow--next .pswp__icn {
+  transform: scale(-1, 1) translateX(4px) !important;
+}
+
+/* The counter inherits --pswp-icon-color/-secondary for its text-shadow,
+   which made sense against the library's default black backdrop but just
+   looks like a smudge against ours — drop it. */
+.pswp__counter {
+  text-shadow: none !important;
+}
+
+/* ─── PhotoSwipe download button loading state ──────────────────── */
+
+/*
+ * The default PhotoSwipe button has no centering of its own (just a
+ * display:block box), so a plain inline svg lands wherever inline layout
+ * happens to put it — not necessarily true-center. Pin the icon to the same
+ * center point the spinner below uses, so swapping between the two doesn't
+ * shift anything.
+ */
+.pswp__button--download-button {
+  color: var(--pswp-icon-color, #fff);
+}
+
+.pswp__button--download-button svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+}
+
+.pswp__button--download-button.is-loading {
+  pointer-events: none;
+}
+
+.pswp__button--download-button.is-loading svg {
+  opacity: 0;
+}
+
+.pswp__button--download-button.is-loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: pswp-download-spin 0.6s linear infinite;
+}
+
+@keyframes pswp-download-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ─── Gallery captions (see lib/lightbox.ts) ─────────────────────── */
+
+.pswp__gallery-caption {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  font-family: var(--font-sans-serif);
+  font-size: var(--font-size-m);
+  color: #fff;
+  text-align: center;
+  max-width: min(90vw, 75ch);
+  width: max-content;
+  background: rgba(0, 0, 0, 0.85);
+  padding: 12px 16px;
+  pointer-events: none;
+  z-index: 100;
+  clip-path: inset(0 0 0 0);
+}
+
+.pswp__gallery-caption a {
+  color: inherit;
+  text-decoration: underline;
+  pointer-events: all;
+}
+
+@keyframes pswp-caption-reveal {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}

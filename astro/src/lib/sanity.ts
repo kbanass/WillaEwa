@@ -19,6 +19,15 @@ export function urlFor(source: SanityImageSource) {
   return builder.image(source);
 }
 
+// Image URLs for the full-screen viewer (lib/lightbox.ts): `src` fills a
+// desktop screen, `zoomSrc` is loaded once the user zooms in.
+export function lightboxSources(source: SanityImageSource) {
+  return {
+    src: urlFor(source).width(1920).auto("format").url(),
+    zoomSrc: urlFor(source).width(3840).auto("format").url(),
+  };
+}
+
 // ── GROQ queries ──────────────────────────────────────────────────────────────
 
 export const heroImagesQuery = defineQuery(`

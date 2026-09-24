@@ -2,29 +2,38 @@
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import "photoswipe/dist/photoswipe.css";
-import { getRoomsSlider, getSiteSettings, urlFor } from "../lib/sanity";
+import "../styles/photoswipe.css";
+import {
+  getRoomsSlider,
+  getSiteSettings,
+  lightboxSources,
+  urlFor,
+} from "../lib/sanity";
+import type { LightboxItem } from "../lib/lightbox";
 
 const [roomsData, settings] = await Promise.all([
   getRoomsSlider(),
   getSiteSettings(),
 ]);
 
-const photos = (roomsData?.images ?? [])
-  .filter((img) => img.image)
-  .map((img, i) => ({
-    thumbSrc: urlFor(img.image!).width(1200).auto("format").url(),
-    thumbSrcset: [600, 900, 1200]
-      .map((w) => `${urlFor(img.image!).width(w).auto("format").url()} ${w}w`)
-      .join(", "),
-    mainSrc: urlFor(img.image!).width(1920).auto("format").url(),
-    zoomSrc: urlFor(img.image!).width(3840).auto("format").url(),
-    alt: img.alt ?? "",
-    lqip: img.lqip ?? "",
-    width: img.width ?? 1920,
-    height: img.height ?? 1080,
-    idx: i,
-  }));
+const images = (roomsData?.images ?? []).filter((img) => img.image);
+
+const photos = images.map((img) => ({
+  src: urlFor(img.image!).width(1200).auto("format").url(),
+  srcset: [600, 900, 1200]
+    .map((w) => `${urlFor(img.image!).width(w).auto("format").url()} ${w}w`)
+    .join(", "),
+  alt: img.alt ?? "",
+  lqip: img.lqip ?? "",
+}));
+
+const lightboxItems: LightboxItem[] = images.map((img) => ({
+  ...lightboxSources(img.image!),
+  width: img.width ?? 1920,
+  height: img.height ?? 1080,
+  alt: img.alt ?? "",
+  msrc: img.lqip || undefined,
+}));
 ---
 
 <section class="rooms" id="oferta">
@@ -46,28 +55,22 @@ const photos = (roomsData?.images ?? [])
             <div class="rooms-swiper-wrapper">
               <div
                 class="swiper rooms-swiper"
-                data-loop={photos.length > 1 ? "true" : "false"}
+                data-lightbox={JSON.stringify(lightboxItems)}
               >
                 <div class="swiper-wrapper">
-                  {photos.map((photo) => (
+                  {photos.map((photo, i) => (
                     <div class="swiper-slide">
                       <button
                         class="rooms-swiper__btn"
-                        data-pswp-src={photo.mainSrc}
-                        data-pswp-zoom={photo.zoomSrc}
-                        data-pswp-w={photo.width}
-                        data-pswp-h={photo.height}
-                        data-pswp-lqip={photo.lqip}
-                        data-pswp-alt={photo.alt}
-                        data-pswp-idx={photo.idx}
+                        data-index={i}
                         aria-label={`Otwórz zdjęcie: ${photo.alt}`}
                       >
                         <img
-                          src={photo.thumbSrc}
-                          srcset={photo.thumbSrcset}
+                          src={photo.src}
+                          srcset={photo.srcset}
                           sizes="(min-width: 1024px) 620px, (min-width: 780px) 820px, 100vw"
                           alt={photo.alt}
-                          loading={photo.idx === 0 ? "eager" : "lazy"}
+                          loading={i === 0 ? "eager" : "lazy"}
                           class="rooms-swiper__img"
                           style={
                             photo.lqip
@@ -111,26 +114,11 @@ const photos = (roomsData?.images ?? [])
 <script>
   import Swiper from "swiper";
   import { Navigation, Pagination, Keyboard, A11y } from "swiper/modules";
-  import PhotoSwipe from "photoswipe";
-  import { downloadImage } from "../lib/download";
-
-  const DOWNLOAD_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/><path d="M7 11l5 5l5 -5"/><path d="M12 4l0 12"/></svg>`;
+  import { openLightbox, type LightboxItem } from "../lib/lightbox";
 
   const swiperEl = document.querySelector<HTMLElement>(".rooms-swiper");
   if (swiperEl) {
-    const shouldLoop = swiperEl.dataset.loop === "true";
-
-    const origButtons = Array.from(
-      swiperEl.querySelectorAll<HTMLElement>(".rooms-swiper__btn"),
-    );
-    const dataSource = origButtons.map((btn) => ({
-      src: btn.dataset.pswpSrc ?? "",
-      width: parseInt(btn.dataset.pswpW ?? "1920", 10),
-      height: parseInt(btn.dataset.pswpH ?? "1080", 10),
-      msrc: btn.dataset.pswpLqip || undefined,
-      alt: btn.dataset.pswpAlt ?? "",
-      zoomSrc: btn.dataset.pswpZoom ?? "",
-    }));
+    const items: LightboxItem[] = JSON.parse(swiperEl.dataset.lightbox ?? "[]");
 
     new Swiper(swiperEl, {
       modules: [Navigation, Pagination, Keyboard, A11y],
@@ -144,89 +132,19 @@ const photos = (roomsData?.images ?? [])
         clickable: true,
       },
       keyboard: { enabled: true },
-      loop: shouldLoop,
+      loop: items.length > 1,
       spaceBetween: 32,
       centeredSlides: true,
       a11y: { enabled: true },
     });
 
-    let pswp: PhotoSwipe | null = null;
-
-    function openPhotoSwipe(startIndex: number) {
-      pswp?.destroy();
-      pswp = new PhotoSwipe({
-        dataSource,
-        index: startIndex,
-        bgOpacity: 1,
-        wheelToZoom: true,
-        zoom: true,
-        close: true,
-        counter: true,
-        arrowKeys: true,
-        preload: [1, 1],
-        // top must clear the 60px button bar, or wide/landscape images end
-        // up rendered underneath it (buttons overlapping the photo).
-        padding: { top: 76, bottom: 16, left: 16, right: 16 },
-        imageClickAction: "zoom",
-        tapAction: "zoom",
-        bgClickAction: "close",
-        clickToCloseNonZoomable: false,
-        secondaryZoomLevel: (zl) => Math.max(zl.fit * 2, zl.fill),
-        maxZoomLevel: (zl) => Math.max(zl.fit * 4, 4),
-      });
-
-      pswp.on("uiRegister", () => {
-        pswp!.ui!.registerElement({
-          name: "download-button",
-          order: 8,
-          isButton: true,
-          appendTo: "bar",
-          html: DOWNLOAD_ICON,
-          title: "Pobierz zdjęcie",
-          onClick: (_event, buttonEl) => {
-            const data = dataSource[pswp!.currIndex];
-            if (data) {
-              downloadImage(
-                `/api/download-image?url=${encodeURIComponent(data.src)}`,
-                `willa-ewa-${Date.now()}.jpg`,
-                buttonEl,
-              );
-            }
-          },
-        });
-      });
-
-      const loadedHighRes = new Set<number>();
-      pswp.on("zoomPanUpdate", ({ slide }) => {
-        const idx = slide.index;
-        if (loadedHighRes.has(idx)) return;
-        const initialZoom = slide.zoomLevels?.initial ?? 1;
-        if (slide.currZoomLevel <= initialZoom * 1.2) return;
-        const data = dataSource[idx];
-        if (!data?.zoomSrc) return;
-        loadedHighRes.add(idx);
-        const hi = new window.Image();
-        hi.onload = () => {
-          const imgEl = slide.content.element as HTMLImageElement | null;
-          if (imgEl?.tagName === "IMG" && imgEl.src !== data.zoomSrc)
-            imgEl.src = data.zoomSrc;
-        };
-        hi.src = data.zoomSrc;
-      });
-
-      pswp.on("destroy", () => {
-        pswp = null;
-      });
-      pswp.init();
-    }
-
+    // Delegated: with loop on, Swiper clones slides, and the clones need
+    // to open the lightbox too.
     swiperEl.addEventListener("click", (e) => {
       const btn = (e.target as HTMLElement).closest<HTMLElement>(
         ".rooms-swiper__btn",
       );
-      if (!btn) return;
-      const idx = parseInt(btn.dataset.pswpIdx ?? "0", 10);
-      openPhotoSwipe(idx);
+      if (btn) openLightbox(items, Number(btn.dataset.index ?? 0));
     });
   }
 </script>

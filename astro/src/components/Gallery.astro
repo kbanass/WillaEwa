@@ -1,7 +1,8 @@
 ---
-import "photoswipe/dist/photoswipe.css";
+import "../styles/photoswipe.css";
 import type { SanityImageSource } from "@sanity/image-url";
-import { getGallery, urlFor } from "../lib/sanity";
+import { getGallery, lightboxSources, urlFor } from "../lib/sanity";
+import type { LightboxItem } from "../lib/lightbox";
 
 // 3:2 crop, matching the grid tiles.
 function galleryThumb(image: SanityImageSource, width: number): string {
@@ -14,28 +15,34 @@ function galleryThumb(image: SanityImageSource, width: number): string {
 }
 
 const galleryData = await getGallery();
-const items = (galleryData?.images ?? [])
-  .filter((img) => img.image)
-  .map((img) => ({
-    _key: img._key ?? "",
-    alt: img.alt ?? "",
-    caption: img.caption ?? "",
-    captionUrl: img.captionUrl ?? "",
-    lqip: img.lqip ?? "",
-    thumbSrc: galleryThumb(img.image!, 800),
-    thumbSrcset: [400, 800, 1200]
-      .map((w) => `${galleryThumb(img.image!, w)} ${w}w`)
-      .join(", "),
-    mainSrc: urlFor(img.image!).width(1920).auto("format").url(),
-    zoomSrc: urlFor(img.image!).width(3840).auto("format").url(),
-    width: img.width ?? 1920,
-    height: img.height ?? 1080,
-  }));
+const images = (galleryData?.images ?? []).filter((img) => img.image);
 
-const preview = items.slice(0, 5);
+// The grid shows the first five; the lightbox has all of them.
+const preview = images.slice(0, 5).map((img) => ({
+  src: galleryThumb(img.image!, 800),
+  srcset: [400, 800, 1200]
+    .map((w) => `${galleryThumb(img.image!, w)} ${w}w`)
+    .join(", "),
+  alt: img.alt ?? "",
+  lqip: img.lqip ?? "",
+}));
+
+const lightboxItems: LightboxItem[] = images.map((img) => ({
+  ...lightboxSources(img.image!),
+  width: img.width ?? 1920,
+  height: img.height ?? 1080,
+  alt: img.alt ?? "",
+  msrc: img.lqip || undefined,
+  caption: img.caption || undefined,
+  captionUrl: img.captionUrl || undefined,
+}));
 ---
 
-<section class="gallery" id="galeria">
+<section
+  class="gallery"
+  id="galeria"
+  data-lightbox={JSON.stringify(lightboxItems)}
+>
   <div class="container">
     <div class="section-header">
       <span class="section-label">Galeria</span>
@@ -43,13 +50,13 @@ const preview = items.slice(0, 5);
     </div>
 
     {
-      items.length > 0 ? (
+      preview.length > 0 ? (
         <>
           <div class="gallery__grid animate stagger">
             {preview.map((img, i) => (
               <img
-                src={img.thumbSrc}
-                srcset={img.thumbSrcset}
+                src={img.src}
+                srcset={img.srcset}
                 sizes={
                   i === 0
                     ? "(min-width: 780px) 704px, 100vw"
@@ -77,166 +84,30 @@ const preview = items.slice(0, 5);
           </div>
         </>
       ) : (
-        <p style="color: var(--c-font-secondary)">Brak zdjęć w galerii.</p>
+        <p class="section-lead">Brak zdjęć w galerii.</p>
       )
     }
   </div>
 </section>
 
-<div
-  id="gallery-data"
-  data-items={JSON.stringify(items)}
-  style="display:none"
-  aria-hidden="true"
->
-</div>
-
 <script>
-  import PhotoSwipe from "photoswipe";
-  import { downloadImage } from "../lib/download";
+  import { openLightbox, type LightboxItem } from "../lib/lightbox";
 
-  type GalleryItem = {
-    _key: string;
-    alt: string;
-    caption: string;
-    captionUrl: string;
-    lqip: string;
-    thumbSrc: string;
-    mainSrc: string;
-    zoomSrc: string;
-    width: number;
-    height: number;
-  };
+  const gallery = document.getElementById("galeria");
+  const items: LightboxItem[] = JSON.parse(gallery?.dataset.lightbox ?? "[]");
 
-  const dataEl = document.getElementById("gallery-data");
-  const allItems: GalleryItem[] = JSON.parse(dataEl?.dataset.items ?? "[]");
-
-  const DOWNLOAD_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/><path d="M7 11l5 5l5 -5"/><path d="M12 4l0 12"/></svg>`;
-
-  if (allItems.length > 0) {
-    const dataSource = allItems.map((img) => ({
-      src: img.mainSrc,
-      width: img.width,
-      height: img.height,
-      msrc: img.lqip || undefined,
-      alt: img.alt,
-      caption: img.caption,
-      captionUrl: img.captionUrl,
-      zoomSrc: img.zoomSrc,
-    }));
-
-    let pswp: PhotoSwipe | null = null;
-
-    function openGallery(startIndex: number) {
-      pswp?.destroy();
-      pswp = new PhotoSwipe({
-        dataSource,
-        index: startIndex,
-        bgOpacity: 1,
-        wheelToZoom: true,
-        zoom: true,
-        close: true,
-        counter: true,
-        arrowKeys: true,
-        preload: [1, 1],
-        // top must clear the 60px button bar, or wide/landscape images end
-        // up rendered underneath it (buttons overlapping the photo).
-        padding: { top: 76, bottom: 16, left: 16, right: 16 },
-        imageClickAction: "zoom",
-        tapAction: "zoom",
-        bgClickAction: "close",
-        clickToCloseNonZoomable: false,
-        secondaryZoomLevel: (zl) => Math.max(zl.fit * 2, zl.fill),
-        maxZoomLevel: (zl) => Math.max(zl.fit * 4, 4),
-      });
-
-      pswp.on("uiRegister", () => {
-        pswp!.ui!.registerElement({
-          name: "download-button",
-          order: 8,
-          isButton: true,
-          appendTo: "bar",
-          html: DOWNLOAD_ICON,
-          title: "Pobierz zdjęcie",
-          onClick: (_event, buttonEl) => {
-            const data = dataSource[pswp!.currIndex];
-            if (data) {
-              downloadImage(
-                `/api/download-image?url=${encodeURIComponent(data.src)}`,
-                `willa-ewa-${Date.now()}.jpg`,
-                buttonEl,
-              );
-            }
-          },
-        });
-
-        // Caption element positioned via CSS (bottom-anchored, see
-        // .pswp__gallery-caption below) rather than measured against the
-        // image — matches the pattern from the PhotoSwipe docs
-        // (https://photoswipe.com/caption/) and avoids depending on the
-        // image's layout timing.
-        pswp!.ui!.registerElement({
-          name: "gallery-caption",
-          order: 9,
-          isButton: false,
-          appendTo: "root",
-          onInit(el) {
-            pswp!.on("change", () => {
-              const data = dataSource[pswp!.currIndex];
-              if (data?.caption) {
-                el.innerHTML = data.captionUrl
-                  ? `<a href="${data.captionUrl}" target="_blank" rel="noopener noreferrer">${data.caption}</a>`
-                  : data.caption;
-                el.style.display = "";
-                // Restart the reveal animation on every slide change.
-                el.style.animation = "none";
-                void el.offsetWidth;
-                el.style.animation = "pswp-caption-reveal 0.6s ease forwards";
-              } else {
-                el.style.display = "none";
-              }
-            });
-          },
-        });
-      });
-
-      const loadedHighRes = new Set<number>();
-      pswp.on("zoomPanUpdate", ({ slide }) => {
-        const idx = slide.index;
-        if (loadedHighRes.has(idx)) return;
-        const initialZoom = slide.zoomLevels?.initial ?? 1;
-        if (slide.currZoomLevel <= initialZoom * 1.2) return;
-        const data = dataSource[idx];
-        if (!data?.zoomSrc) return;
-        loadedHighRes.add(idx);
-        const hi = new window.Image();
-        hi.onload = () => {
-          const imgEl = slide.content.element as HTMLImageElement | null;
-          if (imgEl?.tagName === "IMG" && imgEl.src !== data.zoomSrc)
-            imgEl.src = data.zoomSrc;
-        };
-        hi.src = data.zoomSrc;
-      });
-
-      pswp.on("destroy", () => {
-        pswp = null;
-      });
-      pswp.init();
-    }
-
-    document
+  if (gallery && items.length > 0) {
+    gallery
       .querySelectorAll<HTMLImageElement>(".gallery__grid img")
       .forEach((img) => {
-        img.style.cursor = "zoom-in";
-        img.addEventListener("click", () => {
-          const idx = parseInt(img.dataset.pswpIndex ?? "0", 10);
-          openGallery(idx);
-        });
+        img.addEventListener("click", () =>
+          openLightbox(items, Number(img.dataset.pswpIndex ?? 0)),
+        );
       });
 
     document
       .getElementById("gallery-open-all")
-      ?.addEventListener("click", () => openGallery(0));
+      ?.addEventListener("click", () => openLightbox(items));
   }
 </script>
 
@@ -248,6 +119,7 @@ const preview = items.slice(0, 5);
   }
 
   .gallery__grid img {
+    cursor: zoom-in;
     width: 100%;
     aspect-ratio: 4 / 3;
     object-fit: cover;
@@ -286,46 +158,5 @@ const preview = items.slice(0, 5);
     border: 1px solid var(--c-font-accent);
     color: var(--c-font-accent);
     padding: 8px 16px;
-  }
-
-  :global(.pswp) {
-    --pswp-bg: hsl(30, 40%, 95%);
-  }
-
-  :global(.pswp__gallery-caption) {
-    position: absolute;
-    left: 50%;
-    bottom: 16px;
-    transform: translateX(-50%);
-    font-family: var(--font-sans-serif);
-    font-size: var(--font-size-m);
-    color: #fff;
-    text-align: center;
-    max-width: min(90vw, 75ch);
-    width: max-content;
-    background: rgba(0, 0, 0, 0.85);
-    padding: 12px 16px;
-    pointer-events: none;
-    z-index: 100;
-    clip-path: inset(0 0 0 0);
-  }
-
-  @keyframes pswp-caption-reveal {
-    from {
-      clip-path: inset(0 100% 0 0);
-    }
-    to {
-      clip-path: inset(0 0 0 0);
-    }
-  }
-
-  :global(.pswp__gallery-caption a) {
-    color: inherit;
-    text-decoration: underline;
-    pointer-events: all;
-  }
-
-  :global(.pswp__button--download-button) {
-    color: var(--pswp-icon-color, #fff);
   }
 </style>
