@@ -1,6 +1,17 @@
 ---
 import "photoswipe/dist/photoswipe.css";
+import type { SanityImageSource } from "@sanity/image-url";
 import { getGallery, urlFor } from "../lib/sanity";
+
+// 3:2 crop, matching the grid tiles.
+function galleryThumb(image: SanityImageSource, width: number): string {
+  return urlFor(image)
+    .width(width)
+    .height(Math.round((width * 2) / 3))
+    .fit("crop")
+    .auto("format")
+    .url();
+}
 
 const galleryData = await getGallery();
 const items = (galleryData?.images ?? [])
@@ -11,12 +22,10 @@ const items = (galleryData?.images ?? [])
     caption: img.caption ?? "",
     captionUrl: img.captionUrl ?? "",
     lqip: img.lqip ?? "",
-    thumbSrc: urlFor(img.image!)
-      .width(800)
-      .height(533)
-      .fit("crop")
-      .auto("format")
-      .url(),
+    thumbSrc: galleryThumb(img.image!, 800),
+    thumbSrcset: [400, 800, 1200]
+      .map((w) => `${galleryThumb(img.image!, w)} ${w}w`)
+      .join(", "),
     mainSrc: urlFor(img.image!).width(1920).auto("format").url(),
     zoomSrc: urlFor(img.image!).width(3840).auto("format").url(),
     width: img.width ?? 1920,
@@ -40,6 +49,12 @@ const preview = items.slice(0, 5);
             {preview.map((img, i) => (
               <img
                 src={img.thumbSrc}
+                srcset={img.thumbSrcset}
+                sizes={
+                  i === 0
+                    ? "(min-width: 780px) 704px, 100vw"
+                    : "(min-width: 780px) 348px, 48vw"
+                }
                 alt={img.alt}
                 loading={i === 0 ? "eager" : "lazy"}
                 class={i === 0 ? "gallery__grid-main" : ""}

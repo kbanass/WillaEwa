@@ -14,6 +14,9 @@ const photos = (roomsData?.images ?? [])
   .filter((img) => img.image)
   .map((img, i) => ({
     thumbSrc: urlFor(img.image!).width(1200).auto("format").url(),
+    thumbSrcset: [600, 900, 1200]
+      .map((w) => `${urlFor(img.image!).width(w).auto("format").url()} ${w}w`)
+      .join(", "),
     mainSrc: urlFor(img.image!).width(1920).auto("format").url(),
     zoomSrc: urlFor(img.image!).width(3840).auto("format").url(),
     alt: img.alt ?? "",
@@ -61,6 +64,8 @@ const photos = (roomsData?.images ?? [])
                       >
                         <img
                           src={photo.thumbSrc}
+                          srcset={photo.thumbSrcset}
+                          sizes="(min-width: 1024px) 620px, (min-width: 780px) 820px, 100vw"
                           alt={photo.alt}
                           loading={photo.idx === 0 ? "eager" : "lazy"}
                           class="rooms-swiper__img"

@@ -64,6 +64,7 @@ const BLANK_IMG =
               srcset={eager ? heroSrcset(slide) : undefined}
               sizes={eager ? "100vw" : undefined}
               data-mid={slide.midUrl}
+              data-srcset={heroSrcset(slide)}
               data-full={slide.fullUrl ?? undefined}
               alt=""
               loading={eager ? "eager" : "lazy"}
@@ -167,6 +168,11 @@ const BLANK_IMG =
             .then(() => resolve());
         };
         img.onerror = () => resolve();
+        // Let the browser pick 800px or 1200px, like for the first slide.
+        if (!img.srcset) {
+          img.sizes = "100vw";
+          img.srcset = img.dataset.srcset!;
+        }
         // Re-setting src (even unchanged) makes the browser re-pick the image
         // after the blocker is gone.
         if (blocker || img.src !== src) img.src = src;
@@ -399,12 +405,6 @@ const BLANK_IMG =
     color: var(--c-font-accent);
   }
 
-  .hero__content-location {
-    width: fit-content;
-    align-self: self-end;
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-s);
   /* Same entrance as the global .animate.slide-from-left, but pure CSS: the
      heading is the LCP element on mobile, and waiting for the observer script
      to reveal it delayed LCP by over a second. */
@@ -436,6 +436,12 @@ const BLANK_IMG =
     }
   }
 
+  .hero__content-location {
+    width: fit-content;
+    align-self: self-end;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-s);
     text-transform: uppercase;
     color: var(--c-font-light);
     animation: pulseLocation 2s ease-in infinite;
