@@ -15,6 +15,8 @@ export default defineConfig({
   trailingSlash: "never",
   build: {
     format: "file", // generuje /opinie.html zamiast /opinie/index.html — zachowuje istniejące URLe
+    // CSS wbudowany w HTML — bez tego dwa pliki CSS blokowały pierwsze renderowanie
+    inlineStylesheets: "always",
   },
   vite: {
     server: {

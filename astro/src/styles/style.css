@@ -176,6 +176,43 @@ footer {
   filter: blur(0);
 }
 
+/* Entrance on page load for above-the-fold elements (header, hero title):
+   same look as .fade-in / .slide-from-left, but pure CSS, so it doesn't
+   wait for the observer script. `backwards` leaves no transform/filter on
+   the element once the animation is over. */
+@media (prefers-reduced-motion: no-preference) {
+  .load-fade-in {
+    animation:
+      loadFade 0.8s ease backwards,
+      loadScaleIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+
+  .load-slide-from-left {
+    animation:
+      loadFade 0.8s ease backwards,
+      loadSlideIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+}
+
+@keyframes loadFade {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+  }
+}
+
+@keyframes loadScaleIn {
+  from {
+    transform: scale(0.96);
+  }
+}
+
+@keyframes loadSlideIn {
+  from {
+    transform: translateX(-50px) scale(0.96);
+  }
+}
+
 /* ─── Header ──────────────────────────────────────────────── */
 .header {
   position: fixed;
