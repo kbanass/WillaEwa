@@ -1,7 +1,5 @@
 import type { Env } from './env'
 
-const isProd = true // always treat CF as production
-
 // Notification bodies below interpolate user-submitted fields (review
 // author/quote, inquiry name/dates) straight from public, unauthenticated
 // forms — escape before building the HTML email so a crafted submission

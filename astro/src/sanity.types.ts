@@ -397,73 +397,6 @@ export type RoomsSliderQueryResult = {
 } | null;
 
 // Source: ../../astro/src/lib/sanity.ts
-// Variable: articlesQuery
-// Query: *[_type == "article"] | order(publishedAt desc){    _id,    title,    slug,    coverImage,    excerpt,    publishedAt,  }
-export type ArticlesQueryResult = Array<{
-  _id: string;
-  title: string | null;
-  slug: Slug | null;
-  coverImage: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  } | null;
-  excerpt: string | null;
-  publishedAt: string | null;
-}>;
-
-// Source: ../../astro/src/lib/sanity.ts
-// Variable: articleBySlugQuery
-// Query: *[_type == "article" && slug.current == $slug][0]{    _id,    title,    slug,    coverImage,    excerpt,    publishedAt,    body,  }
-export type ArticleBySlugQueryResult = {
-  _id: string;
-  title: string | null;
-  slug: Slug | null;
-  coverImage: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  } | null;
-  excerpt: string | null;
-  publishedAt: string | null;
-  body: Array<
-    | {
-        children?: Array<{
-          marks?: Array<string>;
-          text?: string;
-          _type: "span";
-          _key: string;
-        }>;
-        style?:
-          "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
-        listItem?: "bullet" | "number";
-        markDefs?: Array<{
-          href?: string;
-          _type: "link";
-          _key: string;
-        }>;
-        level?: number;
-        _type: "block";
-        _key: string;
-      }
-    | {
-        asset?: SanityImageAssetReference;
-        media?: unknown;
-        hotspot?: SanityImageHotspot;
-        crop?: SanityImageCrop;
-        alt?: string;
-        caption?: string;
-        _type: "image";
-        _key: string;
-      }
-  > | null;
-} | null;
-
-// Source: ../../astro/src/lib/sanity.ts
 // Variable: siteSettingsQuery
 // Query: *[_type == "siteSettings"][0]
 export type SiteSettingsQueryResult = {
@@ -522,8 +455,6 @@ declare global {
     '\n  *[_type == "heroImages"][0]{\n    images[]{\n      _key,\n      alt,\n      image,\n      mobileOnly,\n      desktopOnly,\n      "lqip": image.asset->metadata.lqip,\n      "width": image.asset->metadata.dimensions.width,\n      "height": image.asset->metadata.dimensions.height,\n    }\n  }\n': HeroImagesQueryResult;
     '\n  *[_type == "gallery"][0]{\n    images[]{\n      _key,\n      image,\n      alt,\n      caption,\n      captionUrl,\n      "lqip": image.asset->metadata.lqip,\n      "width": image.asset->metadata.dimensions.width,\n      "height": image.asset->metadata.dimensions.height,\n    }\n  }\n': GalleryQueryResult;
     '\n  *[_type == "roomsSlider"][0]{\n    images[]{\n      _key,\n      image,\n      alt,\n      "lqip": image.asset->metadata.lqip,\n      "width": image.asset->metadata.dimensions.width,\n      "height": image.asset->metadata.dimensions.height,\n    }\n  }\n': RoomsSliderQueryResult;
-    '\n  *[_type == "article"] | order(publishedAt desc){\n    _id,\n    title,\n    slug,\n    coverImage,\n    excerpt,\n    publishedAt,\n  }\n': ArticlesQueryResult;
-    '\n  *[_type == "article" && slug.current == $slug][0]{\n    _id,\n    title,\n    slug,\n    coverImage,\n    excerpt,\n    publishedAt,\n    body,\n  }\n': ArticleBySlugQueryResult;
     '\n  *[_type == "siteSettings"][0]\n': SiteSettingsQueryResult;
     '\n  *[_type == "importantInfo"][0]{\n    items[]{\n      _key,\n      icon,\n      label,\n      value,\n    }\n  }\n': ImportantInfoQueryResult;
     '\n  {\n    "reviews": *[_type == "review" && status == "accepted"] | order(time desc) {\n      "id": _id,\n      author,\n      quote,\n      rating,\n      source,\n      time,\n      reply,\n      replyTime,\n    }\n  }\n': PublicReviewsQueryResult;

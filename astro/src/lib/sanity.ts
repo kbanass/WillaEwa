@@ -63,29 +63,6 @@ export const roomsSliderQuery = defineQuery(`
   }
 `);
 
-export const articlesQuery = defineQuery(`
-  *[_type == "article"] | order(publishedAt desc){
-    _id,
-    title,
-    slug,
-    coverImage,
-    excerpt,
-    publishedAt,
-  }
-`);
-
-export const articleBySlugQuery = defineQuery(`
-  *[_type == "article" && slug.current == $slug][0]{
-    _id,
-    title,
-    slug,
-    coverImage,
-    excerpt,
-    publishedAt,
-    body,
-  }
-`);
-
 export const siteSettingsQuery = defineQuery(`
   *[_type == "siteSettings"][0]
 `);
@@ -124,14 +101,6 @@ export async function getGallery() {
 
 export async function getRoomsSlider() {
   return sanityClient.fetch(roomsSliderQuery);
-}
-
-export async function getArticles() {
-  return sanityClient.fetch(articlesQuery);
-}
-
-export async function getArticleBySlug(slug: string) {
-  return sanityClient.fetch(articleBySlugQuery, { slug });
 }
 
 export async function getSiteSettings() {

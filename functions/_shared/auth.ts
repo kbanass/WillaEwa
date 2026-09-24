@@ -20,9 +20,6 @@ export async function verifyAuth(request: Request, env: Env): Promise<boolean> {
   }
 }
 
-export function unauthorized(redirect = false): Response {
-  if (redirect) {
-    return Response.redirect('/login', 302)
-  }
+export function unauthorized(): Response {
   return Response.json({ error: 'Unauthorized' }, { status: 401 })
 }
