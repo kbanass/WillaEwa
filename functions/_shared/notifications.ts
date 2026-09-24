@@ -2,8 +2,8 @@ import type { Env } from './env'
 
 // Notification bodies below interpolate user-submitted fields (review
 // author/quote, inquiry name/dates) straight from public, unauthenticated
-// forms — escape before building the HTML email so a crafted submission
-// can't inject markup into it.
+// forms — escape them in both the HTML email and the Telegram message
+// (sent with parse_mode HTML) so a crafted submission can't inject markup.
 function escapeHtml(str: string): string {
   return str
     .replace(/&/g, '&amp;')
@@ -114,7 +114,7 @@ export async function sendNewReviewTelegram(
   const stars = '⭐'.repeat(Math.round(review.rating))
   await sendTelegram(
     env,
-    `<b>Nowa opinia</b>\n${stars} (${review.rating})\n<b>${review.author}</b>\n${review.quote}`,
+    `<b>Nowa opinia</b>\n${stars} (${review.rating})\n<b>${escapeHtml(review.author)}</b>\n${escapeHtml(review.quote)}`,
   )
 }
 
@@ -133,9 +133,9 @@ export async function sendInquiryTelegram(
   await sendTelegram(
     env,
     `<b>Zapytanie o dostępność</b>\n` +
-      `<b>${data.name}</b>\n` +
-      `📅 ${data.dateFrom} → ${data.dateTo}\n` +
-      `👥 Dorośli: ${data.adults}${data.childrenAges ? `, dzieci: ${data.childrenAges}` : ''}\n` +
-      `📧 ${data.email}\n📞 ${data.phone}`,
+      `<b>${escapeHtml(data.name)}</b>\n` +
+      `📅 ${escapeHtml(data.dateFrom)} → ${escapeHtml(data.dateTo)}\n` +
+      `👥 Dorośli: ${data.adults}${data.childrenAges ? `, dzieci: ${escapeHtml(data.childrenAges)}` : ''}\n` +
+      `📧 ${escapeHtml(data.email)}\n📞 ${escapeHtml(data.phone)}`,
   )
 }
