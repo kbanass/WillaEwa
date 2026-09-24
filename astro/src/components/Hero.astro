@@ -114,6 +114,7 @@ const BLANK_IMG =
 
   if (allSlides.length > 0) {
     const midLoaded = new WeakSet<Element>();
+    const midPending = new Map<Element, Promise<void>>();
     const fullRequested = new WeakSet<Element>();
     const INTERVAL = 5000;
     // Same breakpoint as the <style> below; slides hidden by CSS on the
@@ -122,6 +123,7 @@ const BLANK_IMG =
 
     let slides: HTMLElement[] = [];
     let current = 0;
+    let timer: number | undefined;
     // Bumped whenever the rotation restarts, so pending switches from the
     // previous rotation are dropped.
     let generation = 0;
@@ -132,13 +134,17 @@ const BLANK_IMG =
 
     function loadMid(slide: HTMLElement): Promise<void> {
       if (midLoaded.has(slide)) return Promise.resolve();
+      // Reuse a pending load: a second call would replace img.onload and the
+      // first caller's promise would never resolve.
+      const pending = midPending.get(slide);
+      if (pending) return pending;
       const img = slide.querySelector<HTMLImageElement>(".hero__slide-img")!;
       const src = img.dataset.mid!;
       // A blocker <source> keeps the slide on a blank GIF on this device;
       // drop it so the real image loads.
       const blocker = slide.querySelector(".hero__slide-blocker");
       blocker?.remove();
-      return new Promise<void>((resolve) => {
+      const promise = new Promise<void>((resolve) => {
         // Already loaded — e.g. first slide whose src was set in HTML and fetched
         // from the preload cache before JS ran.
         if (!blocker && img.complete && img.naturalWidth > 0) {
@@ -159,7 +165,9 @@ const BLANK_IMG =
         // Re-setting src (even unchanged) makes the browser re-pick the image
         // after the blocker is gone.
         if (blocker || img.src !== src) img.src = src;
-      });
+      }).finally(() => midPending.delete(slide));
+      midPending.set(slide, promise);
+      return promise;
     }
 
     function loadFull(slide: HTMLElement): void {
@@ -203,9 +211,33 @@ const BLANK_IMG =
       slide.classList.add("hero__slide--active");
     }
 
+    // Shows the current slide for INTERVAL, then waits until the next one has
+    // loaded before switching. The index only advances on an actual switch,
+    // so on a slow connection slides are delayed, never skipped.
+    function scheduleNext(): void {
+      if (slides.length < 2) return;
+      const expectedGeneration = generation;
+      timer = window.setTimeout(() => {
+        const nextIdx = (current + 1) % slides.length;
+        const next = slides[nextIdx];
+        loadMid(next).then(() => {
+          if (generation !== expectedGeneration) return;
+          current = nextIdx;
+          showOnly(next);
+          if (shouldLoadFull()) loadFull(next);
+          setTimeout(
+            () => preloadSlide((current + 1) % slides.length),
+            INTERVAL - 1500,
+          );
+          scheduleNext();
+        });
+      }, INTERVAL);
+    }
+
     // Starts the rotation from the first slide visible on this device.
     function startRotation(): void {
       generation++;
+      clearTimeout(timer);
       slides = allSlides.filter((s) => getComputedStyle(s).display !== "none");
       current = 0;
       const first = slides[0];
@@ -225,35 +257,11 @@ const BLANK_IMG =
         if (shouldLoadFull()) loadFull(first);
       });
       if (slides.length > 1) setTimeout(() => preloadSlide(1), INTERVAL - 1500);
+      scheduleNext();
     }
 
     startRotation();
     desktopQuery.addEventListener("change", startRotation);
-
-    setInterval(() => {
-      if (slides.length < 2) return;
-      const nextIdx = (current + 1) % slides.length;
-      current = nextIdx;
-
-      const next = slides[nextIdx];
-      const expectedGeneration = generation;
-
-      const doSwitch = () => {
-        if (generation !== expectedGeneration || current !== nextIdx) return;
-        showOnly(next);
-        if (shouldLoadFull()) loadFull(next);
-        setTimeout(
-          () => preloadSlide((current + 1) % slides.length),
-          INTERVAL - 1500,
-        );
-      };
-
-      if (midLoaded.has(next)) {
-        doSwitch();
-      } else {
-        loadMid(next).then(doSwitch);
-      }
-    }, INTERVAL);
   }
 </script>
 
