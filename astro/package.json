@@ -7,7 +7,6 @@
   },
   "scripts": {
     "dev": "astro dev --host",
-    "prebuild": "npm --prefix ../sanity/studio run typegen",
     "dev:all": "concurrently \"npm run dev\" \"cd ../sanity/studio && npx sanity typegen generate --watch\"",
     "build": "astro build",
     "preview": "astro preview",
