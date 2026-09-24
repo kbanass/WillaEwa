@@ -78,7 +78,7 @@ const BLANK_IMG =
   }
   <div class="hero__overlay" aria-hidden="true"></div>
   <div class="hero__content container">
-    <h1 class="hero__content-header">
+    <h1 class="hero__content-header load-slide-from-left">
       Pokoje do wynajęcia
       <br />w <em>Krynicy Morskiej</em>
     </h1>
@@ -403,37 +403,6 @@ const BLANK_IMG =
 
   .hero__content-header em {
     color: var(--c-font-accent);
-  }
-
-  /* Same entrance as the global .animate.slide-from-left, but pure CSS: the
-     heading is the LCP element on mobile, and waiting for the observer script
-     to reveal it delayed LCP by over a second. */
-  @media (prefers-reduced-motion: no-preference) {
-    .hero__content-header {
-      animation:
-        heroTitleIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both,
-        heroTitleFade 0.8s ease both;
-    }
-  }
-
-  @keyframes heroTitleIn {
-    from {
-      transform: translateX(-50px) scale(0.96);
-      filter: blur(8px);
-    }
-    to {
-      transform: translateX(0) scale(1);
-      filter: blur(0);
-    }
-  }
-
-  @keyframes heroTitleFade {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
   }
 
   .hero__content-location {

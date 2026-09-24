@@ -8,7 +8,7 @@ const { phone, link } = Astro.props;
 ---
 
 <button
-  class="nav__toggle animate fade-in"
+  class="nav__toggle load-fade-in"
   id="nav-toggle"
   type="button"
   aria-expanded="false"
@@ -20,8 +20,8 @@ const { phone, link } = Astro.props;
   <span class="nav__toggle-bar"></span>
 </button>
 
-<nav class="nav animate fade-in" id="nav-menu">
-  <ul class="nav__links animate slide-from-left">
+<nav class="nav load-fade-in" id="nav-menu">
+  <ul class="nav__links load-slide-from-left">
     <li><a href="/#oferta">Oferta</a></li>
     <li><a href="/#galeria">Galeria</a></li>
     <li><a href="/#opinie">Opinie</a></li>
@@ -30,7 +30,7 @@ const { phone, link } = Astro.props;
     <li><a href="/#kontakt">Kontakt</a></li>
   </ul>
 
-  <div class="header__phone animate fade-in">
+  <div class="header__phone load-fade-in">
     {
       link === "contact-number" ? (
         <>

@@ -149,22 +149,10 @@ const phone = settings?.contactPhone ?? "+48 508 273 502";
           });
           staggerObserver.observe(container);
         });
-
-      // position:fixed elements are always in the viewport — IntersectionObserver
-      // is unreliable for them on iOS Safari. Trigger immediately via double-rAF
-      // so the CSS transition still plays from the initial state.
-      document
-        .querySelectorAll<HTMLElement>(".header .animate")
-        .forEach((el) => {
-          animateObserver.unobserve(el);
-          requestAnimationFrame(() =>
-            requestAnimationFrame(() => el.classList.add("visible")),
-          );
-        });
     </script>
     <header class="header">
       <div class="header__content container">
-        <h3 class="header__title animate slide-from-left">
+        <h3 class="header__title load-slide-from-left">
           {navigation.title}
         </h3>
 
@@ -172,7 +160,7 @@ const phone = settings?.contactPhone ?? "+48 508 273 502";
           showNav ? (
             <Nav phone={phone} link={navigation.link} />
           ) : (
-            <div class="header__phone animate fade-in">
+            <div class="header__phone load-fade-in">
               {navigation.link === "contact-number" ? (
                 <>
                   <a
