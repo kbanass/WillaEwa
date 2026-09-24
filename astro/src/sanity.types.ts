@@ -517,8 +517,7 @@ export type PublicReviewsQueryResult = {
 };
 
 // Query TypeMap
-import "@sanity/client";
-declare module "@sanity/client" {
+declare global {
   interface SanityQueries {
     '\n  *[_type == "heroImages"][0]{\n    images[]{\n      _key,\n      alt,\n      image,\n      mobileOnly,\n      desktopOnly,\n      "lqip": image.asset->metadata.lqip,\n      "width": image.asset->metadata.dimensions.width,\n      "height": image.asset->metadata.dimensions.height,\n    }\n  }\n': HeroImagesQueryResult;
     '\n  *[_type == "gallery"][0]{\n    images[]{\n      _key,\n      image,\n      alt,\n      caption,\n      captionUrl,\n      "lqip": image.asset->metadata.lqip,\n      "width": image.asset->metadata.dimensions.width,\n      "height": image.asset->metadata.dimensions.height,\n    }\n  }\n': GalleryQueryResult;
@@ -529,4 +528,8 @@ declare module "@sanity/client" {
     '\n  *[_type == "importantInfo"][0]{\n    items[]{\n      _key,\n      icon,\n      label,\n      value,\n    }\n  }\n': ImportantInfoQueryResult;
     '\n  {\n    "reviews": *[_type == "review" && status == "accepted"] | order(time desc) {\n      "id": _id,\n      author,\n      quote,\n      rating,\n      source,\n      time,\n      reply,\n      replyTime,\n    }\n  }\n': PublicReviewsQueryResult;
   }
+}
+// Lets @sanity/client releases that predate the global registry read it too
+declare module "@sanity/client" {
+  interface SanityQueries extends globalThis.SanityQueries {}
 }
