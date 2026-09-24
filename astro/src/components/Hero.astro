@@ -114,7 +114,7 @@ const BLANK_IMG =
 
   if (allSlides.length > 0) {
     const midLoaded = new WeakSet<Element>();
-    const fullLoaded = new WeakSet<Element>();
+    const fullRequested = new WeakSet<Element>();
     const INTERVAL = 5000;
     // Same breakpoint as the <style> below; slides hidden by CSS on the
     // current device (mobile-only / desktop-only) are left out of rotation.
@@ -148,7 +148,12 @@ const BLANK_IMG =
         }
         img.onload = () => {
           midLoaded.add(slide);
-          resolve();
+          // Decode before the slide fades in, otherwise its first frames can
+          // show the LQIP background instead of the loaded image.
+          img
+            .decode()
+            .catch(() => {})
+            .then(() => resolve());
         };
         img.onerror = () => resolve();
         // Re-setting src (even unchanged) makes the browser re-pick the image
@@ -158,22 +163,25 @@ const BLANK_IMG =
     }
 
     function loadFull(slide: HTMLElement): void {
-      if (fullLoaded.has(slide)) return;
+      if (fullRequested.has(slide)) return;
       const img = slide.querySelector<HTMLImageElement>(".hero__slide-img")!;
       const src = img.dataset.full;
       if (!src) return;
       const doLoad = () => {
-        if (!midLoaded.has(slide)) return;
-        const preload = new Image();
-        preload.onload = () => {
-          if (midLoaded.has(slide)) {
-            img.removeAttribute("srcset");
-            img.removeAttribute("sizes");
-            img.src = src;
-            fullLoaded.add(slide);
-          }
-        };
-        preload.src = src;
+        if (fullRequested.has(slide) || !midLoaded.has(slide)) return;
+        fullRequested.add(slide);
+        // Swapping src on the visible <img> leaves it blank while the large
+        // image decodes, exposing the LQIP background. Instead the full image
+        // goes into a separate <img> on top, added only once it is decoded,
+        // so the mid image stays visible underneath until then.
+        const full = new Image();
+        full.className = "hero__slide-img hero__slide-img--full";
+        full.alt = "";
+        full.src = src;
+        full
+          .decode()
+          .then(() => slide.appendChild(full))
+          .catch(() => fullRequested.delete(slide));
       };
       if ("requestIdleCallback" in window) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -306,6 +314,18 @@ const BLANK_IMG =
     object-position: center;
     display: block;
   }
+
+  /* Created by the script, so it lacks Astro's scoping attribute. */
+  .hero__slide :global(.hero__slide-img--full) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
   @keyframes slowZoom {
     from {
       transform: scale(1.015);
