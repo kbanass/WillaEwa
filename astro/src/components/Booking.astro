@@ -19,7 +19,8 @@
           ></label
         >
         <input
-          class="form-input"type="text"
+          class="form-input"
+          type="text"
           id="booking-name"
           name="name"
           placeholder="Jan Kowalski"
@@ -34,7 +35,8 @@
             ></label
           >
           <input
-            class="form-input"type="email"
+            class="form-input"
+            type="email"
             id="booking-email"
             name="email"
             placeholder="jan.kowalski@example.com"
@@ -48,7 +50,8 @@
             ></label
           >
           <input
-            class="form-input"type="tel"
+            class="form-input"
+            type="tel"
             id="booking-phone"
             name="phone"
             placeholder="+48 123 456 789"
@@ -63,14 +66,26 @@
             >Przyjazd <span class="form-required" aria-hidden="true">*</span
             ></label
           >
-          <input class="form-input" type="date" id="booking-date-from" name="dateFrom" required />
+          <input
+            class="form-input"
+            type="date"
+            id="booking-date-from"
+            name="dateFrom"
+            required
+          />
         </div>
         <div class="form-field">
           <label class="form-label" for="booking-date-to"
             >Wyjazd <span class="form-required" aria-hidden="true">*</span
             ></label
           >
-          <input class="form-input" type="date" id="booking-date-to" name="dateTo" required />
+          <input
+            class="form-input"
+            type="date"
+            id="booking-date-to"
+            name="dateTo"
+            required
+          />
         </div>
       </div>
       <div class="booking__row">
@@ -80,7 +95,8 @@
             ></label
           >
           <input
-            class="form-input"type="number"
+            class="form-input"
+            type="number"
             id="booking-adults"
             name="adults"
             min="1"
@@ -91,11 +107,11 @@
         </div>
         <div class="form-field">
           <label class="form-label" for="booking-children"
-            >Dzieci <span class="form-optional">(wiek, np. 8, 10)</span
-            ></label
+            >Dzieci <span class="form-optional">(wiek, np. 8, 10)</span></label
           >
           <input
-            class="form-input"type="text"
+            class="form-input"
+            type="text"
             id="booking-children"
             name="childrenAges"
             placeholder="np. 8, 10"
@@ -110,7 +126,9 @@
         tabindex="-1"
         autocomplete="off"
       />
-      <button type="submit" class="form-submit booking__submit">Wyślij zapytanie</button>
+      <button type="submit" class="form-submit booking__submit"
+        >Wyślij zapytanie</button
+      >
       <p class="form-error booking__error"></p>
     </form>
   </div>

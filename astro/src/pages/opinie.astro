@@ -20,9 +20,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       <form class="add-review__form">
         <fieldset class="form-field">
           <legend class="form-label">
-            Ocena <span class="form-required" aria-hidden="true"
-              >*</span
-            >
+            Ocena <span class="form-required" aria-hidden="true">*</span>
           </legend>
           <div class="star-picker">
             <input type="radio" id="star5" name="rating" value="5" />
@@ -40,9 +38,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
         <div class="form-field">
           <label class="form-label" for="author">
-            Imię i nazwisko <span
-              class="form-required"
-              aria-hidden="true">*</span
+            Imię i nazwisko <span class="form-required" aria-hidden="true"
+              >*</span
             >
           </label>
           <input
@@ -58,9 +55,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
         <div class="form-field">
           <label class="form-label" for="content">
-            Opinia <span class="form-required" aria-hidden="true"
-              >*</span
-            >
+            Opinia <span class="form-required" aria-hidden="true">*</span>
           </label>
           <textarea
             class="form-input"
@@ -131,7 +126,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         });
       submitBtn.textContent = "Wysłano";
       form.classList.add("add-review__form--sent");
-      const sectionHeader = document.querySelector(".add-review .section-header");
+      const sectionHeader = document.querySelector(
+        ".add-review .section-header",
+      );
       if (sectionHeader) {
         sectionHeader.innerHTML = `
           <span class="section-label">Dziękujemy</span>

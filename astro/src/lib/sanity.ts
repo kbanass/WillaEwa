@@ -117,9 +117,7 @@ export async function getRoomsSlider() {
 // Resolves to null if Sanity is unreachable, so callers fall back to SITE.
 let siteSettings: Promise<SiteSettingsQueryResult> | undefined;
 export function getSiteSettings(): Promise<SiteSettingsQueryResult> {
-  siteSettings ??= sanityClient
-    .fetch(siteSettingsQuery)
-    .catch(() => null);
+  siteSettings ??= sanityClient.fetch(siteSettingsQuery).catch(() => null);
   return siteSettings;
 }
 
