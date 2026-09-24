@@ -1,7 +1,9 @@
 ---
+import HeaderContact, { type HeaderLink } from "./HeaderContact.astro";
+
 interface Props {
   phone: string;
-  link: "contact-number" | "main-page";
+  link: HeaderLink;
 }
 
 const { phone, link } = Astro.props;
@@ -30,25 +32,7 @@ const { phone, link } = Astro.props;
     <li><a href="/#kontakt">Kontakt</a></li>
   </ul>
 
-  <div class="header__phone load-fade-in">
-    {
-      link === "contact-number" ? (
-        <>
-          <a
-            class="header__phone-number"
-            href={`tel:${phone.replace(/\s/g, "")}`}
-          >
-            {phone}
-          </a>
-          <small class="header__phone-label">Rezerwacje</small>
-        </>
-      ) : (
-        <a class="header__main-page" href="/">
-          Strona Główna
-        </a>
-      )
-    }
-  </div>
+  <HeaderContact phone={phone} link={link} />
 </nav>
 
 <script>
@@ -178,7 +162,7 @@ const { phone, link } = Astro.props;
     transition: color 150ms ease;
   }
 
-  .nav .header__phone {
+  .nav :global(.header__phone) {
     border-top: 1px solid var(--c-border-light);
     padding: var(--space-l);
     align-items: flex-start;
@@ -208,7 +192,7 @@ const { phone, link } = Astro.props;
       gap: var(--space-xl);
     }
 
-    .nav .header__phone {
+    .nav :global(.header__phone) {
       padding: 0;
       align-items: flex-end;
       text-align: right;

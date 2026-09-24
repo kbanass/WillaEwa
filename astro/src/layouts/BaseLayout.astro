@@ -3,7 +3,11 @@ import "../styles/variables.css";
 import "../styles/reset.css";
 import "../styles/style.css";
 import { getSiteSettings } from "../lib/sanity";
+import { SITE, telHref } from "../lib/site";
 import Nav from "../components/Nav.astro";
+import HeaderContact, {
+  type HeaderLink,
+} from "../components/HeaderContact.astro";
 
 interface Props {
   title?: string;
@@ -13,7 +17,7 @@ interface Props {
   bodyClass?: string;
   navigation?: {
     title: string;
-    link: "contact-number" | "main-page";
+    link: HeaderLink;
   };
   showNav?: boolean;
 }
@@ -21,8 +25,8 @@ interface Props {
 const {
   title = "Willa Ewa - Krynica Morska",
   description = "Willa Ewa – spokojny obiekt noclegowy w Krynicy Morskiej.",
-  ogUrl = "https://willaewanadmorzem.pl/",
-  ogImage = "https://willaewanadmorzem.pl/favicon/og-image.png",
+  ogUrl = `${SITE.url}/`,
+  ogImage = SITE.ogImage,
   bodyClass = "",
   navigation = {
     title: "Willa Ewa",
@@ -31,8 +35,12 @@ const {
   showNav = false,
 } = Astro.props;
 
-const settings = await getSiteSettings().catch(() => null);
-const phone = settings?.contactPhone ?? "+48 508 273 502";
+const settings = await getSiteSettings();
+const phone = settings?.contactPhone ?? SITE.phone;
+
+// Inter isn't used anywhere (--font-sans-serif), only Playfair Display.
+const FONTS_URL =
+  "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap";
 ---
 
 <!doctype html>
@@ -69,18 +77,15 @@ const phone = settings?.contactPhone ?? "+48 508 273 502";
     <link rel="preconnect" href="https://cdn.sanity.io" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <script is:inline>
+    <!-- Loaded from a script so the font stylesheet doesn't block rendering. -->
+    <script is:inline define:vars={{ FONTS_URL }}>
       var l = document.createElement("link");
       l.rel = "stylesheet";
-      l.href =
-        "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap";
+      l.href = FONTS_URL;
       document.head.appendChild(l);
     </script>
     <noscript>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
-        rel="stylesheet"
-      />
+      <link href={FONTS_URL} rel="stylesheet" />
     </noscript>
 
     <script
@@ -160,29 +165,13 @@ const phone = settings?.contactPhone ?? "+48 508 273 502";
           showNav ? (
             <Nav phone={phone} link={navigation.link} />
           ) : (
-            <div class="header__phone load-fade-in">
-              {navigation.link === "contact-number" ? (
-                <>
-                  <a
-                    class="header__phone-number"
-                    href={`tel:${phone.replace(/\s/g, "")}`}
-                  >
-                    {phone}
-                  </a>
-                  <small class="header__phone-label">Rezerwacje</small>
-                </>
-              ) : (
-                <a class="header__main-page" href="/">
-                  Strona Główna
-                </a>
-              )}
-            </div>
+            <HeaderContact phone={phone} link={navigation.link} />
           )
         }
       </div>
     </header>
 
-    <main style="flex: 1">
+    <main class="main">
       <slot />
     </main>
 
@@ -190,7 +179,7 @@ const phone = settings?.contactPhone ?? "+48 508 273 502";
       <div class="container">
         <div class="footer__grid">
           <div class="footer__brand">
-            <p class="footer__brand-name">Willa Ewa</p>
+            <p class="footer__brand-name">{SITE.name}</p>
             <p class="footer__brand-desc">
               Obiekt noclegowy na Mierzei Wiślanej. Stworzony dla tych, którzy
               szukają ciszy, przestrzeni i prawdziwego wypoczynku z dala od
@@ -200,20 +189,20 @@ const phone = settings?.contactPhone ?? "+48 508 273 502";
           <div class="footer__address">
             <p class="footer__address-title">Adres</p>
             <address>
-              ul. Szałwiowa 1<br />
-              82-120 Krynica Morska
+              {SITE.address.street}<br />
+              {`${SITE.address.postalCode} ${SITE.address.city}`}
             </address>
           </div>
           <div class="footer__contact">
             <p class="footer__contact-title">Kontakt</p>
             <p>Nr telefonu:</p>
-            <a class="footer__phone" href={`tel:${phone.replace(/\s/g, "")}`}
-              >{phone}</a
-            >
+            <a class="footer__phone" href={telHref(phone)}>{phone}</a>
           </div>
         </div>
         <div class="footer__bottom">
-          <span>{new Date().getFullYear()} Willa Ewa Krynica Morska</span>
+          <span
+            >{new Date().getFullYear()} {SITE.name} {SITE.address.city}</span
+          >
         </div>
       </div>
     </footer>

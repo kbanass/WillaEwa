@@ -1,9 +1,12 @@
 ---
 import { getSiteSettings } from "../lib/sanity";
+import { SITE, telHref } from "../lib/site";
 
-const settings = await getSiteSettings().catch(() => null);
-const phone1 = settings?.contactPhone ?? "+48 508 273 502";
-const phone2 = settings?.contactPhone2 ?? "+48 511 611 064";
+const settings = await getSiteSettings();
+const phones = [
+  settings?.contactPhone ?? SITE.phone,
+  settings?.contactPhone2 ?? SITE.phone2,
+];
 ---
 
 <div class="phone-banner" aria-label="Numer kontaktowy">
@@ -15,12 +18,13 @@ const phone2 = settings?.contactPhone2 ?? "+48 511 611 064";
       Serdecznie zapraszamy do kontaktu telefonicznego
     </p>
     <div class="phone-banner__numbers">
-      <a class="button-outline" href={`tel:${phone1.replace(/\s/g, "")}`}
-        >{phone1}</a
-      >
-      <a class="button-outline" href={`tel:${phone2.replace(/\s/g, "")}`}
-        >{phone2}</a
-      >
+      {
+        phones.map((phone) => (
+          <a class="button-outline" href={telHref(phone)}>
+            {phone}
+          </a>
+        ))
+      }
     </div>
   </div>
 </div>

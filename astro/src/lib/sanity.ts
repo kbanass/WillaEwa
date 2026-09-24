@@ -4,6 +4,7 @@ import {
   type SanityImageSource,
 } from "@sanity/image-url";
 import { defineQuery } from "groq";
+import type { SiteSettingsQueryResult } from "../sanity.types";
 
 export const sanityClient = createClient({
   projectId: "csed1mdo",
@@ -103,8 +104,14 @@ export async function getRoomsSlider() {
   return sanityClient.fetch(roomsSliderQuery);
 }
 
-export async function getSiteSettings() {
-  return sanityClient.fetch(siteSettingsQuery);
+// Used by several components on every page — fetched once per build.
+// Resolves to null if Sanity is unreachable, so callers fall back to SITE.
+let siteSettings: Promise<SiteSettingsQueryResult> | undefined;
+export function getSiteSettings(): Promise<SiteSettingsQueryResult> {
+  siteSettings ??= sanityClient
+    .fetch(siteSettingsQuery)
+    .catch(() => null);
+  return siteSettings;
 }
 
 export async function getImportantInfo() {

@@ -55,6 +55,10 @@ a {
   margin-inline: auto;
 }
 
+.main {
+  flex: 1;
+}
+
 section {
   padding-block: 64px;
   scroll-margin-top: 60px;

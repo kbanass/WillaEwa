@@ -4,6 +4,7 @@ import {
   publicReviewsQuery,
   getSiteSettings,
 } from "../lib/sanity";
+import { SITE } from "../lib/site";
 
 interface Review {
   id: string;
@@ -29,11 +30,9 @@ let reviews: Review[] = [];
 let avgRating = 5.0;
 let googleReviewCount = 0;
 
+const settings = await getSiteSettings();
 try {
-  const [data, settings] = await Promise.all([
-    sanityClient.fetch(publicReviewsQuery),
-    getSiteSettings().catch(() => null),
-  ]);
+  const data = await sanityClient.fetch(publicReviewsQuery);
   reviews = (data?.reviews ?? []) as Review[];
 
   if (settings?.googleRating != null && settings?.googleReviewCount != null) {
@@ -81,25 +80,21 @@ const avgStars = buildStars(Math.round(avgRating * 2) / 2);
 const ldSchema = {
   "@context": "https://schema.org",
   "@type": "LodgingBusiness",
-  name: "Willa Ewa",
-  url: "https://willaewanadmorzem.pl/",
-  telephone: "+48508273502",
-  image: "https://willaewanadmorzem.pl/favicon/og-image.png",
+  name: SITE.name,
+  url: `${SITE.url}/`,
+  telephone: (settings?.contactPhone ?? SITE.phone).replace(/\s/g, ""),
+  image: SITE.ogImage,
   description:
     "Spokojny obiekt noclegowy w Krynicy Morskiej, nieopodal malowniczego lasu. Idealne miejsce dla par i rodzin.",
   priceRange: "$$",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "ul. Szałwiowa 1",
-    addressLocality: "Krynica Morska",
-    postalCode: "82-120",
+    streetAddress: SITE.address.street,
+    addressLocality: SITE.address.city,
+    postalCode: SITE.address.postalCode,
     addressCountry: "PL",
   },
-  geo: {
-    "@type": "GeoCoordinates",
-    latitude: 54.371607,
-    longitude: 19.4174926,
-  },
+  geo: { "@type": "GeoCoordinates", ...SITE.geo },
   ...(reviews.length > 0 && {
     aggregateRating: {
       "@type": "AggregateRating",
@@ -179,7 +174,7 @@ const ldJson = JSON.stringify(ldSchema).replace(/<\/script>/gi, "<\\/script>");
             ))
           }
         </div>
-        <a href="https://www.google.com/maps?cid=16206240161214872810">
+        <a href={SITE.googleMapsUrl}>
           <small>({googleReviewCount} opinii)</small>
         </a>
       </div>

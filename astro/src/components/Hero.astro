@@ -6,6 +6,7 @@ import {
   HERO_MOBILE_MEDIA,
   type HeroSlide,
 } from "../lib/hero";
+import { SITE } from "../lib/site";
 
 interface Props {
   slides: HeroSlide[];
@@ -84,7 +85,7 @@ const BLANK_IMG =
     </h1>
     <a
       class="hero__content-location"
-      href="https://www.google.com/maps?cid=16206240161214872810"
+      href={SITE.googleMapsUrl}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Szałwiowa 1 – otwórz lokalizację w Google Maps"
