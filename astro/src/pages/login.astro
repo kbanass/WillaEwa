@@ -9,7 +9,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 >
   <meta name="robots" content="noindex" slot="head" />
 
-  <section class="login">
+  <section class="form-page login">
     <div class="container">
       <div class="section-header">
         <span class="section-label">Login</span>
@@ -22,9 +22,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         </p>
       </div>
       <form>
-        <input type="password" name="password" placeholder="Hasło" required />
-        <button type="submit">Zaloguj</button>
-        <p class="error"></p>
+        <input
+          class="form-input"
+          type="password"
+          name="password"
+          placeholder="Hasło"
+          required
+        />
+        <button type="submit" class="form-submit">Zaloguj</button>
+        <p class="form-error"></p>
       </form>
     </div>
   </section>
@@ -35,7 +41,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     });
 
     const form = document.querySelector("form")!;
-    const errorEl = form.querySelector<HTMLParagraphElement>(".error")!;
+    const errorEl = form.querySelector<HTMLParagraphElement>(".form-error")!;
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -64,58 +70,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   </script>
 
   <style>
-    .login {
-      margin-block-start: var(--space-xl);
-    }
-
-    .login .section-header {
-      display: flex;
-      flex-direction: column;
-      justify-content: start;
-      align-items: center;
-      text-align: center;
-    }
-
-    .login .container {
-      min-height: 60vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: start;
-      align-items: center;
-    }
-
     .login form {
       display: flex;
       flex-direction: column;
       width: 100%;
-      margin-inline: auto;
       gap: var(--space-m);
-    }
-
-    .login .error {
-      text-align: left;
-      color: hsl(0, 60%, 45%);
-    }
-
-    .login input {
-      padding: 12px 16px;
-      border: 1px solid var(--c-font-primary);
-      background-color: var(--c-bg-secondary);
-      font-size: var(--font-size-m);
-      font-family: var(--font-sans-serif);
-      color: var(--c-font-primary);
-    }
-
-    .login input:focus {
-      outline-color: var(--c-font-accent);
-    }
-
-    .login button {
-      background-color: var(--c-bg-dark);
-      border: 1px solid var(--c-font-primary);
-      color: var(--c-font-light);
-      padding: 12px;
-      cursor: pointer;
     }
 
     @media (min-width: 640px) {
@@ -125,7 +84,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         max-width: fit-content;
       }
 
-      .login .error {
+      .login .form-error {
         grid-column: 1 / -1;
       }
     }

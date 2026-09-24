@@ -11,8 +11,11 @@
   --c-font-light: hsl(30, 32%, 93%);
   --c-star: hsl(42, 60%, 58%);
   --c-star-empty: hsl(42, 15%, 82%);
+  --c-avatar: hsl(32, 26%, 73%);
+  --c-error: hsl(0, 60%, 45%);
 
-  --c-backdrop: hsla(30, 29%, 20%, 0.9);
+  /* translucent bar behind the fixed header and the mobile menu */
+  --c-bg-header: hsl(30, 40%, 95%, 0.95);
 
   --c-border-light: hsl(30, 40%, 85%);
 
