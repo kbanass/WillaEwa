@@ -115,7 +115,9 @@ const BLANK_IMG =
   if (allSlides.length > 0) {
     const midLoaded = new WeakSet<Element>();
     const midPending = new Map<Element, Promise<void>>();
-    const fullRequested = new WeakSet<Element>();
+    const fullTried = new WeakSet<Element>();
+    const fullLoaded = new WeakSet<Element>();
+    let fullBusy = false;
     const INTERVAL = 5000;
     // Same breakpoint as the <style> below; slides hidden by CSS on the
     // current device (mobile-only / desktop-only) are left out of rotation.
@@ -133,7 +135,10 @@ const BLANK_IMG =
     }
 
     function loadMid(slide: HTMLElement): Promise<void> {
-      if (midLoaded.has(slide)) return Promise.resolve();
+      // A slide whose full image is already on top needs no mid image.
+      if (midLoaded.has(slide) || fullLoaded.has(slide)) {
+        return Promise.resolve();
+      }
       // Reuse a pending load: a second call would replace img.onload and the
       // first caller's promise would never resolve.
       const pending = midPending.get(slide);
@@ -165,19 +170,27 @@ const BLANK_IMG =
         // Re-setting src (even unchanged) makes the browser re-pick the image
         // after the blocker is gone.
         if (blocker || img.src !== src) img.src = src;
-      }).finally(() => midPending.delete(slide));
+      }).finally(() => {
+        midPending.delete(slide);
+        loadNextFull();
+      });
       midPending.set(slide, promise);
       return promise;
     }
 
-    function loadFull(slide: HTMLElement): void {
-      if (fullRequested.has(slide)) return;
-      const img = slide.querySelector<HTMLImageElement>(".hero__slide-img")!;
-      const src = img.dataset.full;
-      if (!src) return;
-      const doLoad = () => {
-        if (fullRequested.has(slide) || !midLoaded.has(slide)) return;
-        fullRequested.add(slide);
+    // Background queue for full-resolution images: one download at a time,
+    // in rotation order starting from the slide on screen. It only runs while
+    // no mid image is loading, so it never slows down the next slide.
+    function loadNextFull(): void {
+      if (fullBusy || midPending.size > 0 || !shouldLoadFull()) return;
+      for (let k = 0; k < slides.length; k++) {
+        const slide = slides[(current + k) % slides.length];
+        if (fullTried.has(slide)) continue;
+        fullTried.add(slide);
+        const img = slide.querySelector<HTMLImageElement>(".hero__slide-img")!;
+        const src = img.dataset.full;
+        if (!src) continue;
+        fullBusy = true;
         // Swapping src on the visible <img> leaves it blank while the large
         // image decodes, exposing the LQIP background. Instead the full image
         // goes into a separate <img> on top, added only once it is decoded,
@@ -185,23 +198,26 @@ const BLANK_IMG =
         const full = new Image();
         full.className = "hero__slide-img hero__slide-img--full";
         full.alt = "";
+        full.fetchPriority = "low";
         full.src = src;
         full
           .decode()
-          .then(() => slide.appendChild(full))
-          .catch(() => fullRequested.delete(slide));
-      };
-      if ("requestIdleCallback" in window) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (window as any).requestIdleCallback(doLoad, { timeout: 2000 });
-      } else {
-        setTimeout(doLoad, 500);
+          .then(() => {
+            slide.appendChild(full);
+            fullLoaded.add(slide);
+          })
+          .catch(() => {})
+          .finally(() => {
+            fullBusy = false;
+            loadNextFull();
+          });
+        return;
       }
     }
 
     function preloadSlide(idx: number): void {
       const slide = slides[idx];
-      if (slide && !midLoaded.has(slide)) loadMid(slide);
+      if (slide) loadMid(slide);
     }
 
     function showOnly(slide: HTMLElement): void {
@@ -224,11 +240,10 @@ const BLANK_IMG =
           if (generation !== expectedGeneration) return;
           current = nextIdx;
           showOnly(next);
-          if (shouldLoadFull()) loadFull(next);
-          setTimeout(
-            () => preloadSlide((current + 1) % slides.length),
-            INTERVAL - 1500,
-          );
+          // Mid of the following slide first: it is small and the rotation
+          // waits for it; the full-resolution queue resumes once it is in.
+          preloadSlide((current + 1) % slides.length);
+          loadNextFull();
           scheduleNext();
         });
       }, INTERVAL);
@@ -236,7 +251,7 @@ const BLANK_IMG =
 
     // Starts the rotation from the first slide visible on this device.
     function startRotation(): void {
-      generation++;
+      const expectedGeneration = ++generation;
       clearTimeout(timer);
       slides = allSlides.filter((s) => getComputedStyle(s).display !== "none");
       current = 0;
@@ -254,9 +269,15 @@ const BLANK_IMG =
       // First slide: browser already started fetching src from the preload cache.
       // loadMid detects img.complete and resolves immediately if it finished.
       loadMid(first).then(() => {
-        if (shouldLoadFull()) loadFull(first);
+        if (generation !== expectedGeneration) return;
+        if (slides.length > 1) preloadSlide(1);
+        // Let the rest of the page load before the large downloads start.
+        if ("requestIdleCallback" in window) {
+          requestIdleCallback(loadNextFull, { timeout: 2000 });
+        } else {
+          setTimeout(loadNextFull, 500);
+        }
       });
-      if (slides.length > 1) setTimeout(() => preloadSlide(1), INTERVAL - 1500);
       scheduleNext();
     }
 
