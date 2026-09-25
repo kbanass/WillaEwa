@@ -27,7 +27,7 @@ import "../styles/review-card.css";
       <div class="info-content">
         <h3>Informacje</h3>
         <p>Wszystkie opinie mają jeden z następujących statusów:</p>
-        <ul>
+        <ul class="panel-list">
           <li>
             <div class="icon">
               <Fragment set:html={STATUS_ICON.pending} />
@@ -116,21 +116,6 @@ import "../styles/review-card.css";
         </p>
       </div>
       <div class="info-content">
-        <p>
-          Kliknij przycisk poniżej, aby otworzyć panel edycji treści w nowej
-          karcie. W Sanity Studio możesz dodawać/kadrować/usuwać/zmieniać
-          kolejność zdjęć pierwszej sekcji strony (sekcja "hero"), tam gdzie
-          jest napis "Pokoje do wynajęcia w Krynicy Morskiej".Tak samo zdjęcia
-          pokoi i z galeri zdjęć (w galeri możesz też dodawać opisy i linki pod
-          zdjęciami). Aby zmienić kolejność zdjęć musisz przeciągnąć je
-          trzymająć za ikonkę z sześcioma kropkami, która wyświetli się po
-          najechaniu na zdjęcie. Możesz także zmieniać podstawowe informacje na
-          stronie jak numer telefonu, cena itd.
-        </p>
-        <p>
-          Po każdej zmianie treści strona automatycznie się przebuduje — może to
-          potrwać około 1–2 minut.
-        </p>
         <a
           href="https://www.sanity.io/@olDJ1uTaz/studio/pst2er4kcasxd158upm0ysmz/default/structure"
           target="_blank"
@@ -156,6 +141,46 @@ import "../styles/review-card.css";
           </svg>
           Otwórz Sanity Studio
         </a>
+
+        <h3>Co możesz zmienić</h3>
+        <p>Poniższe nazwy znajdziesz w menu po lewej stronie Sanity Studio.</p>
+        <ul class="panel-list">
+          <li>
+            <strong>Zdjęcia hero</strong>
+            <p>
+              Zdjęcia na samej górze strony, za napisem „Pokoje do wynajęcia w
+              Krynicy Morskiej”. Każde zdjęcie możesz ustawić tak, żeby
+              wyświetlało się tylko na telefonie albo tylko na komputerze.
+            </p>
+          </li>
+          <li>
+            <strong>Zdjęcia pokoi</strong>
+            <p>Przewijane zdjęcia w sekcji „Nasza oferta”.</p>
+          </li>
+          <li>
+            <strong>Galeria zdjęć</strong>
+            <p>
+              Zdjęcia w galerii. Pod każdym możesz dodać podpis i link (np. do
+              Google Maps).
+            </p>
+          </li>
+          <li>
+            <strong>Ważne informacje</strong>
+            <p>
+              Lista w sekcji „Dobrze wiedzieć przed przyjazdem” — np. godziny
+              zameldowania i opłata klimatyczna.
+            </p>
+          </li>
+          <li>
+            <strong>Ustawienia strony</strong>
+            <p>Numery telefonów, e-mail, ceny i opis pokoi.</p>
+          </li>
+        </ul>
+
+        <p class="cms-note">
+          Zmiany pojawią się na stronie po kliknięciu <strong>Publish</strong>.
+          Strona przebuduje się wtedy sama — trwa to około 1–2 minut.
+        </p>
       </div>
     </div>
   </section>
@@ -575,7 +600,8 @@ import "../styles/review-card.css";
       color: var(--c-font-secondary);
     }
 
-    .info-content ul {
+    /* Bordered rows: status legend, CMS sections */
+    .panel-list {
       list-style: none;
       margin: 0;
       padding: 0;
@@ -587,7 +613,7 @@ import "../styles/review-card.css";
       gap: var(--space-s);
     }
 
-    .info-content li {
+    .panel-list li {
       margin: 0;
       padding: var(--space-m);
       width: 100%;
@@ -598,14 +624,15 @@ import "../styles/review-card.css";
       border: 1px solid var(--c-font-primary);
     }
 
-    .info-content .icon {
+    .panel-list .icon {
       display: flex;
       flex-direction: row;
       align-items: center;
       gap: 8px;
     }
 
-    .info-content li p {
+    /* text lines up with the label, past the icon */
+    .panel-list .icon + p {
       margin-inline-start: var(--space-xl);
     }
 
@@ -942,7 +969,6 @@ import "../styles/review-card.css";
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      margin-top: var(--space-l);
       padding: 14px 24px;
       background-color: var(--c-bg-dark);
       border: 1px solid var(--c-font-primary);
@@ -956,6 +982,25 @@ import "../styles/review-card.css";
     .sanity-link:hover {
       opacity: 0.85;
       transform: none;
+    }
+
+    /* the button comes right after the section header */
+    .sanity-cms .info-content {
+      margin-top: 0;
+    }
+
+    .sanity-cms h3 {
+      margin-block-start: var(--space-xl);
+    }
+
+    .sanity-cms .panel-list li p {
+      color: var(--c-font-secondary);
+    }
+
+    .cms-note {
+      border-left: 2px solid var(--c-font-accent);
+      background-color: var(--c-bg-secondary);
+      padding: var(--space-l);
     }
 
     /* ── Analytics ────────────────────────────────────────────── */
