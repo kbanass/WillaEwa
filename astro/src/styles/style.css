@@ -50,8 +50,10 @@ a {
   }
 }
 
+/* rem, not ch: ch depends on the font, so a font change would reflow the
+   whole layout (58.4rem = the former 105ch in the system font). */
 .container {
-  width: min(90%, 105ch);
+  width: min(90%, 58.4rem);
   margin-inline: auto;
 }
 
@@ -263,8 +265,8 @@ footer {
    without nav — just a wider header bar. */
 @media (min-width: 1024px) {
   .header__content.container {
-    width: min(95%, 180ch);
-    max-width: min(95%, 180ch);
+    width: min(95%, 100rem);
+    max-width: min(95%, 100rem);
   }
 }
 

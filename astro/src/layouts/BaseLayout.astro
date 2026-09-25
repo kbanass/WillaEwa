@@ -39,9 +39,10 @@ const {
 const settings = await getSiteSettings();
 const phone = settings?.contactPhone ?? SITE.phone;
 
-// Inter isn't used anywhere (--font-sans-serif), only Playfair Display.
+// --font-serif and --font-sans-serif (variables.css). Lato has no 500/600,
+// so --weight-medium renders as 400 and --weight-semi as 700.
 const FONTS_URL =
-  "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap";
+  "https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap";
 ---
 
 <!doctype html>
