@@ -66,7 +66,8 @@ const BLANK_IMG =
               sizes={eager ? "100vw" : undefined}
               data-mid={slide.midUrl}
               data-srcset={heroSrcset(slide)}
-              data-full={slide.fullUrl ?? undefined}
+              data-full-srcset={slide.fullSrcset ?? undefined}
+              data-aspect={slide.aspect.toFixed(3)}
               alt=""
               loading={eager ? "eager" : "lazy"}
               fetchpriority={eager ? "high" : undefined}
@@ -195,8 +196,8 @@ const BLANK_IMG =
         if (fullTried.has(slide)) continue;
         fullTried.add(slide);
         const img = slide.querySelector<HTMLImageElement>(".hero__slide-img")!;
-        const src = img.dataset.full;
-        if (!src) continue;
+        const srcset = img.dataset.fullSrcset;
+        if (!srcset) continue;
         fullBusy = true;
         // Swapping src on the visible <img> leaves it blank while the large
         // image decodes, exposing the LQIP background. Instead the full image
@@ -206,7 +207,13 @@ const BLANK_IMG =
         full.className = "hero__slide-img hero__slide-img--full";
         full.alt = "";
         full.fetchPriority = "low";
-        full.src = src;
+        // With object-fit: cover the image is drawn at least as wide as the
+        // slide and at least as tall; `sizes` is that width in CSS px, and
+        // the browser picks the srcset candidate for the screen's density.
+        const { width, height } = slide.getBoundingClientRect();
+        const aspect = Number(img.dataset.aspect) || 1.5;
+        full.sizes = `${Math.ceil(Math.max(width, height * aspect))}px`;
+        full.srcset = srcset;
         full
           .decode()
           .then(() => {

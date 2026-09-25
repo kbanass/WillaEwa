@@ -12,9 +12,15 @@ export type HeroSlide = {
   lqip: string;
   smallUrl: string;
   midUrl: string;
-  fullUrl: string | null;
+  /** Sizes above the 1200 px mid image, as a srcset; null for small originals. */
+  fullSrcset: string | null;
+  /** width / height of the original, to size the image for object-fit: cover */
+  aspect: number;
   visibility: HeroVisibility;
 };
+
+// Full-resolution candidates; the browser picks the one that fits the screen.
+const FULL_WIDTHS = [1600, 2400, 3200, 4500];
 
 export function buildHeroSlides(hero: HeroImagesQueryResult): HeroSlide[] {
   return (hero?.images ?? []).flatMap((img): HeroSlide[] => {
@@ -30,14 +36,18 @@ export function buildHeroSlides(hero: HeroImagesQueryResult): HeroSlide[] {
       .quality(75)
       .auto("format")
       .url();
-    const fullUrl: string | null =
-      origWidth > 1200
-        ? urlFor(img.image)
-            .width(Math.min(origWidth, 4500))
-            .quality(80)
-            .auto("format")
-            .url()
-        : null;
+    const fullWidths = [
+      ...FULL_WIDTHS.filter((w) => w < origWidth),
+      Math.min(origWidth, FULL_WIDTHS.at(-1)!),
+    ].filter((w, i, all) => w > 1200 && all.indexOf(w) === i);
+    const fullSrcset: string | null = fullWidths.length
+      ? fullWidths
+          .map(
+            (w) =>
+              `${urlFor(img.image!).width(w).quality(80).auto("format").url()} ${w}w`,
+          )
+          .join(", ")
+      : null;
     const visibility: HeroVisibility =
       img.mobileOnly && !img.desktopOnly
         ? "mobile"
@@ -45,7 +55,15 @@ export function buildHeroSlides(hero: HeroImagesQueryResult): HeroSlide[] {
           ? "desktop"
           : "all";
     return [
-      { key: img._key, lqip: img.lqip ?? "", smallUrl, midUrl, fullUrl, visibility },
+      {
+        key: img._key,
+        lqip: img.lqip ?? "",
+        smallUrl,
+        midUrl,
+        fullSrcset,
+        aspect: origWidth / (img.height ?? origWidth / 1.5),
+        visibility,
+      },
     ];
   });
 }
