@@ -1,22 +1,20 @@
 import type { Env } from '../_shared/env'
+import { jsonError } from '../_shared/http'
 
-const ALLOWED_PREFIX = 'https://cdn.sanity.io/images/csed1mdo/'
-
-export const onRequestGet = async (context: {
-  request: Request
-  env: Env
-}): Promise<Response> => {
+export const onRequestGet: PagesFunction<Env> = async (context) => {
   const url = new URL(context.request.url).searchParams.get('url')
 
-  if (!url || !url.startsWith(ALLOWED_PREFIX)) {
-    return Response.json({ error: 'Nieprawidłowy URL' }, { status: 400 })
+  // Only images from our own Sanity project — not an open proxy.
+  const allowedPrefix = `https://cdn.sanity.io/images/${context.env.SANITY_PROJECT_ID}/`
+  if (!url || !url.startsWith(allowedPrefix)) {
+    return jsonError('Nieprawidłowy URL', 400)
   }
 
   const res = await fetch(url, {
     headers: { Accept: 'image/jpeg,image/png,image/webp,image/*,*/*;q=0.8' },
   })
   if (!res.ok) {
-    return Response.json({ error: 'Błąd pobierania obrazu' }, { status: 502 })
+    return jsonError('Błąd pobierania obrazu', 502)
   }
 
   const rawType = res.headers.get('content-type') ?? ''

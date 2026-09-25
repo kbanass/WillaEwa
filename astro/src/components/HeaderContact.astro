@@ -1,0 +1,29 @@
+---
+import { telHref } from "../lib/site";
+
+export type HeaderLink = "contact-number" | "main-page";
+
+interface Props {
+  phone: string;
+  link: HeaderLink;
+}
+
+const { phone, link } = Astro.props;
+---
+
+<div class="header__phone load-fade-in">
+  {
+    link === "contact-number" ? (
+      <>
+        <a class="header__phone-number" href={telHref(phone)}>
+          {phone}
+        </a>
+        <small class="header__phone-label">Rezerwacje</small>
+      </>
+    ) : (
+      <a class="header__main-page" href="/">
+        Strona Główna
+      </a>
+    )
+  }
+</div>

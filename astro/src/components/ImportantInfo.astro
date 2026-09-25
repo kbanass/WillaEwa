@@ -54,7 +54,7 @@ const items = await Promise.all(
         <div class="section-header">
           <span class="section-label">Informacje praktyczne</span>
           <h2 class="section-title">Dobrze wiedzieć przed przyjazdem</h2>
-          <p class="section-lead"></p>
+          <p class="section-lead" />
         </div>
         <ul class="important-info__list animate stagger">
           {items.map((item) => (
@@ -89,8 +89,6 @@ const items = await Promise.all(
 
   @media (min-width: 780px) {
     .important-info__list {
-      grid-template-columns: 1fr;
-      column-gap: var(--space-xl);
       row-gap: var(--space-xl);
     }
 
@@ -140,7 +138,6 @@ const items = await Promise.all(
     grid-column: 2;
     font-family: var(--font-sans-serif);
     font-weight: var(--weight-normal);
-    font-size: var(--font-size-normal);
     color: var(--c-font-primary);
   }
 

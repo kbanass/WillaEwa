@@ -32,6 +32,18 @@ cd astro && npm install && npm run dev
 
 Do edycji CMS lokalnie: `cd sanity/studio && npm install && npm run dev`.
 
+### Gdzie co jest (`astro/src/`)
+
+- `lib/site.ts` — dane obiektu (nazwa, adres, zapasowe numery telefonu, link do Map Google).
+  Numery ustawione w Sanity (siteSettings) mają pierwszeństwo.
+- `lib/sanity.ts` — klient Sanity, zapytania GROQ, `getSiteSettings()`.
+- `lib/hero.ts`, `lib/lightbox.ts`, `lib/reviews.ts` — logika współdzielona przez komponenty
+  (slajdy Hero, podgląd zdjęć PhotoSwipe, karta opinii na stronie i w panelu).
+- `styles/` — style globalne: `variables.css` (kolory, fonty, odstępy — wartości dodawaj tutaj,
+  nie wpisuj ich na sztywno), `reset.css`, `style.css` (layout, nagłówek, stopka, animacje),
+  `forms.css`, `photoswipe.css`, `review-card.css`. Style jednego komponentu trzymaj w jego
+  `<style>`.
+
 ### Typy z Sanity
 
 `sanity/studio/schema.json` i `astro/src/sanity.types.ts` są wygenerowane i trzymane w repo —

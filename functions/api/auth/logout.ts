@@ -1,12 +1,9 @@
-import { verifyAuth } from '../../_shared/auth'
+import { verifyAuth, unauthorized } from '../../_shared/auth'
 import type { Env } from '../../_shared/env'
 
-export const onRequestPost = async (context: {
-  request: Request
-  env: Env
-}): Promise<Response> => {
+export const onRequestPost: PagesFunction<Env> = async (context) => {
   const ok = await verifyAuth(context.request, context.env)
-  if (!ok) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!ok) return unauthorized()
 
   const headers = new Headers()
   headers.append(

@@ -1,5 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { STATUS_ICON } from "../lib/reviews";
+import "../styles/review-card.css";
 ---
 
 <BaseLayout
@@ -28,23 +30,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <ul>
           <li>
             <div class="icon">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path
-                  d="M8 8a3.5 3 0 0 1 3.5 -3h1a3.5 3 0 0 1 3.5 3a3 3 0 0 1 -2 3a3 4 0 0 0 -2 4"
-                ></path>
-                <path d="M12 19l0 .01"></path>
-              </svg>
+              <Fragment set:html={STATUS_ICON.pending} />
               <strong>Oczekująca</strong>
             </div>
             <p>
@@ -54,44 +40,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           </li>
           <li>
             <div class="icon">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
-                <path d="M9 12l2 2l4 -4"></path>
-              </svg>
+              <Fragment set:html={STATUS_ICON.accepted} />
               <strong>Zaakceptowana</strong>
             </div>
             <p>Wyświetla się na stronie.</p>
           </li>
           <li>
             <div class="icon">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path d="M4 7l16 0"></path><path d="M10 11l0 6"></path><path
-                  d="M14 11l0 6"></path>
-                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
-                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-              </svg>
+              <Fragment set:html={STATUS_ICON.deleted} />
               <strong>Usunięta</strong>
             </div>
             <p>Opinia usunięta (nie wyświetla się na stronie).</p>
@@ -115,80 +71,32 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <p class="section-lead"></p>
       </div>
       <div class="status-filter" data-current-filter="pending">
-        <button class="button-outline status-filter__btn--pending">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path
-              d="M8 8a3.5 3 0 0 1 3.5 -3h1a3.5 3 0 0 1 3.5 3a3 3 0 0 1 -2 3a3 4 0 0 0 -2 4"
-            ></path>
-            <path d="M12 19l0 .01"></path>
-          </svg>
+        <button
+          class="button-outline status-filter__btn--pending"
+          data-filter="pending"
+        >
+          <Fragment set:html={STATUS_ICON.pending} />
           Oczekujące
         </button>
-        <button class="button-outline status-filter__btn--accepted">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
-            <path d="M9 12l2 2l4 -4"></path>
-          </svg>
+        <button
+          class="button-outline status-filter__btn--accepted"
+          data-filter="accepted"
+        >
+          <Fragment set:html={STATUS_ICON.accepted} />
           Zaakceptowane
         </button>
-        <button class="button-outline status-filter__btn--deleted">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M4 7l16 0"></path><path d="M10 11l0 6"></path><path
-              d="M14 11l0 6"></path>
-            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
-            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-          </svg>
+        <button
+          class="button-outline status-filter__btn--deleted"
+          data-filter="deleted"
+        >
+          <Fragment set:html={STATUS_ICON.deleted} />
           Usunięte
         </button>
-        <button class="button-outline status-filter__btn--all">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M4 3h16"></path><path d="M4 9h16"></path>
-            <path d="M4 15h16"></path><path d="M4 21h16"></path>
-          </svg>
+        <button
+          class="button-outline status-filter__btn--all"
+          data-filter="all"
+        >
+          <Fragment set:html={STATUS_ICON.all} />
           Wszystkie
         </button>
       </div>
@@ -267,6 +175,18 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   </section>
 
   <script>
+    import {
+      formatReviewDate,
+      getInitials,
+      LONG_QUOTE_LENGTH,
+      SOURCE_ICON,
+      SOURCE_LABEL,
+      STATUS_ICON,
+      starsHtml,
+      type ReviewSource,
+      type ReviewStatus,
+    } from "../lib/reviews";
+
     // Auth guard — runs before any DOM manipulation or data fetching.
     // Treats ANY non-200 (including 404 from the Astro dev server when Express
     // is not proxied) and network errors as unauthorized so the redirect always fires.
@@ -276,7 +196,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       throw new Error("unauthorized"); // halts further module execution
     }
 
-    type ReviewStatus = "pending" | "accepted" | "deleted";
     type StatusFilter = ReviewStatus | "all";
 
     interface Review {
@@ -286,16 +205,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       rating: number;
       time: number;
       status: ReviewStatus;
-      source: "google" | "page";
+      source: ReviewSource;
       reply?: string;
-    }
-
-    function formatDate(timestamp: number): string {
-      return new Date(timestamp * 1000).toLocaleDateString("pl-PL", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
     }
 
     // Reviews are rendered via innerHTML below, and author/quote for
@@ -330,26 +241,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       }
     }
 
-    function getInitials(author: string): string {
-      return author
-        .split(" ")
-        .map((w) => w[0] ?? "")
-        .join("")
-        .slice(0, 2)
-        .toLowerCase();
-    }
-
-    function renderStars(rating: number): string {
-      const full = Math.floor(rating);
-      const half = rating % 1 >= 0.5;
-      const empty = 5 - full - (half ? 1 : 0);
-      return (
-        '<div class="star star--filled"></div>'.repeat(full) +
-        (half ? '<div class="star star--half"></div>' : "") +
-        '<div class="star"></div>'.repeat(empty)
-      );
-    }
-
     let currentStatusFilter: StatusFilter = "pending";
     const reviewsSectionTitle = document.querySelector(
       ".reviews .section-title",
@@ -369,16 +260,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     applyChangesButton.addEventListener("click", () => applyChanges());
 
     statusFilterElement?.addEventListener("click", (e) => {
-      const button = (e.target as HTMLElement).closest("button");
-      if (!button) return;
-      if (button.classList.contains("status-filter__btn--pending"))
-        changeStatusFilter("pending");
-      else if (button.classList.contains("status-filter__btn--accepted"))
-        changeStatusFilter("accepted");
-      else if (button.classList.contains("status-filter__btn--deleted"))
-        changeStatusFilter("deleted");
-      else if (button.classList.contains("status-filter__btn--all"))
-        changeStatusFilter("all");
+      const button = (e.target as HTMLElement).closest<HTMLElement>(
+        "button[data-filter]",
+      );
+      if (button) changeStatusFilter(button.dataset.filter as StatusFilter);
     });
 
     function changeStatusFilter(filter: StatusFilter) {
@@ -448,28 +333,21 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         const textarea = card?.querySelector<HTMLTextAreaElement>(
           ".review-card__reply-input",
         );
-        if (id && textarea) saveReply(id, textarea.value, replySaveBtn, textarea);
+        if (id && textarea)
+          saveReply(id, textarea.value, replySaveBtn, textarea);
         return;
       }
 
-      const statusBtn = target.closest(
-        "[class*='status-picker__btn']",
-      ) as HTMLElement | null;
+      const statusBtn = target.closest<HTMLElement>("button[data-status]");
       if (!statusBtn) return;
 
       const card = statusBtn.closest(".review-card") as HTMLElement;
       if (!card) return;
 
       const id = card.dataset.id;
-      let newStatus: ReviewStatus | null = null;
-      if (statusBtn.classList.contains("status-picker__btn--accepted"))
-        newStatus = "accepted";
-      else if (statusBtn.classList.contains("status-picker__btn--pending"))
-        newStatus = "pending";
-      else if (statusBtn.classList.contains("status-picker__btn--deleted"))
-        newStatus = "deleted";
+      const newStatus = statusBtn.dataset.status as ReviewStatus;
 
-      if (newStatus && id) {
+      if (id) {
         const review = allReviews.find((r) => r.id === id);
         if (!review) return;
         if (newStatus === review.status) {
@@ -528,8 +406,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           <div class="delete-confirm-details">
             <table>
               <tr><td>Autor</td><td><strong>${escapeHtml(review.author)}</strong></td></tr>
-              <tr><td>Ocena</td><td><div class="stars">${renderStars(review.rating)}</div></td></tr>
-              <tr><td>Data</td><td>${formatDate(review.time)}</td></tr>
+              <tr><td>Ocena</td><td><div class="stars">${starsHtml(review.rating)}</div></td></tr>
+              <tr><td>Data</td><td>${formatReviewDate(review.time)}</td></tr>
               <tr><td>Treść</td><td class="delete-confirm-details__quote">${escapeHtml(review.quote)}</td></tr>
             </table>
           </div>
@@ -611,44 +489,35 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       const pendingAttr = pendingStatus
         ? `data-pending-status="${pendingStatus}"`
         : "";
-      const isLong = review.quote.length > 450;
+      const isLong = review.quote.length > LONG_QUOTE_LENGTH;
 
       return `
         <div class="review-card${isLong ? " long-quote" : ""}" data-status="${review.status}" data-id="${review.id}" ${pendingAttr}>
           <div class="review-card__source">
             <div class="review-card__source-logo-wrap">
-              <div class="review-card__source-logo">
-                ${
-                  review.source === "google"
-                    ? `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 2a9.96 9.96 0 0 1 6.29 2.226a1 1 0 0 1 .04 1.52l-1.51 1.362a1 1 0 0 1 -1.265 .06a6 6 0 1 0 2.103 6.836l.001 -.004h-3.66a1 1 0 0 1 -.992 -.883l-.007 -.117v-2a1 1 0 0 1 1 -1h6.945a1 1 0 0 1 .994 .89c.04 .367 .061 .737 .061 1.11c0 5.523 -4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10z"/></svg>`
-                    : `<img src="/favicon/favicon.svg" width="24" height="24" alt="Willa Ewa" />`
-                }
-              </div>
-              <span class="review-card__source-name">${review.source === "google" ? "Google" : "Strona"}</span>
+              <div class="review-card__source-logo">${SOURCE_ICON[review.source]}</div>
+              <span class="review-card__source-name">${SOURCE_LABEL[review.source]}</span>
             </div>
-            <div class="review-card__stars">${renderStars(review.rating)}</div>
+            <div class="stars">${starsHtml(review.rating)}</div>
           </div>
           ${review.quote ? `<blockquote class="review-card__quote">„${escapeHtml(review.quote)}"</blockquote>` : ""}
-          <button class="review-toggle">Czytaj więcej</button>
+          ${isLong ? `<button class="review-toggle">Czytaj więcej</button>` : ""}
           <div class="review-card__bottom">
             <div class="review-card__author">
               <div class="review-card__avatar" aria-hidden="true">${escapeHtml(getInitials(review.author))}</div>
               <div>
                 <p class="review-card__name">${escapeHtml(review.author)}</p>
-                <p class="review-card__date">${formatDate(review.time)}</p>
+                <p class="review-card__date">${formatReviewDate(review.time)}</p>
               </div>
             </div>
             <div class="review-card__controls">
               <div class="status-picker">
-                <button class="status-picker__btn--accepted">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/><path d="M9 12l2 2l4 -4"/></svg>
-                </button>
-                <button class="status-picker__btn--pending">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 8a3.5 3 0 0 1 3.5 -3h1a3.5 3 0 0 1 3.5 3a3 3 0 0 1 -2 3a3 4 0 0 0 -2 4"/><path d="M12 19l0 .01"/></svg>
-                </button>
-                <button class="status-picker__btn--deleted">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0"/><path d="M10 11l0 6"/><path d="M14 11l0 6"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/></svg>
-                </button>
+                ${(["accepted", "pending", "deleted"] as const)
+                  .map(
+                    (status) =>
+                      `<button class="status-picker__btn--${status}" data-status="${status}">${STATUS_ICON[status]}</button>`,
+                  )
+                  .join("")}
               </div>
             </div>
           </div>
@@ -674,6 +543,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     }
   </script>
 
+  <!-- Global: most of the panel is rendered by the script above (innerHTML),
+       which scoped styles don't reach. Only loaded on this page. -->
   <style is:global>
     /* ── Info section ─────────────────────────────────────────── */
     .info {
@@ -788,99 +659,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       gap: var(--space-l);
     }
 
-    /* ── Review card base ─────────────────────────────────────── */
-    .review-card {
-      border: 1px solid var(--c-font-accent);
-      padding: 32px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: var(--space-l);
-    }
-
+    /* ── Review card (base styles: styles/review-card.css) ───── */
     .review-card[data-pending-status] {
       border: 1px solid var(--c-font-primary);
-    }
-
-    .review-card__source {
-      display: flex;
-      width: 100%;
-      justify-content: space-between;
-      align-items: start;
-      font-size: var(--font-size-s);
-      color: var(--c-font-secondary);
-    }
-
-    .review-card__source-logo-wrap {
-      display: flex;
-      flex-direction: row;
-      gap: 8px;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .review-card__stars {
-      display: flex;
-      gap: 2px;
-    }
-
-    .star {
-      width: 18px;
-      height: 18px;
-      background: var(--c-star-empty);
-      clip-path: polygon(
-        50% 0%,
-        61% 35%,
-        98% 35%,
-        68% 57%,
-        79% 91%,
-        50% 70%,
-        21% 91%,
-        32% 57%,
-        2% 35%,
-        39% 35%
-      );
-    }
-
-    .star--filled {
-      background: var(--c-star);
-    }
-
-    .star--half {
-      background: linear-gradient(
-        to right,
-        var(--c-star) 50%,
-        var(--c-star-empty) 50%
-      );
-    }
-
-    .review-card__quote {
-      font-family: var(--font-serif);
-      font-weight: var(--weight-light);
-    }
-
-    .review-card.long-quote .review-card__quote {
-      overflow: hidden;
-      max-height: 6.5rem;
-      transition: max-height 250ms ease-out;
-    }
-
-    .review-card.long-quote .expanded {
-      max-height: 1000px;
-    }
-
-    .review-card:not(.long-quote) .review-toggle {
-      display: none;
-    }
-
-    .review-card.long-quote .review-toggle {
-      align-self: flex-end;
-      background: none;
-      border: 1px solid var(--c-font-accent);
-      color: var(--c-font-accent);
-      padding: 8px 16px;
-      cursor: pointer;
     }
 
     /* ── Review card bottom (admin-specific) ──────────────────── */
@@ -901,42 +682,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         justify-content: space-between;
         align-items: center;
       }
-    }
-
-    .review-card__author {
-      border: none;
-      font-size: var(--font-size-s);
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .review-card__name {
-      font-weight: var(--weight-bold);
-      text-transform: capitalize;
-    }
-
-    .review-card__date {
-      font-weight: var(--weight-light);
-      font-size: var(--font-size-s);
-    }
-
-    .review-card__avatar {
-      background-color: hsl(32, 26%, 73%);
-      color: var(--c-font-light);
-      font-weight: var(--weight-medium);
-      font-family: var(--font-serif);
-      font-size: var(--font-size-m);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      height: 4ch;
-      aspect-ratio: 1/1;
-      border-radius: 50%;
-      text-transform: uppercase;
     }
 
     .review-card__controls {
@@ -1073,8 +818,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     }
 
     .review-card__hard-delete:hover {
-      border-color: #c0392b;
-      color: #c0392b;
+      border-color: var(--c-error);
+      color: var(--c-error);
     }
 
     /* ── Apply changes button (fixed) ────────────────────────── */
@@ -1092,17 +837,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       cursor: pointer;
     }
 
-    .hidden {
-      display: none;
-    }
-
     /* ── Delete confirmation dialog ───────────────────────────── */
     .delete-confirm-overlay {
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.4);
       backdrop-filter: blur(4px);
-      z-index: 1000;
+      z-index: var(--z-modal);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1156,11 +897,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       white-space: nowrap;
     }
 
-    .delete-confirm-details .stars {
-      display: flex;
-      gap: 2px;
-    }
-
     .delete-confirm-details__quote {
       max-width: 320px;
       overflow: hidden;
@@ -1170,7 +906,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     }
 
     .delete-confirm-warning {
-      color: #c0392b;
+      color: var(--c-error);
       font-size: var(--font-size-s);
       margin: 0 0 1.5rem;
     }
@@ -1191,8 +927,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     .delete-confirm__yes {
       padding: 10px 24px;
-      border: 1px solid #c0392b;
-      background: #c0392b;
+      border: 1px solid var(--c-error);
+      background: var(--c-error);
       color: #fff;
       cursor: pointer;
     }

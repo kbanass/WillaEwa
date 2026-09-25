@@ -2,10 +2,7 @@ import { verifyAuth, unauthorized } from '../../_shared/auth'
 import { sanityQuery } from '../../_shared/sanity'
 import type { Env } from '../../_shared/env'
 
-export const onRequestGet = async (context: {
-  request: Request
-  env: Env
-}): Promise<Response> => {
+export const onRequestGet: PagesFunction<Env> = async (context) => {
   const { request, env } = context
   if (!(await verifyAuth(request, env))) return unauthorized()
 

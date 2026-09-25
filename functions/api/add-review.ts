@@ -1,11 +1,9 @@
 import { sanityMutate } from '../_shared/sanity'
 import { sendNewReviewNotification, sendNewReviewTelegram } from '../_shared/notifications'
 import type { Env } from '../_shared/env'
+import { jsonError } from '../_shared/http'
 
-export const onRequestPost = async (context: {
-  request: Request
-  env: Env
-}): Promise<Response> => {
+export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context
 
   let body: {
@@ -18,7 +16,7 @@ export const onRequestPost = async (context: {
   try {
     body = (await request.json()) as typeof body
   } catch {
-    return Response.json({ error: 'Nieprawidłowe dane' }, { status: 400 })
+    return jsonError('Nieprawidłowe dane', 400)
   }
 
   // Honeypot
@@ -30,17 +28,17 @@ export const onRequestPost = async (context: {
   const email = typeof body.email === 'string' ? body.email.trim() : undefined
 
   if (author.length < 2 || author.length > 100) {
-    return Response.json({ error: 'Imię i nazwisko: 2–100 znaków' }, { status: 400 })
+    return jsonError('Imię i nazwisko: 2–100 znaków', 400)
   }
   if (content.length < 2 || content.length > 1000) {
-    return Response.json({ error: 'Opinia: 2–1000 znaków' }, { status: 400 })
+    return jsonError('Opinia: 2–1000 znaków', 400)
   }
   if (/https?:\/\//i.test(content)) {
-    return Response.json({ error: 'Opinia nie może zawierać linków' }, { status: 400 })
+    return jsonError('Opinia nie może zawierać linków', 400)
   }
   const validRatings = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]
   if (isNaN(rating) || !validRatings.includes(rating)) {
-    return Response.json({ error: 'Nieprawidłowa ocena' }, { status: 400 })
+    return jsonError('Nieprawidłowa ocena', 400)
   }
 
   const now = Math.floor(Date.now() / 1000)

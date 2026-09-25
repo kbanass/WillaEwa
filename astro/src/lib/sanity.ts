@@ -4,6 +4,7 @@ import {
   type SanityImageSource,
 } from "@sanity/image-url";
 import { defineQuery } from "groq";
+import type { SiteSettingsQueryResult } from "../sanity.types";
 
 export const sanityClient = createClient({
   projectId: "csed1mdo",
@@ -16,6 +17,15 @@ const builder = createImageUrlBuilder(sanityClient);
 
 export function urlFor(source: SanityImageSource) {
   return builder.image(source);
+}
+
+// Image URLs for the full-screen viewer (lib/lightbox.ts): `src` fills a
+// desktop screen, `zoomSrc` is loaded once the user zooms in.
+export function lightboxSources(source: SanityImageSource) {
+  return {
+    src: urlFor(source).width(1920).auto("format").url(),
+    zoomSrc: urlFor(source).width(3840).auto("format").url(),
+  };
 }
 
 // ── GROQ queries ──────────────────────────────────────────────────────────────
@@ -63,29 +73,6 @@ export const roomsSliderQuery = defineQuery(`
   }
 `);
 
-export const articlesQuery = defineQuery(`
-  *[_type == "article"] | order(publishedAt desc){
-    _id,
-    title,
-    slug,
-    coverImage,
-    excerpt,
-    publishedAt,
-  }
-`);
-
-export const articleBySlugQuery = defineQuery(`
-  *[_type == "article" && slug.current == $slug][0]{
-    _id,
-    title,
-    slug,
-    coverImage,
-    excerpt,
-    publishedAt,
-    body,
-  }
-`);
-
 export const siteSettingsQuery = defineQuery(`
   *[_type == "siteSettings"][0]
 `);
@@ -126,16 +113,12 @@ export async function getRoomsSlider() {
   return sanityClient.fetch(roomsSliderQuery);
 }
 
-export async function getArticles() {
-  return sanityClient.fetch(articlesQuery);
-}
-
-export async function getArticleBySlug(slug: string) {
-  return sanityClient.fetch(articleBySlugQuery, { slug });
-}
-
-export async function getSiteSettings() {
-  return sanityClient.fetch(siteSettingsQuery);
+// Used by several components on every page — fetched once per build.
+// Resolves to null if Sanity is unreachable, so callers fall back to SITE.
+let siteSettings: Promise<SiteSettingsQueryResult> | undefined;
+export function getSiteSettings(): Promise<SiteSettingsQueryResult> {
+  siteSettings ??= sanityClient.fetch(siteSettingsQuery).catch(() => null);
+  return siteSettings;
 }
 
 export async function getImportantInfo() {
