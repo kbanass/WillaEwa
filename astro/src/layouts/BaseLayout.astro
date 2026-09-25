@@ -1,4 +1,5 @@
 ---
+import "../styles/fonts.css";
 import "../styles/variables.css";
 import "../styles/reset.css";
 import "../styles/style.css";
@@ -38,11 +39,6 @@ const {
 
 const settings = await getSiteSettings();
 const phone = settings?.contactPhone ?? SITE.phone;
-
-// --font-serif and --font-sans-serif (variables.css). Lato has no 500/600,
-// so --weight-medium renders as 400 and --weight-semi as 700.
-const FONTS_URL =
-  "https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap";
 ---
 
 <!doctype html>
@@ -77,18 +73,6 @@ const FONTS_URL =
     <title>{title}</title>
 
     <link rel="preconnect" href="https://cdn.sanity.io" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Loaded from a script so the font stylesheet doesn't block rendering. -->
-    <script is:inline define:vars={{ FONTS_URL }}>
-      var l = document.createElement("link");
-      l.rel = "stylesheet";
-      l.href = FONTS_URL;
-      document.head.appendChild(l);
-    </script>
-    <noscript>
-      <link href={FONTS_URL} rel="stylesheet" />
-    </noscript>
 
     <script
       defer
