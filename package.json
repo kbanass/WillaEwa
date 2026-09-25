@@ -5,6 +5,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
+    "dev": "cd astro && npm run build && cd .. && npx wrangler pages dev astro/dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
