@@ -1,5 +1,9 @@
 import { sanityMutate } from '../_shared/sanity'
-import { sendNewReviewNotification, sendNewReviewTelegram } from '../_shared/notifications'
+import {
+  notifyAll,
+  sendNewReviewNotification,
+  sendNewReviewTelegram,
+} from '../_shared/notifications'
 import type { Env } from '../_shared/env'
 import { jsonError } from '../_shared/http'
 
@@ -58,7 +62,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     },
   ])
 
-  await Promise.allSettled([
+  await notifyAll('add-review', [
     sendNewReviewNotification(env, { author, rating, quote: content }),
     sendNewReviewTelegram(env, { author, rating, quote: content }),
   ])

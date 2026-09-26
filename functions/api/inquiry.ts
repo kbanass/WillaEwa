@@ -1,4 +1,8 @@
-import { sendInquiryNotification, sendInquiryTelegram } from '../_shared/notifications'
+import {
+  notifyAll,
+  sendInquiryNotification,
+  sendInquiryTelegram,
+} from '../_shared/notifications'
 import type { Env } from '../_shared/env'
 import { jsonError } from '../_shared/http'
 
@@ -50,7 +54,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const data = { name, email, phone, dateFrom, dateTo, adults, childrenAges }
 
-  await Promise.allSettled([
+  await notifyAll('inquiry', [
     sendInquiryNotification(env, data),
     sendInquiryTelegram(env, data),
   ])
