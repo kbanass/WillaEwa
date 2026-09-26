@@ -13,6 +13,22 @@ function escapeHtml(str: string): string {
     .replace(/'/g, '&#39;')
 }
 
+// Notifications never fail the request that triggered them, but a failed
+// one has to show up in the Functions logs (Cloudflare dashboard → Pages
+// project → Functions → real-time logs) instead of disappearing silently.
+export async function notifyAll(label: string, tasks: Promise<void>[]): Promise<void> {
+  for (const result of await Promise.allSettled(tasks)) {
+    if (result.status === 'rejected') {
+      const reason = result.reason instanceof Error ? result.reason.message : result.reason
+      console.error(`[${label}] notification failed: ${reason}`)
+    }
+  }
+}
+
+async function ensureOk(service: string, res: Response): Promise<void> {
+  if (!res.ok) throw new Error(`${service} responded ${res.status}: ${await res.text()}`)
+}
+
 // ── Email ─────────────────────────────────────────────────────────────────────
 
 export interface NewReview {
@@ -35,8 +51,10 @@ export async function sendEmail(
   env: Env,
   opts: { to: string; subject: string; html: string },
 ): Promise<void> {
-  if (!env.RESEND_API_KEY || !env.MAIL_FROM) return
-  await fetch('https://api.resend.com/emails', {
+  if (!env.RESEND_API_KEY || !env.MAIL_FROM) {
+    throw new Error('e-mail not sent: RESEND_API_KEY or MAIL_FROM is not set')
+  }
+  const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${env.RESEND_API_KEY}`,
@@ -49,6 +67,7 @@ export async function sendEmail(
       html: opts.html,
     }),
   })
+  await ensureOk('Resend', res)
 }
 
 export async function sendNewReviewNotification(
@@ -100,7 +119,7 @@ async function sendTelegram(env: Env, text: string): Promise<void> {
     chunks.push(text.slice(i, i + 4000))
   }
   for (const chunk of chunks) {
-    await fetch(
+    const res = await fetch(
       `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`,
       {
         method: 'POST',
@@ -112,6 +131,7 @@ async function sendTelegram(env: Env, text: string): Promise<void> {
         }),
       },
     )
+    await ensureOk('Telegram', res)
   }
 }
 
