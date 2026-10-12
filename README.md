@@ -48,13 +48,13 @@ Reviews were the obvious thing to build it around, because they really are the h
 
 I built it for next to nothing. What I really got out of it was the chance to build something real, for someone actually waiting for the result. That's why I let myself make the project bigger than a small guesthouse site strictly needs. If she had been paying for every feature, I would have kept it simpler, because I wouldn't talk a client into paying for things she doesn't need that much.
 
-**Why not WordPress?** I had never used it and I don't know PHP. For the custom review handling I would have had to learn it and write plugins. I built the site after hours, next to a full-time job and weekend university classes. I went with what I already knew (TypeScript, HTML, CSS, Express), because that way I was sure I could finish before the season started.
+**Why not WordPress?** I had never used it and I don't know PHP. For the custom review handling I would have had to learn it and write plugins. I built the site after hours, next to a full-time job and weekend university classes. I went with what I already knew (TypeScript, HTML, CSS), because that way I was sure I could finish before the season started.
 
 ---
 
 ## Reviews: the heart of the project
 
-From the start I wanted Google reviews to appear on the site automatically, without anyone copying them by hand. The obvious question came right away: what if someone posts a fake, malicious review and Google doesn't catch it? This isn't about censorship. The owner simply has the right not to have a troll's post in the middle of her website. So every review goes to a panel first and only appears on the site after she approves it.
+From the start I wanted Google reviews to appear on the site automatically, without anyone copying them by hand. The obvious question came right away: what if someone posts a fake, malicious review and Google doesn't catch it? The owner simply should have the right not to have a troll's post in the middle of her website. So every review goes to a panel first and only appears on the site after she approves it.
 
 ```mermaid
 flowchart LR
@@ -105,7 +105,7 @@ The content changes rarely, it's the same for every visitor, and SEO matters a l
 
 ## Lesson 1: I should have reached for a proven solution right away (UX)
 
-After launching the first version I showed the site to family and friends. Partly because I was excited about it, but mostly for feedback, because more eyes means a better chance someone spots a problem. Nobody reported anything. But while watching them browse the photos, I noticed almost everyone did the same things:
+After launching the first version I showed the site to family and friends. Partly because I was excited about this project, but mostly for feedback, because more eyes means a better chance someone spots a problem. Nobody reported anything. But while watching them browse the photos, I noticed almost everyone did the same things:
 
 1. **They tried to swipe the photo carousel**, which only worked with arrow buttons.
 2. **They pinched to zoom in the photo viewer.** That gesture triggered my swipe detection, so the photo changed and the whole page zoomed in at the same time (which was awful).
@@ -139,7 +139,7 @@ At first I assumed a guesthouse website barely changes. I'd build it, the owner 
 
 Everything was built around my first assumption. I had three photo folders (hero, rooms, gallery), and Vite picked up the files at build time. The order depended on the file name: `0000.webp`, `0001.webp` … `0028.webp`. To put a new photo in second place I had to rename almost 30 files. Fixing the ordering was easy, but a second problem remained: every change still had to go through me.
 
-That's when I found out about **headless CMSs**. The site was already in production, and the code (plain HTML, CSS and TS) had grown messy and hard to navigate. Adding a CMS on top of that would only make it worse, so I rebuilt the site on **Astro and Sanity**. Astro organized the code into components, Sanity has let the owner edit content, and the two work well together. A bonus: Sanity has assets pipeline out of the box, it compresses images and serves them in the size and format that i need, so I no longer have to convert files by hand.
+That's when I found out about **headless CMSs**. The site was already in production, and the code (plain HTML, CSS and TS) had grown messy and hard to navigate. Adding a CMS on top of that would only make it worse, so I rebuilt the site on **Astro and Sanity**. Astro organized the code into components, Sanity lets the owner edit content, and the two work well together. A bonus: Sanity has an asset pipeline built in. It compresses images and serves them in the size and format I need, so I no longer have to convert files by hand.
 
 <p align="center"><img src="docs/screenshots/sanity-hero-order.gif" width="800" alt="Reordering hero photos in Sanity Studio"></p>
 <p align="center"><i>Sanity Studio: reordering photos by drag and drop, and the "phone only / desktop only" option</i></p>
@@ -193,7 +193,7 @@ On mobile, Performance comes out lower (76–82), mostly because of the hero pho
 
 ## Lesson 3: a server that spends 99% of its time waiting
 
-The first version ran on the cheapest VPS at Hetzner (Express, SQLite, nginx, PM2) for about 20 PLN (5 €) a month. The owner was fine with that, but it kept bugging me. 99% of the time the server just waited for requests, and we were paying for the whole machine. Over a year that's 240 PLN (55 €), which is more than three nights at Willa Ewa.
+The first version ran on the cheapest VPS at Hetzner (Express, SQLite, nginx, PM2) for about 20 PLN (5 €) a month. The owner was fine with that, but it kept bugging me. 99% of the time the server just waited for requests, and she was paying for the whole machine. Over a year that's 240 PLN (55 €), which is more than three nights at Willa Ewa.
 
 I started looking for another way and found serverless: paying for actual usage instead of a whole server. Cloudflare's free plan gives far more than this site will ever use. Nobody asked me to do this, but if the site can run for free, I figured it should. So I moved everything:
 
@@ -307,8 +307,6 @@ _As of September 2026._
 - **438 people** visited the site, more than 1,100 times in total, and stayed over 5 minutes on average.
 - **Google search** showed the site about 2,000 times, and 170 people clicked through to it.
 - **Hosting costs 0 PLN** a month. Only the domain is paid.
-
-It's a small site with small numbers, but behind them are real people looking for a place to stay.
 
 ---
 
