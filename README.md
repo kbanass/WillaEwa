@@ -31,7 +31,7 @@ In March 2026 my aunt came to me with a problem. She runs a small guesthouse in 
 
 Some time ago, after a few malicious reports, Google blocked her account. She got it back after contacting support, but it took long enough to show her how fragile that was. If the listing disappeared again, she would lose the main way new guests find her. She needed something that doesn't depend on her Google account.
 
-So I built her a website of her own, where guests can find her, see the prices and ask about free rooms directly. I can't stop Google from blocking her account again, but her business no longer depends on one listing.
+So I built her a website of her own, where guests can find her, see the prices and ask about free rooms directly.
 
 Reviews were the obvious thing to build it around, because they really are the heart of this business. Willa Ewa isn't a big building with modern apartments right on the beach. It has an owner who puts her heart into it, guests who write about that, and low prices. So I built the whole site around two things: **reviews** and **price**.
 
