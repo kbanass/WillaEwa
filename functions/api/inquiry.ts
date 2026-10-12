@@ -5,6 +5,7 @@ import {
 } from '../_shared/notifications'
 import type { Env } from '../_shared/env'
 import { jsonError } from '../_shared/http'
+import { enforceRateLimit, RATE_LIMITS } from '../_shared/rate-limit'
 import { validateInquiry } from '../_shared/validation'
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
@@ -23,6 +24,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const result = validateInquiry(body)
   if (!result.ok) return jsonError(result.error, 400)
   const data = result.data
+
+  const limited = await enforceRateLimit(request, env, RATE_LIMITS.inquiry)
+  if (limited) return limited
 
   await notifyAll('inquiry', [
     sendInquiryNotification(env, data),
