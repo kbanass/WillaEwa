@@ -211,6 +211,7 @@ import "../styles/review-card.css";
       type ReviewSource,
       type ReviewStatus,
     } from "../lib/reviews";
+    import escapeHtml from "escape-html";
 
     // Auth guard — runs before any DOM manipulation or data fetching.
     // Treats ANY non-200 (including 404 from the Astro dev server when Express
@@ -238,15 +239,8 @@ import "../styles/review-card.css";
     // source: "page" reviews come straight from the public, unauthenticated
     // add-review form (only length/URL-checked, not HTML-checked) — escape
     // before interpolating so a malicious submission can't run script in
-    // this authenticated admin session.
-    function escapeHtml(str: string): string {
-      return str
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-    }
+    // this authenticated admin session. Every user-submitted field below
+    // goes through escapeHtml (from the escape-html package).
 
     // Bare fetch() has no default timeout — a request that never resolves
     // (dead connection, hung server) leaves callers stuck awaiting it

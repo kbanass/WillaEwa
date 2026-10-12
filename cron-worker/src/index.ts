@@ -1,3 +1,5 @@
+import escapeHtml from 'escape-html'
+
 interface Env {
   SERPAPI_API_KEY: string
   GOOGLE_PLACE_ID: string
@@ -14,15 +16,6 @@ interface Env {
 }
 
 const SANITY_API_VERSION = '2024-01-01'
-
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-}
 
 async function sanityQuery<T>(
   env: Env,

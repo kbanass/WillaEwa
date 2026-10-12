@@ -12,5 +12,8 @@
   "type": "module",
   "devDependencies": {
     "wrangler": "^4.124.0"
+  },
+  "dependencies": {
+    "escape-html": "^1.0.3"
   }
 }
