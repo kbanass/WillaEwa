@@ -12,4 +12,5 @@ export interface Env {
   TELEGRAM_BOT_TOKEN?: string;
   TELEGRAM_CHAT_ID?: string;
   REBUILD_SECRET?: string;
+  RATE_LIMIT_KV?: KVNamespace;
 }
