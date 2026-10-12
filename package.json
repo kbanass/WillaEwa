@@ -15,11 +15,13 @@
   "type": "module",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "escape-html": "^1.0.3",
     "jose": "^5.9.6"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240917.0",
     "@types/bcryptjs": "^2.4.6",
+    "@types/escape-html": "^1.0.4",
     "typescript": "^5.7.3",
     "vitest": "^5.0.4"
   }
