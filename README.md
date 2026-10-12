@@ -46,7 +46,7 @@ Reviews were the obvious thing to build it around, because they really are the h
 </tr>
 </table>
 
-I built the site for a token 100 PLN (about €25) and a free weekend in Krynica. What I really got out of it was the chance to build something real, for someone actually waiting for the result. That's why I let myself make the project bigger than a small guesthouse site strictly needs. If I had been charging per feature, I would have kept it simpler, because I wouldn't talk a client into paying for things she doesn't need that much.
+I built it for next to nothing. What I really got out of it was the chance to build something real, for someone actually waiting for the result. That's why I let myself make the project bigger than a small guesthouse site strictly needs. If she had been paying for every feature, I would have kept it simpler, because I wouldn't talk a client into paying for things she doesn't need that much.
 
 **Why not WordPress?** I had never used it and I don't know PHP. For the custom review handling I would have had to learn it and write plugins. I built the site after hours, next to a full-time job and weekend university classes. I went with what I already knew (TypeScript, HTML, CSS, Express), because that way I was sure I could finish before the season started.
 
