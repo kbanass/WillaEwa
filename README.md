@@ -303,10 +303,10 @@ Most photos on the site, including the hero and room photos, I took with my own 
 
 _As of September 2026._
 
-- **March–September 2026:** 168 commits, in production since mid-April, before the season started.
-- **Umami:** 438 unique visitors, 1.11k visits, 3.77k page views, 5 min 36 s average visit.
-- **Google Search Console:** 1.99k impressions in search results, 170 clicks, 8.6% CTR, average position 7.5.
-- **Hosting cost:** 0 PLN a month, only the domain is paid.
+- **In production since mid-April 2026**, before the season started. 168 commits so far.
+- **438 people** visited the site, more than 1,100 times in total, and stayed over 5 minutes on average.
+- **Google search** showed the site about 2,000 times, and 170 people clicked through to it.
+- **Hosting costs 0 PLN** a month. Only the domain is paid.
 
 It's a small site with small numbers, but behind them are real people looking for a place to stay.
 
