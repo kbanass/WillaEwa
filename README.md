@@ -6,9 +6,7 @@
 
 <table>
 <tr>
-<td>
 <td width="100%"><img src="docs/screenshots/hero-desktop.jpg" alt="Hero section"></td>
-</td>
 </tr>
 </table>
 
@@ -219,16 +217,18 @@ The site has two public forms (availability inquiry and adding a review) and a p
 
 - **Login:** the password is stored as a bcrypt hash in environment variables. After logging in, the browser gets a JWT in an `HttpOnly`, `Secure`, `SameSite=Strict` cookie, valid for 72 hours. Code: [auth/login.ts](functions/api/auth/login.ts), [\_shared/auth.ts](functions/_shared/auth.ts).
 - **Honeypot:** a hidden field that humans don't see but bots usually fill in. When it's filled, the server pretends everything went fine and saves nothing.
-- **Server-side validation**, not just in the browser: field lengths, e-mail and phone format, valid dates, a rating from the allowed values only, and **no links in review text**. Code: [add-review.ts](functions/api/add-review.ts).
-- **Escaping user content** in the panel, in e-mails and in Telegram messages.
+- **Rate limiting** per IP: 10 login attempts per 15 minutes (checked before bcrypt), 3 reviews and 5 inquiries per hour. Cloudflare's own rate limiting rules on the free plan only count in 10-second windows, and the Workers rate limiting binding isn't available in Pages Functions, so the counter lives in Cloudflare KV. KV is eventually consistent, so the count is approximate, which is enough to stop password guessing and spam. Code: [\_shared/rate-limit.ts](functions/_shared/rate-limit.ts).
+- **Server-side validation**, not just in the browser: field lengths, e-mail and phone format, valid dates, a rating from the allowed values only, and **no links in review text** (including `www.` and bare domains like `spam.pl`). Code: [\_shared/validation.ts](functions/_shared/validation.ts).
+- **User text never goes in as HTML.** The panel builds review cards from `<template>` elements and puts user text in with `textContent`, so there's no escaping to forget. E-mails and Telegram messages are HTML text sent out, so there the text is escaped with `escape-html`.
 - **Security headers:** CSP, HSTS, `X-Frame-Options`, `nosniff`.
 - **The image download endpoint** only works for images from my own Sanity project, so it can't be used as an open proxy.
 - `/login`, `/panel` and `/opinie` are `noindex` and left out of the sitemap.
 
 **Mistakes I made:**
 
-- **XSS.** Early versions put review and inquiry text straight into the HTML in the panel and in e-mails, so someone could inject their own code through a public form. I didn't notice it myself; Claude Code found it. I fixed it in July, and in the Telegram messages in September.
-- **Lost rate limiting.** The Express version had request limits (`express-rate-limit`) on login and the forms. During the move to Cloudflare that layer didn't come along with the rest, and I only noticed while writing this README. <!-- TODO: update once the fix is in production --> I'm fixing it now.
+- **XSS.** Early versions put review and inquiry text straight into the HTML in the panel and in e-mails, so someone could inject their own code through a public form. I didn't notice it myself; Claude Code found it. I fixed it in July, and in the Telegram messages in September. In October I switched the panel from escaping to `textContent`, so a new field can't bring the XSS back just because someone forgot to escape it.
+- **Lost rate limiting.** The Express version had request limits (`express-rate-limit`) on login and the forms. During the move to Cloudflare that layer didn't come along with the rest, and I only noticed while writing this README. It's back now, in KV (see above).
+- **Links in reviews.** The "no links" check only looked for `http://`, so `www.spam.pl` got through. Tests I wrote for the validation found it.
 
 ---
 
@@ -318,7 +318,7 @@ On my side are the conversations with the owner, spotting problems, making the d
 
 ## What I'd do differently, and what's next
 
-- **Tests.** I tested everything here by hand. I'm learning to write tests now on my second project, [MealJournal](https://github.com/kbanass/mindfull-eating).
+- **Tests from the start.** For months I tested everything by hand. In October I added the first tests (validation, rate limiting, escaping in notifications) and CI that runs them with a type check on every pull request. The first batch already found the link gap described above. The pages and the panel still have no automated tests. I'm also learning testing on my second project, [MealJournal](https://github.com/kbanass/mindfull-eating).
 - **A list of "what the old system does" before migrating.** Rate limiting got lost along the way during the move to Cloudflare, and I only noticed more than two months later.
 - **A CMS from day one**, when the client is as involved as this one.
 - **A branch and a pull request instead of fixes in production.** At first I fixed bugs directly in production: the history has five "TypeScript errors fixed" commits within 40 minutes. Since September every change goes through its own branch and PR.
@@ -335,11 +335,13 @@ astro/          the site (Astro, output: "static"), hosted on Cloudflare Pages
 functions/      the site's API: Cloudflare Pages Functions (/api/*)
 cron-worker/    a separate Cloudflare Worker: daily Google review sync (SerpAPI → Sanity)
 sanity/studio/  Sanity Studio: photos, site settings, good-to-know info, reviews
+tests/          Vitest tests for the Functions
 ```
 
 - **Deploying the site:** push to `main`, and Cloudflare Pages builds `astro/` and deploys `functions/`.
+- **CI:** every pull request runs the type check, the tests and `astro check` (GitHub Actions).
 - **Sanity webhook:** publishing content in Sanity calls `/api/rebuild`, which triggers the Cloudflare Pages deploy hook.
-- **cron-worker** is deployed separately: `cd cron-worker && npx wrangler deploy`.
+- **cron-worker** is deployed separately, from `main`: `cd cron-worker && npm install && npx wrangler deploy`.
 
 In `astro/src/`:
 
@@ -353,6 +355,8 @@ In `astro/src/`:
 ```sh
 npm install && (cd astro && npm install)
 npm run dev          # builds the site and serves it together with Pages Functions (wrangler)
+npm test             # Vitest
+npm run typecheck    # tsc for functions/ and cron-worker/
 ```
 
 Secrets for the Functions live locally in `.dev.vars` (not in the repo). Sanity Studio: `cd sanity/studio && npm install && npm run dev`.
@@ -376,6 +380,10 @@ Set in the Cloudflare dashboard or with `wrangler secret put`:
 - `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`: Telegram notifications (optional)
 - `CF_PAGES_DEPLOY_HOOK`: rebuilds the site after review changes
 - `DOMAIN_NAME`, `REBUILD_SECRET` (optional Sanity webhook secret)
+
+Bindings (Pages → Settings → Bindings, for Production and Preview):
+
+- `RATE_LIMIT_KV`: KV namespace for rate limiting. Without it the limits are off and the Functions logs show a warning. `npm run dev` binds a local one.
 
 </details>
 
