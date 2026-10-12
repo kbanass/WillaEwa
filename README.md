@@ -17,7 +17,7 @@
 - The owner changes photos, prices and texts herself in Sanity CMS, and the site rebuilds itself after every change.
 - No server of my own: Cloudflare Pages Functions and a Worker. On my own initiative I cut hosting from about 20 PLN a month on a VPS to 0 PLN (only the domain costs money).
 - I started with Express, SQLite and Nunjucks on a VPS. In July I rewrote everything on Astro, Sanity and Cloudflare.
-- 438 unique visitors, 170 clicks from Google search, in 5 months.
+- 438 unique visitors and 170 clicks from Google search in the first 5 months (as of September 2026).
 
 **Stack:** TypeScript · Astro · Sanity · Cloudflare Pages & Workers · SerpAPI · Resend · Telegram Bot API · PhotoSwipe · Swiper · Umami
 
@@ -300,6 +300,8 @@ Most photos on the site, including the hero and room photos, I took with my own 
 ---
 
 ## By the numbers
+
+_As of September 2026._
 
 - **March–September 2026:** 168 commits, in production since mid-April, before the season started.
 - **Umami:** 438 unique visitors, 1.11k visits, 3.77k page views, 5 min 36 s average visit.
