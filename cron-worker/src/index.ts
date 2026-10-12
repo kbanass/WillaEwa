@@ -268,7 +268,7 @@ async function runSync(env: Env): Promise<void> {
     }
   } catch (err) {
     console.error('[cron] Sync failed:', err)
-    await sendTelegram(env, `<b>⚠️ Google Reviews sync — błąd</b>\n${String(err)}`)
+    await sendTelegram(env, `<b>⚠️ Google Reviews sync — błąd</b>\n${escapeHtml(String(err))}`)
   }
 }
 
