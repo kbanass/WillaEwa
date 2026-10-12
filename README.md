@@ -318,7 +318,7 @@ On my side are the conversations with the owner, spotting problems, making the d
 
 ## What I'd do differently, and what's next
 
-- **Tests from the start.** For months I tested everything by hand. In October I added the first tests (validation, rate limiting, escaping in notifications) and CI that runs them with a type check on every pull request. The first batch already found the link gap described above. The pages and the panel still have no automated tests. I'm also learning testing on my second project, [MealJournal](https://github.com/kbanass/mindfull-eating).
+- **Tests from the start.** For months I tested everything by hand. In October I added the first tests (validation, rate limiting, escaping in notifications) and CI that runs them with a type check on every pull request. The first batch already found the link gap described above. The pages and the panel still have no automated tests. I'm also learning testing on my second project, [meal-journal](https://github.com/kbanass/meal-journal).
 - **A list of "what the old system does" before migrating.** Rate limiting got lost along the way during the move to Cloudflare, and I only noticed more than two months later.
 - **A CMS from day one**, when the client is as involved as this one.
 - **A branch and a pull request instead of fixes in production.** At first I fixed bugs directly in production: the history has five "TypeScript errors fixed" commits within 40 minutes. Since September every change goes through its own branch and PR.
