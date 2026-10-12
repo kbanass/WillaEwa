@@ -5,6 +5,10 @@ describe('containsLink', () => {
   it.each([
     'Zapraszam na http://spam.pl',
     'https://example.com/promo',
+    'Wejdź na www.tanie-noclegi.com',
+    'Polecam spam.pl',
+    'Najlepsze ceny: noclegi-krynica.com/oferta',
+    'Pisz na jan.kowalski@gmail.com',
   ])('finds a link in "%s"', (text) => {
     expect(containsLink(text)).toBe(true)
   })
@@ -28,6 +32,13 @@ describe('validateReview', () => {
     expect(result).toEqual({
       ok: true,
       data: { author: 'Anna', content: 'Bardzo miło, wrócimy!', rating: 5, email: undefined },
+    })
+  })
+
+  it('rejects a link written without http', () => {
+    expect(validateReview({ ...valid, content: 'Tanio na www.spam.pl' })).toEqual({
+      ok: false,
+      error: 'Opinia nie może zawierać linków',
     })
   })
 

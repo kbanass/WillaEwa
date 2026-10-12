@@ -2,8 +2,17 @@ export type ValidationResult<T> = { ok: true; data: T } | { ok: false; error: st
 
 // ── Links ─────────────────────────────────────────────────────────────────────
 
+// Bare domains are matched against a short list of TLDs instead of any
+// "word.word", so a review typed without a space after a full stop
+// ("Czysto.Polecam") isn't rejected as a link.
+const LINK_PATTERNS = [
+  /https?:\/\//i,
+  /\bwww\./i,
+  /\b[a-z0-9-]+\.(pl|com|net|org|eu|info|biz|io|ru|xyz|online|site|shop)\b/i,
+]
+
 export function containsLink(text: string): boolean {
-  return /https?:\/\//i.test(text)
+  return LINK_PATTERNS.some((pattern) => pattern.test(text))
 }
 
 // ── Review ────────────────────────────────────────────────────────────────────
