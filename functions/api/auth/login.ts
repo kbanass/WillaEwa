@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs'
 import { SignJWT } from 'jose'
 import type { Env } from '../../_shared/env'
 import { jsonError } from '../../_shared/http'
+import { enforceRateLimit, RATE_LIMITS } from '../../_shared/rate-limit'
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context
@@ -17,6 +18,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (!password) {
     return jsonError('Brak hasła', 400)
   }
+
+  // Before bcrypt, so guessing passwords is limited and doesn't burn CPU time.
+  const limited = await enforceRateLimit(request, env, RATE_LIMITS.login)
+  if (limited) return limited
 
   const hash = env.ADMIN_PASSWORD_HASH
   if (!hash) {

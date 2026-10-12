@@ -199,6 +199,74 @@ import "../styles/review-card.css";
     </div>
   </section>
 
+  <!-- ══════════════════════════════ TEMPLATES ═══════════════════════════════ -->
+  <!-- Cloned and filled in by the script below. -->
+  <template id="review-card-template">
+    <div class="review-card">
+      <div class="review-card__source">
+        <div class="review-card__source-logo-wrap">
+          <div class="review-card__source-logo"></div>
+          <span class="review-card__source-name"></span>
+        </div>
+        <div class="stars"></div>
+      </div>
+      <blockquote class="review-card__quote"></blockquote>
+      <button class="review-toggle">Czytaj więcej</button>
+      <div class="review-card__bottom">
+        <div class="review-card__author">
+          <div class="review-card__avatar" aria-hidden="true"></div>
+          <div>
+            <p class="review-card__name"></p>
+            <p class="review-card__date"></p>
+          </div>
+        </div>
+        <div class="review-card__controls">
+          <div class="status-picker">
+            {
+              (["accepted", "pending", "deleted"] as const).map((status) => (
+                <button class={`status-picker__btn--${status}`} data-status={status}>
+                  <Fragment set:html={STATUS_ICON[status]} />
+                </button>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+      <div class="review-card__reply">
+        <label>Odpowiedź</label>
+        <textarea
+          class="review-card__reply-input"
+          placeholder="Napisz odpowiedź na tę opinię…"></textarea>
+        <button type="button" class="review-card__reply-save"></button>
+      </div>
+      <button class="review-card__hard-delete">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7h16"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/><path d="M10 12l4 4m0 -4l-4 4"/></svg>
+        Usuń trwale
+      </button>
+    </div>
+  </template>
+
+  <template id="delete-confirm-template">
+    <div class="delete-confirm-overlay">
+      <div class="delete-confirm-dialog">
+        <h3>Czy na pewno chcesz usunąć tę opinię?</h3>
+        <div class="delete-confirm-details">
+          <table>
+            <tr><td>Autor</td><td><strong class="delete-confirm__author"></strong></td></tr>
+            <tr><td>Ocena</td><td><div class="stars"></div></td></tr>
+            <tr><td>Data</td><td class="delete-confirm__date"></td></tr>
+            <tr><td>Treść</td><td class="delete-confirm-details__quote"></td></tr>
+          </table>
+        </div>
+        <p class="delete-confirm-warning">Tej operacji nie można cofnąć.</p>
+        <div class="delete-confirm-actions">
+          <button class="delete-confirm__no">Nie</button>
+          <button class="delete-confirm__yes">Tak, usuń trwale</button>
+        </div>
+      </div>
+    </div>
+  </template>
+
   <script>
     import {
       formatReviewDate,
@@ -234,18 +302,20 @@ import "../styles/review-card.css";
       reply?: string;
     }
 
-    // Reviews are rendered via innerHTML below, and author/quote for
-    // source: "page" reviews come straight from the public, unauthenticated
-    // add-review form (only length/URL-checked, not HTML-checked) — escape
-    // before interpolating so a malicious submission can't run script in
-    // this authenticated admin session.
-    function escapeHtml(str: string): string {
-      return str
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
+    // Author, quote and reply of source: "page" reviews come straight from
+    // the public, unauthenticated add-review form. Cards are cloned from the
+    // <template>s above, and user text only goes in through textContent or
+    // value, which the browser never parses as HTML, so a crafted review
+    // can't run script in this authenticated admin session. innerHTML is
+    // used only for our own icons and stars.
+
+    function cloneTemplate(id: string): HTMLElement {
+      const template = document.getElementById(id) as HTMLTemplateElement;
+      return template.content.firstElementChild!.cloneNode(true) as HTMLElement;
+    }
+
+    function part(root: HTMLElement, selector: string): HTMLElement {
+      return root.querySelector<HTMLElement>(selector)!;
     }
 
     // Bare fetch() has no default timeout — a request that never resolves
@@ -322,9 +392,14 @@ import "../styles/review-card.css";
         currentStatusFilter === "all"
           ? allReviews
           : allReviews.filter((r) => r.status === currentStatusFilter);
-      reviewsContainerElement.innerHTML = filtered.length
-        ? filtered.map(renderReview).join("")
-        : `<p class="reviews__empty">Brak opinii z tym statusem</p>`;
+      if (!filtered.length) {
+        const empty = document.createElement("p");
+        empty.className = "reviews__empty";
+        empty.textContent = "Brak opinii z tym statusem";
+        reviewsContainerElement.replaceChildren(empty);
+        return;
+      }
+      reviewsContainerElement.replaceChildren(...filtered.map(renderReview));
     }
 
     reviewsContainerElement.addEventListener("click", (e) => {
@@ -423,26 +498,11 @@ import "../styles/review-card.css";
 
     function showDeleteConfirm(review: Review): void {
       document.querySelector(".delete-confirm-overlay")?.remove();
-      const overlay = document.createElement("div");
-      overlay.className = "delete-confirm-overlay";
-      overlay.innerHTML = `
-        <div class="delete-confirm-dialog">
-          <h3>Czy na pewno chcesz usunąć tę opinię?</h3>
-          <div class="delete-confirm-details">
-            <table>
-              <tr><td>Autor</td><td><strong>${escapeHtml(review.author)}</strong></td></tr>
-              <tr><td>Ocena</td><td><div class="stars">${starsHtml(review.rating)}</div></td></tr>
-              <tr><td>Data</td><td>${formatReviewDate(review.time)}</td></tr>
-              <tr><td>Treść</td><td class="delete-confirm-details__quote">${escapeHtml(review.quote)}</td></tr>
-            </table>
-          </div>
-          <p class="delete-confirm-warning">Tej operacji nie można cofnąć.</p>
-          <div class="delete-confirm-actions">
-            <button class="delete-confirm__no">Nie</button>
-            <button class="delete-confirm__yes">Tak, usuń trwale</button>
-          </div>
-        </div>
-      `;
+      const overlay = cloneTemplate("delete-confirm-template");
+      part(overlay, ".delete-confirm__author").textContent = review.author;
+      part(overlay, ".stars").innerHTML = starsHtml(review.rating);
+      part(overlay, ".delete-confirm__date").textContent = formatReviewDate(review.time);
+      part(overlay, ".delete-confirm-details__quote").textContent = review.quote;
       overlay
         .querySelector(".delete-confirm__no")
         ?.addEventListener("click", () => overlay.remove());
@@ -509,67 +569,50 @@ import "../styles/review-card.css";
       }
     }
 
-    function renderReview(review: Review): string {
-      const pendingStatus = pendingChanges.get(review.id);
-      const pendingAttr = pendingStatus
-        ? `data-pending-status="${pendingStatus}"`
-        : "";
+    function renderReview(review: Review): HTMLElement {
+      const card = cloneTemplate("review-card-template");
       const isLong = review.quote.length > LONG_QUOTE_LENGTH;
 
-      return `
-        <div class="review-card${isLong ? " long-quote" : ""}" data-status="${review.status}" data-id="${review.id}" ${pendingAttr}>
-          <div class="review-card__source">
-            <div class="review-card__source-logo-wrap">
-              <div class="review-card__source-logo">${SOURCE_ICON[review.source]}</div>
-              <span class="review-card__source-name">${SOURCE_LABEL[review.source]}</span>
-            </div>
-            <div class="stars">${starsHtml(review.rating)}</div>
-          </div>
-          ${review.quote ? `<blockquote class="review-card__quote">„${escapeHtml(review.quote)}"</blockquote>` : ""}
-          ${isLong ? `<button class="review-toggle">Czytaj więcej</button>` : ""}
-          <div class="review-card__bottom">
-            <div class="review-card__author">
-              <div class="review-card__avatar" aria-hidden="true">${escapeHtml(getInitials(review.author))}</div>
-              <div>
-                <p class="review-card__name">${escapeHtml(review.author)}</p>
-                <p class="review-card__date">${formatReviewDate(review.time)}</p>
-              </div>
-            </div>
-            <div class="review-card__controls">
-              <div class="status-picker">
-                ${(["accepted", "pending", "deleted"] as const)
-                  .map(
-                    (status) =>
-                      `<button class="status-picker__btn--${status}" data-status="${status}">${STATUS_ICON[status]}</button>`,
-                  )
-                  .join("")}
-              </div>
-            </div>
-          </div>
-          ${
-            review.source === "page"
-              ? `<div class="review-card__reply">
-                  <label for="reply-${review.id}">Odpowiedź</label>
-                  <textarea id="reply-${review.id}" class="review-card__reply-input" placeholder="Napisz odpowiedź na tę opinię…">${escapeHtml(review.reply ?? "")}</textarea>
-                  <button type="button" class="review-card__reply-save">${review.reply ? "Zapisz odpowiedź" : "Dodaj odpowiedź"}</button>
-                </div>`
-              : ""
-          }
-          ${
-            currentStatusFilter === "deleted" && review.source === "page"
-              ? `<button class="review-card__hard-delete">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7h16"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/><path d="M10 12l4 4m0 -4l-4 4"/></svg>
-                  Usuń trwale
-                </button>`
-              : ""
-          }
-        </div>
-      `;
+      card.classList.toggle("long-quote", isLong);
+      card.dataset.status = review.status;
+      card.dataset.id = review.id;
+      const pendingStatus = pendingChanges.get(review.id);
+      if (pendingStatus) card.dataset.pendingStatus = pendingStatus;
+
+      part(card, ".review-card__source-logo").innerHTML = SOURCE_ICON[review.source];
+      part(card, ".review-card__source-name").textContent = SOURCE_LABEL[review.source];
+      part(card, ".stars").innerHTML = starsHtml(review.rating);
+
+      if (review.quote) part(card, ".review-card__quote").textContent = `„${review.quote}"`;
+      else part(card, ".review-card__quote").remove();
+      if (!isLong) part(card, ".review-toggle").remove();
+
+      part(card, ".review-card__avatar").textContent = getInitials(review.author);
+      part(card, ".review-card__name").textContent = review.author;
+      part(card, ".review-card__date").textContent = formatReviewDate(review.time);
+
+      const reply = part(card, ".review-card__reply");
+      if (review.source === "page") {
+        const textarea = reply.querySelector("textarea")!;
+        textarea.id = `reply-${review.id}`;
+        textarea.value = review.reply ?? "";
+        reply.querySelector("label")!.htmlFor = textarea.id;
+        part(reply, ".review-card__reply-save").textContent = review.reply
+          ? "Zapisz odpowiedź"
+          : "Dodaj odpowiedź";
+      } else {
+        reply.remove();
+      }
+
+      if (currentStatusFilter !== "deleted" || review.source !== "page") {
+        part(card, ".review-card__hard-delete").remove();
+      }
+      return card;
     }
   </script>
 
-  <!-- Global: most of the panel is rendered by the script above (innerHTML),
-       which scoped styles don't reach. Only loaded on this page. -->
+  <!-- Global: most of the panel is built by the script above from the
+       templates. Only loaded on this page. -->
   <style is:global>
     /* ── Info section ─────────────────────────────────────────── */
     .info {

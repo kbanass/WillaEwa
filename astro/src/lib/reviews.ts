@@ -1,6 +1,6 @@
 // Shared by the public reviews section (Reviews.astro, rendered at build
-// time) and the admin panel (panel.astro, rendered in the browser from
-// HTML strings) — both show the same review card.
+// time) and the admin panel (panel.astro, built in the browser from a
+// <template>) — both show the same review card.
 
 export type ReviewSource = "google" | "page";
 export type ReviewStatus = "pending" | "accepted" | "deleted";

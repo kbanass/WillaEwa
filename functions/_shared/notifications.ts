@@ -1,17 +1,10 @@
+import escapeHtml from 'escape-html'
 import type { Env } from './env'
 
 // Notification bodies below interpolate user-submitted fields (review
 // author/quote, inquiry name/dates) straight from public, unauthenticated
 // forms — escape them in both the HTML email and the Telegram message
 // (sent with parse_mode HTML) so a crafted submission can't inject markup.
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-}
 
 // Notifications never fail the request that triggered them, but a failed
 // one has to show up in the Functions logs (Cloudflare dashboard → Pages
